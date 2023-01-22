@@ -1,10 +1,9 @@
-import Drawflow from "drawflow";
-
 import "./App.css";
 import "./resources/beautify.css";
 import { useEffect, useRef } from "react";
 
 let editor = null;
+const Drawflow = window.Drawflow;
 
 function App() {
   const drawFlowElt = useRef(null);
@@ -12,8 +11,11 @@ function App() {
   const unlock = useRef(null);
 
   useEffect(() => {
-    editor = new Drawflow(drawFlowElt.current);
-    editor.start();
+    if (!editor) {
+      editor = new Drawflow(drawFlowElt.current);
+      editor.reroute = true;
+      editor.start();
+    }
   }, []);
 
   const allowDrop = (event) => {
