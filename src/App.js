@@ -1,6 +1,10 @@
 import "./App.css";
 import "./resources/beautify.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import Microphone from "./components/objects/Microphone";
+import User from "./components/objects/User";
+import Camera from "./components/objects/Camera";
+import MenuItem from "./components/MenuItem";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -15,6 +19,8 @@ function App() {
   const drawFlowElt = useRef(null);
   const lock = useRef(null);
   const unlock = useRef(null);
+
+  const [menuItems, setMenuItems] = useState(["microphone", "camera", "user"]);
 
   useEffect(() => {
     if (!editor) {
@@ -64,7 +70,7 @@ function App() {
     });
 
     editor.on("mouseMove", function (position) {
-      console.log("Position mouse x:" + position.x + " y:" + position.y);
+      //console.log("Position mouse x:" + position.x + " y:" + position.y);
     });
 
     editor.on("nodeMoved", function (id) {
@@ -107,32 +113,32 @@ function App() {
         (editor.precanvas.clientHeight /
           (editor.precanvas.clientHeight * editor.zoom));
 
+    let component = null;
+
     switch (name) {
       case "microphone":
-        let microphone = `
-        <div>
-          <div class="title-box"><i class="fas fa-microphone"></i> Microphone</div>
-        </div>
-        `;
-        editor.addNode(
-          "microphone",
-          0,
-          1,
-          pos_x,
-          pos_y,
-          "microphone",
-          {},
-          microphone
-        );
+        component = new Microphone();
+        break;
+      case "camera":
+        component = new Camera();
         break;
       case "user":
-        let user = `
-        <div>
-          <div class="title-box"><i class="fas fa-user"></i> User</div>
-        </div>
-        `;
-        editor.addNode("user", 0, 1, pos_x, pos_y, "user", {}, user);
+        component = new User();
         break;
+    }
+
+    if (component) {
+      editor.addNode(
+        component.name,
+        component.inputs,
+        component.outputs,
+        pos_x,
+        pos_y,
+        component.name,
+        {},
+        component.render(),
+        false
+      );
     }
   };
 
@@ -216,24 +222,15 @@ function App() {
     <div className="">
       <div className="wrapper">
         <div className="col">
-          <div
-            className="drag-drawflow"
-            draggable="true"
-            onDragStart={(event) => onDrag(event)}
-            data-node="microphone"
-          >
-            <i className="fas fa-microphone"></i>
-            <span> Microphone</span>
-          </div>
-          <div
-            className="drag-drawflow"
-            draggable="true"
-            onDragStart={(event) => onDrag(event)}
-            data-node="user"
-          >
-            <i className="fas fa-user"></i>
-            <span> User</span>
-          </div>
+          {menuItems &&
+            menuItems.map((menuItem, key) => {
+              return new MenuItem({
+                name: menuItem,
+                icon: menuItem,
+                onDrag: onDrag,
+                key,
+              });
+            })}
         </div>
         <div className="col-right">
           <div className="menu">
