@@ -145,7 +145,7 @@ function App() {
         pos_x,
         pos_y,
         component.name,
-        {},
+        { component },
         component.render(),
         false
       );
@@ -229,7 +229,7 @@ function App() {
   };
 
   return (
-    <div className="">
+    <div className="global">
       <div className="wrapper">
         <div className="col">
           {menuItems &&
@@ -246,6 +246,15 @@ function App() {
           <div className="menu">
             <ul>
               <li className="selected">Home</li>
+              <li className="selected" onClick={() => onZoomIn()}>
+                <i className="fas fa-search-plus" />
+              </li>
+              <li className="selected" onClick={() => onZoomOut()}>
+                <i className="fas fa-search-minus" />
+              </li>
+              <li className="selected" onClick={() => onZoomReset()}>
+                <i className="fas fa-search" />
+              </li>
             </ul>
           </div>
           <div
@@ -254,15 +263,11 @@ function App() {
             onDrop={(event) => onDrop(event)}
             onDragOver={(event) => allowDrop(event)}
           ></div>
-          <div className="btn-export">Export</div>
-          <div className="btn-clear" onClick={() => onClear()}>
-            Clear
-          </div>
           <div className="btn-lock">
             <i
               id="lock"
               ref={lock}
-              className="fas fa-lock"
+              className="fas fa-search"
               onClick={() => {
                 onLock();
               }}
@@ -277,10 +282,11 @@ function App() {
               style={{ display: "none" }}
             ></i>
           </div>
-          <div className="bar-zoom">
-            <i className="fas fa-search-minus" onClick={() => onZoomOut()}></i>
-            <i className="fas fa-search" onClick={() => onZoomReset()}></i>
-            <i className="fas fa-search-plus" onClick={() => onZoomIn()}></i>
+        </div>
+        <div className="col-properties">
+          <div className="btn-export">Export</div>
+          <div className="btn-clear" onClick={() => onClear()}>
+            Clear
           </div>
         </div>
       </div>

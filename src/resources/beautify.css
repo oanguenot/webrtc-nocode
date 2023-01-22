@@ -19,13 +19,16 @@ header {
     border-bottom: 1px solid var(--border-color);
     padding-left: 20px;
 }
+
 header h2 {
     margin: 0px;
     line-height: 66px;
 }
+
 header a {
     color: black;
 }
+
 .them-edit-link {
     position: absolute;
     top: 10px;
@@ -33,11 +36,12 @@ header a {
     color: black;
     font-size: 40px;
 }
+
 .them-edit-link a {
     text-decoration: none;
 }
 
-.github-link{
+.github-link {
     position: absolute;
     top: 10px;
     right: 20px;
@@ -57,6 +61,12 @@ header a {
     border-right: 1px solid var(--border-color);
 }
 
+.col-properties {
+    width: 300px;
+    height: 100%;
+    border-left: 1px solid var(--border-color);
+}
+
 .drag-drawflow {
     line-height: 50px;
     border-bottom: 1px solid var(--border-color);
@@ -64,13 +74,13 @@ header a {
     cursor: move;
     user-select: none;
 }
+
 .menu {
-    position: absolute;
     height: 40px;
-    display: block;
     background: white;
     width: 100%;
 }
+
 .menu ul {
     padding: 0px;
     margin: 0px;
@@ -119,8 +129,9 @@ header a {
     cursor: pointer;
     z-index: 5;
 }
-.swal-wide{
-    width:80% !important;
+
+.swal-wide {
+    width: 80% !important;
 }
 
 .btn-lock {
@@ -153,38 +164,39 @@ header a {
     border-right: 1px solid var(--border-color);
     z-index: 5;
 }
+
 .bar-zoom svg {
     cursor: pointer;
     padding-left: 10px;
 }
+
 .bar-zoom svg:nth-child(1) {
     padding-left: 0px;
 }
 
 #drawflow {
     position: relative;
-    width: calc(100vw - 301px);
+    width: calc(100vw - 602px);
     height: calc(100% - 50px);
-    top: 40px;
     background: var(--background-color);
     background-size: 25px 25px;
-    background-image:
-            linear-gradient(to right, #f1f1f1 1px, transparent 1px),
-            linear-gradient(to bottom, #f1f1f1 1px, transparent 1px);
+    background-image: linear-gradient(to right, #f1f1f1 1px, transparent 1px),
+    linear-gradient(to bottom, #f1f1f1 1px, transparent 1px);
 }
 
 @media only screen and (max-width: 768px) {
     .col {
         width: 50px;
     }
+
     .col .drag-drawflow span {
-        display:none;
+        display: none;
     }
+
     #drawflow {
         width: calc(100vw - 51px);
     }
 }
-
 
 
 /* Editing Drawflow */
@@ -198,7 +210,7 @@ header a {
     width: 200px;
 }
 
-.drawflow .drawflow-node.selected  {
+.drawflow .drawflow-node.selected {
     background: white;
     border: 1px solid #4ea9ff;
     -webkit-box-shadow: 0 2px 20px 2px #4ea9ff;
@@ -258,15 +270,18 @@ header a {
     border-radius: 4px 4px 0px 0px;
     padding-left: 10px;
 }
+
 .drawflow .title-box svg {
     position: initial;
 }
+
 .drawflow-node .box {
     padding: 10px 20px 20px 20px;
     font-size: 14px;
     color: #555555;
 
 }
+
 .drawflow-node .box p {
     margin-top: 5px;
     margin-bottom: 5px;
@@ -301,9 +316,11 @@ header a {
     text-align: center;
     color: white;
 }
+
 .drawflow-node.personalized .input {
     background: yellow;
 }
+
 .drawflow-node.personalized .output {
     background: green;
 }
@@ -334,8 +351,8 @@ header a {
     width: 100vw;
     height: 100vh;
     overflow: auto;
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.7);
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.7);
 
 }
 
@@ -354,7 +371,7 @@ header a {
     float: right;
     font-size: 28px;
     font-weight: bold;
-    cursor:pointer;
+    cursor: pointer;
 }
 
 @media only screen and (max-width: 768px) {
