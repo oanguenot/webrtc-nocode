@@ -50,7 +50,7 @@ header a {
 
 .wrapper {
     width: 100%;
-    height: calc(100vh - 67px);
+    height: calc(100vh - 1px);
     display: flex;
 }
 
@@ -177,7 +177,7 @@ header a {
 #drawflow {
     position: relative;
     width: calc(100vw - 602px);
-    height: calc(100% - 50px);
+    height: 100%;
     background: var(--background-color);
     background-size: 25px 25px;
     background-image: linear-gradient(to right, #f1f1f1 1px, transparent 1px),

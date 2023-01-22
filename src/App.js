@@ -56,6 +56,7 @@ function App() {
 
     editor.on("nodeSelected", function (id) {
       console.log("Node selected " + id);
+      console.log(">>>", editor.getNodeFromId(id));
     });
 
     editor.on("moduleCreated", function (name) {
@@ -263,25 +264,6 @@ function App() {
             onDrop={(event) => onDrop(event)}
             onDragOver={(event) => allowDrop(event)}
           ></div>
-          <div className="btn-lock">
-            <i
-              id="lock"
-              ref={lock}
-              className="fas fa-search"
-              onClick={() => {
-                onLock();
-              }}
-            ></i>
-            <i
-              id="unlock"
-              ref={unlock}
-              className="fas fa-lock-open"
-              onClick={() => {
-                onUnlock();
-              }}
-              style={{ display: "none" }}
-            ></i>
-          </div>
         </div>
         <div className="col-properties">
           <div className="btn-export">Export</div>
