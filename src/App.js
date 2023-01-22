@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Microphone from "./components/objects/Microphone";
 import User from "./components/objects/User";
 import Camera from "./components/objects/Camera";
+import Turn from "./components/objects/Turn";
 import MenuItem from "./components/MenuItem";
 
 let editor = null;
@@ -20,7 +21,13 @@ function App() {
   const lock = useRef(null);
   const unlock = useRef(null);
 
-  const [menuItems, setMenuItems] = useState(["microphone", "camera", "user"]);
+  const [menuItems, setMenuItems] = useState([
+    "microphone",
+    "camera",
+    "user",
+    "stun",
+    "turn",
+  ]);
 
   useEffect(() => {
     if (!editor) {
@@ -124,6 +131,9 @@ function App() {
         break;
       case "user":
         component = new User();
+        break;
+      case "turn":
+        component = new Turn();
         break;
     }
 
