@@ -4,6 +4,12 @@ import { useEffect, useRef } from "react";
 
 let editor = null;
 const Drawflow = window.Drawflow;
+let mobile_item_selec = "";
+let mobile_last_move = null;
+
+function positionMobile(ev) {
+  mobile_last_move = ev;
+}
 
 function App() {
   const drawFlowElt = useRef(null);
@@ -15,14 +21,160 @@ function App() {
       editor = new Drawflow(drawFlowElt.current);
       editor.reroute = true;
       editor.start();
+      addFlowEvents();
+
+      let elements = document.getElementsByClassName("drag-drawflow");
+      for (let i = 0; i < elements.length; i++) {
+        elements[i].addEventListener("touchend", onDrop, false);
+        elements[i].addEventListener("touchmove", positionMobile, false);
+        elements[i].addEventListener("touchstart", onDrop, false);
+      }
     }
   }, []);
+
+  const addFlowEvents = () => {
+    editor.on("nodeCreated", function (id) {
+      console.log("Node created " + id);
+    });
+
+    editor.on("nodeRemoved", function (id) {
+      console.log("Node removed " + id);
+    });
+
+    editor.on("nodeSelected", function (id) {
+      console.log("Node selected " + id);
+    });
+
+    editor.on("moduleCreated", function (name) {
+      console.log("Module Created " + name);
+    });
+
+    editor.on("moduleChanged", function (name) {
+      console.log("Module Changed " + name);
+    });
+
+    editor.on("connectionCreated", function (connection) {
+      console.log("Connection created");
+      console.log(connection);
+    });
+
+    editor.on("connectionRemoved", function (connection) {
+      console.log("Connection removed");
+      console.log(connection);
+    });
+
+    editor.on("mouseMove", function (position) {
+      console.log("Position mouse x:" + position.x + " y:" + position.y);
+    });
+
+    editor.on("nodeMoved", function (id) {
+      console.log("Node moved " + id);
+    });
+
+    editor.on("zoom", function (zoom) {
+      console.log("Zoom level " + zoom);
+    });
+
+    editor.on("translate", function (position) {
+      console.log("Translate x:" + position.x + " y:" + position.y);
+    });
+
+    editor.on("addReroute", function (id) {
+      console.log("Reroute added " + id);
+    });
+
+    editor.on("removeReroute", function (id) {
+      console.log("Reroute removed " + id);
+    });
+  };
+
+  const addNodeToDrawFlow = (name, pos_x, pos_y) => {
+    if (editor.editor_mode === "fixed") {
+      return false;
+    }
+    pos_x =
+      pos_x *
+        (editor.precanvas.clientWidth /
+          (editor.precanvas.clientWidth * editor.zoom)) -
+      editor.precanvas.getBoundingClientRect().x *
+        (editor.precanvas.clientWidth /
+          (editor.precanvas.clientWidth * editor.zoom));
+    pos_y =
+      pos_y *
+        (editor.precanvas.clientHeight /
+          (editor.precanvas.clientHeight * editor.zoom)) -
+      editor.precanvas.getBoundingClientRect().y *
+        (editor.precanvas.clientHeight /
+          (editor.precanvas.clientHeight * editor.zoom));
+
+    switch (name) {
+      case "microphone":
+        let microphone = `
+        <div>
+          <div class="title-box"><i class="fas fa-microphone"></i> Microphone</div>
+        </div>
+        `;
+        editor.addNode(
+          "microphone",
+          0,
+          1,
+          pos_x,
+          pos_y,
+          "microphone",
+          {},
+          microphone
+        );
+        break;
+      case "user":
+        let user = `
+        <div>
+          <div class="title-box"><i class="fas fa-user"></i> User</div>
+        </div>
+        `;
+        editor.addNode("user", 0, 1, pos_x, pos_y, "user", {}, user);
+        break;
+    }
+  };
 
   const allowDrop = (event) => {
     event.preventDefault();
   };
 
-  const onDrop = () => {};
+  const onDrop = (event) => {
+    if (event.type === "touchend") {
+      let parentdrawflow = document
+        .elementFromPoint(
+          mobile_last_move.touches[0].clientX,
+          mobile_last_move.touches[0].clientY
+        )
+        .closest("#drawflow");
+      if (parentdrawflow != null) {
+        addNodeToDrawFlow(
+          mobile_item_selec,
+          mobile_last_move.touches[0].clientX,
+          mobile_last_move.touches[0].clientY
+        );
+      }
+      mobile_item_selec = "";
+    } else {
+      event.preventDefault();
+      var data = event.dataTransfer.getData("node");
+      addNodeToDrawFlow(data, event.clientX, event.clientY);
+    }
+  };
+
+  const onDrag = (event) => {
+    if (event.type === "touchstart") {
+      mobile_item_selec = event.target
+        .closest(".drag-drawflow")
+        .getAttribute("data-node");
+    } else {
+      event.dataTransfer.setData(
+        "node",
+        event.target.getAttribute("data-node")
+      );
+    }
+  };
 
   const onClear = () => {
     editor.clearModuleSelected();
@@ -61,9 +213,28 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="">
       <div className="wrapper">
-        <div className="col"></div>
+        <div className="col">
+          <div
+            className="drag-drawflow"
+            draggable="true"
+            onDragStart={(event) => onDrag(event)}
+            data-node="microphone"
+          >
+            <i className="fas fa-microphone"></i>
+            <span> Microphone</span>
+          </div>
+          <div
+            className="drag-drawflow"
+            draggable="true"
+            onDragStart={(event) => onDrag(event)}
+            data-node="user"
+          >
+            <i className="fas fa-user"></i>
+            <span> User</span>
+          </div>
+        </div>
         <div className="col-right">
           <div className="menu">
             <ul>
