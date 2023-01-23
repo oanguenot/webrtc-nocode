@@ -48,6 +48,27 @@ class Main {
     return this._uuid;
   }
 
+  get node() {
+    const infoNode = this._info.find((info) => info.key === "node");
+    return infoNode ? infoNode.value : "Unknown";
+  }
+
+  getPropertyValueFor(name) {
+    const property = this._properties.find(
+      (property) => property.prop === name
+    );
+    return property ? property.value : "unknown";
+  }
+
+  updateValueFor(name, value) {
+    const property = this._properties.find(
+      (property) => property.prop === name
+    );
+    if (property) {
+      property.value = value;
+    }
+  }
+
   render() {
     return "";
   }

@@ -19,13 +19,29 @@ const appReducer = (state = initialAppState, action) => {
       const object = state.objects.find((object) => object.id === objectId);
       return {
         ...state,
+        lastAdded: null,
         selected: object,
       };
     case OBJECT_ACTIONS.UNSELECT_OBJECT_SUCCESS:
       return {
         ...state,
+        lastAdded: null,
         selected: null,
       };
+    case OBJECT_ACTIONS.UPDATE_OBJECT_SUCCESS: {
+      const objectId = action.payload.objectId;
+      const name = action.payload.name;
+      const value = action.payload.value;
+      const index = state.objects.findIndex((object) => object.id === objectId);
+      const updatedObjects = [...state.objects];
+      updatedObjects[index].updateValueFor(name, value);
+      console.log("UpdateObjects", updatedObjects);
+      return {
+        ...state,
+        lastAdded: null,
+        objects: updatedObjects,
+      };
+    }
     default:
       break;
   }

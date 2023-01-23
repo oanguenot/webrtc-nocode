@@ -61,12 +61,12 @@ function App() {
 
       if (!objectFound) {
         editor.addNode(
-          appState.lastAdded.properties["name"].value,
+          appState.lastAdded.getPropertyValueFor("name"),
           appState.lastAdded.inputs,
           appState.lastAdded.outputs,
           appState.lastAdded.x,
           appState.lastAdded.y,
-          appState.lastAdded.properties["name"].value,
+          appState.lastAdded.getPropertyValueFor("name"),
           { id: appState.lastAdded.id },
           appState.lastAdded.render(),
           false
@@ -285,7 +285,7 @@ function App() {
               Clear
             </div>
             <div className="properties-editor">
-              <Properties />
+              <Properties dispatch={dispatch} />
             </div>
           </div>
         </div>

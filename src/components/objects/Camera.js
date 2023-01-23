@@ -11,35 +11,38 @@ class Camera extends Main {
       { key: "kind", value: "videoinput" },
       { key: "type", value: "real" },
     ];
-    this._properties = {
-      name: {
+    this._properties = [
+      {
+        prop: "name",
         label: "Name",
         type: "text",
         value: "Camera",
         description: "Name of the Camera",
       },
-      framerate: {
+      {
+        prop: "framerate",
         label: "Framerate",
         type: "enum",
         enum: [1, 10, 24, 30, 60],
         value: 30,
         description: "Number of frames per second",
       },
-      resolution: {
+      {
+        prop: "resolution",
         label: "Resolution",
         type: "enum",
         enum: ["480p", "720p", "1080p", "2k", "4k"],
         value: "720p",
         description: "Resolution of the camera",
       },
-    };
+    ];
   }
 
   render() {
     const item = `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this._icon}"></i> ${this._properties["name"].value}
+          <i class="fas fa-${this._icon}"></i> ${this._properties[0].value}
         </div>
       </div>
       `;

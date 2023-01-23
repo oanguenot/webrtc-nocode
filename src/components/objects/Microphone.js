@@ -11,28 +11,30 @@ class Microphone extends Main {
       { key: "kind", value: "audioInput" },
       { key: "type", value: "real" },
     ];
-    this._properties = {
-      name: {
+    this._properties = [
+      {
+        prop: "name",
         label: "Name",
         type: "text",
         value: "Microphone",
         description: "Name of the Microphone",
       },
-      channelCount: {
+      {
+        prop: "channelCount",
         label: "Channels Count",
         type: "enum",
         enum: [1, 2],
         value: 1,
         description: "Number of Channels (mono or stereo)",
       },
-    };
+    ];
   }
 
   render() {
     const item = `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this._icon}"></i> ${this._properties["name"].value}
+          <i class="fas fa-${this._icon}"></i> ${this._properties[0].value}
         </div>
       </div>
       `;

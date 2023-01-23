@@ -9,13 +9,13 @@ import {
   gridSize as getGridSize,
 } from "@atlaskit/theme/constants";
 import "./Properties.css";
+import { updateProperty } from "../../actions/objectActions";
 
 const fontSize = getFontSize();
 const gridSize = getGridSize();
 
-function Properties({ node }) {
+function Properties({ dispatch }) {
   const appState = useContext(AppContext);
-  const [editValue, setEditValue] = useState("User 1");
   const [selected, setSelected] = useState(appState.selected);
 
   useEffect(() => {
@@ -32,6 +32,35 @@ function Properties({ node }) {
     wordBreak: "break-word",
   });
 
+  const getInfo = () => {
+    return selected.info.map((info, key) => (
+      <div key={key}>
+        {info.key}: {info.value}
+      </div>
+    ));
+  };
+
+  const getProperties = () => {
+    return selected.properties.map((property, key) => (
+      <InlineEdit
+        key={key}
+        defaultValue={property.value}
+        label={property.label}
+        editView={({ errorMessage, ...fieldProps }) => (
+          <Textfield {...fieldProps} autoFocus />
+        )}
+        readView={() => (
+          <div css={readViewContainerStyles} data-testid="read-view">
+            {property.value || "Click to edit"}
+          </div>
+        )}
+        onConfirm={(value) =>
+          updateProperty(selected.id, property.prop, value, dispatch)
+        }
+      />
+    ));
+  };
+
   return (
     <div>
       {!selected && (
@@ -40,28 +69,9 @@ function Properties({ node }) {
           description="Check your node, something is wrong"
         />
       )}
-      {selected &&
-        selected.info.map((info, key) => (
-          <div key={key}>
-            {info.key}: {info.value}
-          </div>
-        ))}
+      {selected && selected.info && getInfo()}
 
-      {node && selected.properties && (
-        <InlineEdit
-          defaultValue={editValue}
-          label="Name"
-          editView={({ errorMessage, ...fieldProps }) => (
-            <Textfield {...fieldProps} autoFocus />
-          )}
-          readView={() => (
-            <div css={readViewContainerStyles} data-testid="read-view">
-              {editValue || "Click to edit the name"}
-            </div>
-          )}
-          onConfirm={(value) => setEditValue(value)}
-        />
-      )}
+      {selected && selected.properties && getProperties()}
     </div>
   );
 }

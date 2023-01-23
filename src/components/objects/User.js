@@ -8,21 +8,22 @@ class User extends Main {
     this._inputs = 2;
     this._outputs = 1;
     this._info = [{ key: "node", value: "user" }];
-    this._properties = {
-      name: {
+    this._properties = [
+      {
+        prop: "name",
         label: "Name",
         type: "text",
         value: `User-${nanoid(10)}`,
         description: "Name of the Microphone",
       },
-    };
+    ];
   }
 
   render() {
     const item = `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this._icon}"></i> ${this._properties["name"].value}
+          <i class="fas fa-${this._icon}"></i> ${this._properties[0].value}
         </div>
       </div>
       `;
