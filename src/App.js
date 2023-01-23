@@ -31,7 +31,6 @@ function App() {
     "microphone",
     "camera",
     "user",
-    "stun",
     "turn",
   ]);
   const [objects, setObjects] = useState(appState.objects);

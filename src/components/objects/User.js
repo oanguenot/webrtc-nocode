@@ -5,7 +5,6 @@ class User extends Main {
   constructor(x, y) {
     super(x, y);
     this._icon = "user";
-    this._type = "user";
     this._inputs = 2;
     this._outputs = 1;
     this._info = [{ key: "node", value: "user" }];
