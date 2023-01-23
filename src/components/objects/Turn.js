@@ -1,10 +1,11 @@
 import Main from "./Main";
 
 class Turn extends Main {
-  constructor(props) {
-    super(props);
+  constructor(x, y) {
+    super(x, y);
     this._name = "turn";
     this._icon = "server";
+    this._type = "turn";
     this._inputs = 1;
     this._outputs = 0;
   }

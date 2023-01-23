@@ -1,11 +1,16 @@
 import "./App.css";
 import "./resources/beautify.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useReducer } from "react";
+import AppContext from "./contexts/appContext";
+import { appReducer, initialAppState } from "./reducers/appReducer";
 import Microphone from "./components/objects/Microphone";
 import User from "./components/objects/User";
 import Camera from "./components/objects/Camera";
 import Turn from "./components/objects/Turn";
 import MenuItem from "./components/MenuItem";
+import Properties from "./components/properties/Properties";
+import { addObject, clearSelection, select } from "./actions/objectActions";
+import { getInitialPosition } from "./utils/editor";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -17,6 +22,7 @@ function positionMobile(ev) {
 }
 
 function App() {
+  const [appState, dispatch] = useReducer(appReducer, initialAppState);
   const drawFlowElt = useRef(null);
   const lock = useRef(null);
   const unlock = useRef(null);
@@ -28,6 +34,7 @@ function App() {
     "stun",
     "turn",
   ]);
+  const [objects, setObjects] = useState(appState.objects);
 
   useEffect(() => {
     if (!editor) {
@@ -45,6 +52,34 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    if (appState.lastAdded) {
+      const objects = editor.getNodesFromName(appState.lastAdded.name);
+
+      const objectFound = objects.find(
+        (object) => object.id === appState.lastAdded.id
+      );
+
+      if (!objectFound) {
+        editor.addNode(
+          appState.lastAdded.properties["name"].value,
+          appState.lastAdded.inputs,
+          appState.lastAdded.outputs,
+          appState.lastAdded.x,
+          appState.lastAdded.y,
+          appState.lastAdded.properties["name"].value,
+          { id: appState.lastAdded.id },
+          appState.lastAdded.render(),
+          false
+        );
+      }
+    }
+  }, [appState.objects, appState.lastAdded]);
+
+  useEffect(() => {
+    setObjects(appState.objects);
+  }, [appState.objects]);
+
   const addFlowEvents = () => {
     editor.on("nodeCreated", function (id) {
       console.log("Node created " + id);
@@ -54,9 +89,13 @@ function App() {
       console.log("Node removed " + id);
     });
 
-    editor.on("nodeSelected", function (id) {
-      console.log("Node selected " + id);
-      console.log(">>>", editor.getNodeFromId(id));
+    editor.on("nodeSelected", async function (id) {
+      const uuid = editor.getNodeFromId(id).data.id;
+      await select(uuid, dispatch);
+    });
+
+    editor.on("nodeUnselected", async function (id) {
+      await clearSelection(dispatch);
     });
 
     editor.on("moduleCreated", function (name) {
@@ -102,55 +141,30 @@ function App() {
     });
   };
 
-  const addNodeToDrawFlow = (name, pos_x, pos_y) => {
+  const addNodeToDrawFlow = async (name, posX, posY) => {
     if (editor.editor_mode === "fixed") {
       return false;
     }
-    pos_x =
-      pos_x *
-        (editor.precanvas.clientWidth /
-          (editor.precanvas.clientWidth * editor.zoom)) -
-      editor.precanvas.getBoundingClientRect().x *
-        (editor.precanvas.clientWidth /
-          (editor.precanvas.clientWidth * editor.zoom));
-    pos_y =
-      pos_y *
-        (editor.precanvas.clientHeight /
-          (editor.precanvas.clientHeight * editor.zoom)) -
-      editor.precanvas.getBoundingClientRect().y *
-        (editor.precanvas.clientHeight /
-          (editor.precanvas.clientHeight * editor.zoom));
 
+    const { x, y } = getInitialPosition(editor, posX, posY);
     let component = null;
 
     switch (name) {
       case "microphone":
-        component = new Microphone();
+        component = new Microphone(x, y);
         break;
       case "camera":
-        component = new Camera();
+        component = new Camera(x, y);
         break;
       case "user":
-        component = new User();
+        component = new User(x, y);
         break;
       case "turn":
-        component = new Turn();
+        component = new Turn(x, y);
         break;
     }
 
-    if (component) {
-      editor.addNode(
-        component.name,
-        component.inputs,
-        component.outputs,
-        pos_x,
-        pos_y,
-        component.name,
-        { component },
-        component.render(),
-        false
-      );
-    }
+    await addObject(component, dispatch);
   };
 
   const allowDrop = (event) => {
@@ -230,49 +244,54 @@ function App() {
   };
 
   return (
-    <div className="global">
-      <div className="wrapper">
-        <div className="col">
-          {menuItems &&
-            menuItems.map((menuItem, key) => {
-              return new MenuItem({
-                name: menuItem,
-                icon: menuItem,
-                onDrag: onDrag,
-                key,
-              });
-            })}
-        </div>
-        <div className="col-right">
-          <div className="menu">
-            <ul>
-              <li className="selected">Home</li>
-              <li className="selected" onClick={() => onZoomIn()}>
-                <i className="fas fa-search-plus" />
-              </li>
-              <li className="selected" onClick={() => onZoomOut()}>
-                <i className="fas fa-search-minus" />
-              </li>
-              <li className="selected" onClick={() => onZoomReset()}>
-                <i className="fas fa-search" />
-              </li>
-            </ul>
+    <AppContext.Provider value={appState}>
+      <div className="global">
+        <div className="wrapper">
+          <div className="col">
+            {menuItems &&
+              menuItems.map((menuItem, key) => {
+                return new MenuItem({
+                  name: menuItem,
+                  icon: menuItem,
+                  onDrag: onDrag,
+                  key,
+                });
+              })}
           </div>
-          <div
-            id="drawflow"
-            ref={drawFlowElt}
-            onDrop={(event) => onDrop(event)}
-            onDragOver={(event) => allowDrop(event)}
-          ></div>
-        </div>
-        <div className="col-properties">
-          <div className="btn-export">Export</div>
-          <div className="btn-clear" onClick={() => onClear()}>
-            Clear
+          <div className="col-right">
+            <div className="menu">
+              <ul>
+                <li className="selected">Home</li>
+                <li className="selected" onClick={() => onZoomIn()}>
+                  <i className="fas fa-search-plus" />
+                </li>
+                <li className="selected" onClick={() => onZoomOut()}>
+                  <i className="fas fa-search-minus" />
+                </li>
+                <li className="selected" onClick={() => onZoomReset()}>
+                  <i className="fas fa-search" />
+                </li>
+              </ul>
+            </div>
+            <div
+              id="drawflow"
+              ref={drawFlowElt}
+              onDrop={(event) => onDrop(event)}
+              onDragOver={(event) => allowDrop(event)}
+            ></div>
+          </div>
+          <div className="col-properties">
+            <div className="btn-export">Export</div>
+            <div className="btn-clear" onClick={() => onClear()}>
+              Clear
+            </div>
+            <div className="properties-editor">
+              <Properties />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </AppContext.Provider>
   );
 }
 
