@@ -7,6 +7,7 @@ const initialAppState = {
 };
 
 const appReducer = (state = initialAppState, action) => {
+  console.log(`[reduc]:: ${action.type}`);
   switch (action.type) {
     case OBJECT_ACTIONS.ADD_OBJECT_SUCCESS:
       return {
@@ -22,11 +23,12 @@ const appReducer = (state = initialAppState, action) => {
         lastAdded: null,
         selected: object,
       };
+
     case OBJECT_ACTIONS.UNSELECT_OBJECT_SUCCESS:
       return {
         ...state,
-        lastAdded: null,
         selected: null,
+        lastAdded: null,
       };
     case OBJECT_ACTIONS.UPDATE_OBJECT_SUCCESS: {
       const objectId = action.payload.objectId;
@@ -35,7 +37,6 @@ const appReducer = (state = initialAppState, action) => {
       const index = state.objects.findIndex((object) => object.id === objectId);
       const updatedObjects = [...state.objects];
       updatedObjects[index].updateValueFor(name, value);
-      console.log("UpdateObjects", updatedObjects);
       return {
         ...state,
         lastAdded: null,
