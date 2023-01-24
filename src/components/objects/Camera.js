@@ -31,9 +31,13 @@ class Camera extends Main {
         prop: "resolution",
         label: "Resolution",
         type: "enum",
-        enum: ["480p", "720p", "1080p", "2k", "4k"],
+        enum: [
+          { label: "480p", value: "480p" },
+          { label: "HD", value: "720p" },
+          { label: "Full HD", value: "1080p" },
+        ],
         value: "720p",
-        description: "Resolution of the camera",
+        description: "Choose a resolution",
       },
     ];
   }

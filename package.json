@@ -6,6 +6,7 @@
     "@atlaskit/empty-state": "^7.4.6",
     "@atlaskit/inline-edit": "^12.2.6",
     "@atlaskit/lozenge": "^11.3.6",
+    "@atlaskit/select": "^16.1.0",
     "@atlaskit/table-tree": "^9.2.7",
     "@atlaskit/textfield": "^5.3.4",
     "@atlaskit/theme": "^12.2.6",

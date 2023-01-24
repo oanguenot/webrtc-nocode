@@ -3,6 +3,7 @@ import Textfield from "@atlaskit/textfield";
 import { updateProperty } from "../../actions/objectActions";
 import InlineEdit from "@atlaskit/inline-edit";
 import { css } from "@emotion/react";
+import Select from "@atlaskit/select";
 import {
   fontSize as getFontSize,
   gridSize as getGridSize,
@@ -25,7 +26,11 @@ function Property({ objectId, property, dispatch }) {
   });
 
   const onChange = (event) => {
-    setValue(event.target.value);
+    if (property.type === "enum") {
+      setValue(event);
+    } else {
+      setValue(event.target.value);
+    }
   };
 
   return (
@@ -33,27 +38,40 @@ function Property({ objectId, property, dispatch }) {
       defaultValue={property.value}
       label={property.label}
       editView={({ errorMessage, ...fieldProps }) => {
-        return (
-          <Textfield
-            {...fieldProps}
-            autoFocus
-            value={value || property.value}
-            onChange={(event) => onChange(event)}
-          />
-        );
+        if (property.type !== "enum") {
+          return (
+            <Textfield
+              {...fieldProps}
+              autoFocus
+              value={value || property.value}
+              onChange={(event) => onChange(event)}
+            />
+          );
+        } else {
+          return (
+            <Select
+              inputId="single-select-example"
+              className="single-select"
+              classNamePrefix="react-select"
+              options={property.enum}
+              value={value || property.value}
+              onChange={(event) => onChange(event)}
+            />
+          );
+        }
       }}
       readView={() => (
         <div css={readViewContainerStyles}>
           {property.value || "Click to edit"}
         </div>
       )}
-      onConfirm={async (newValue) => {
-        await updateProperty(
-          objectId,
-          property.prop,
-          value || property.value,
-          dispatch
-        );
+      onConfirm={async () => {
+        const newValue =
+          property.type !== "enum"
+            ? value || property.value
+            : (value && value.value) || property.value;
+
+        await updateProperty(objectId, property.prop, newValue, dispatch);
         setValue(null);
       }}
     />
