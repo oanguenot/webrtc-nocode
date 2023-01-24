@@ -2,3 +2,34 @@
     margin-top: 40px;
     padding: 8px;
 }
+
+table {
+    padding: 4px;
+    width: 100%;
+    background: #fff;
+}
+
+th {
+    text-align: left;
+    color: #091e42;
+}
+
+tr {
+    height: 24px;
+}
+
+.col-label, .col-value {
+    text-align: left;
+}
+
+.col-label {
+    color: #5e6c84;
+    font-size: 16px;
+}
+
+.properties {
+    margin-top: 20px;
+    padding: 8px;
+}
+
+

@@ -5,8 +5,11 @@
   "dependencies": {
     "@atlaskit/empty-state": "^7.4.6",
     "@atlaskit/inline-edit": "^12.2.6",
+    "@atlaskit/lozenge": "^11.3.6",
+    "@atlaskit/table-tree": "^9.2.7",
     "@atlaskit/textfield": "^5.3.4",
-    "@atlaskit/theme": "^12.2.5",
+    "@atlaskit/theme": "^12.2.6",
+    "@atlaskit/tokens": "^0.13.3",
     "@emotion/react": "^11.10.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
