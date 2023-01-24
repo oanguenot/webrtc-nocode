@@ -1,6 +1,6 @@
 import "./App.css";
 import "./resources/beautify.css";
-import { useEffect, useRef, useState, useReducer } from "react";
+import { useEffect, useRef, useState, useReducer, createElement } from "react";
 import AppContext from "./contexts/appContext";
 import { appReducer, initialAppState } from "./reducers/appReducer";
 import Microphone from "./components/objects/Microphone";
@@ -160,6 +160,8 @@ function App() {
         break;
       case "turn":
         component = new Turn(x, y);
+        break;
+      default:
         break;
     }
 

@@ -66,6 +66,16 @@ class Main {
     );
     if (property) {
       property.value = value;
+      if (name === "name") {
+        this.updateName(value);
+      }
+    }
+  }
+
+  updateName(name) {
+    const nameElt = document.querySelector(`#name-${this._uuid}`);
+    if (nameElt) {
+      nameElt.innerHTML = name;
     }
   }
 
