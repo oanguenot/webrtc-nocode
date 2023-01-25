@@ -1,16 +1,18 @@
 import "./App.css";
 import "./resources/beautify.css";
-import { useEffect, useRef, useState, useReducer, createElement } from "react";
+import { useEffect, useRef, useState, useReducer } from "react";
 import AppContext from "./contexts/appContext";
 import { appReducer, initialAppState } from "./reducers/appReducer";
 import Microphone from "./components/objects/Microphone";
 import User from "./components/objects/User";
 import Camera from "./components/objects/Camera";
 import Turn from "./components/objects/Turn";
-import MenuItem from "./components/MenuItem";
+import MenuItem from "./components/Menu/MenuItem";
 import Properties from "./components/properties/Properties";
 import { addObject, clearSelection, select } from "./actions/objectActions";
 import { getInitialPosition } from "./utils/editor";
+import VideoEncodings from "./components/objects/VideoEncodings";
+import Sig from "./components/objects/Sig";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -32,6 +34,8 @@ function App() {
     "camera",
     "user",
     "turn",
+    "sig",
+    "videoEncodings",
   ]);
   const [objects, setObjects] = useState(appState.objects);
 
@@ -161,11 +165,21 @@ function App() {
       case "turn":
         component = new Turn(x, y);
         break;
+      case "videoEncodings":
+        component = new VideoEncodings(x, y);
+        break;
+      case "sig":
+        component = new Sig(x, y);
+        break;
       default:
         break;
     }
 
-    await addObject(component, dispatch);
+    if (component) {
+      await addObject(component, dispatch);
+    } else {
+      console.log(`[app] can't add component ${name}`);
+    }
   };
 
   const allowDrop = (event) => {

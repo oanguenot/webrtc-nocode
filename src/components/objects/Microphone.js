@@ -23,7 +23,10 @@ class Microphone extends Main {
         prop: "channelCount",
         label: "Channels Count",
         type: "enum",
-        enum: [1, 2],
+        enum: [
+          { label: "Mono", value: 1 },
+          { label: "Stereo", value: 2 },
+        ],
         value: 1,
         description: "Number of Channels (mono or stereo)",
       },
@@ -31,13 +34,13 @@ class Microphone extends Main {
   }
 
   render() {
-    return (`
+    return `
       <div>
         <div class="title-box">
           <i class="fas fa-${this._icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
         </div>
       </div>
-    `);
+    `;
   }
 }
 

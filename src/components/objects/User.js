@@ -16,6 +16,28 @@ class User extends Main {
         value: `User-${nanoid(10)}`,
         description: "Name of the Microphone",
       },
+      {
+        prop: "role",
+        label: "Role",
+        type: "enum",
+        enum: [
+          { label: "Caller", value: "caller" },
+          { label: "Called", value: "called" },
+        ],
+        value: "caller",
+        description: "Choose the role",
+      },
+      {
+        prop: "network",
+        label: "Connection type",
+        type: "enum",
+        enum: [
+          { label: "Any", value: "any" },
+          { label: "Relay only", value: "relay" },
+        ],
+        value: "any",
+        description: "Choose the connection type to use",
+      },
     ];
   }
 
