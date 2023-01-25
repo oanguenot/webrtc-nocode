@@ -33,9 +33,18 @@ function Property({ objectId, property, dispatch }) {
     }
   };
 
+  let defaultValue = property.value;
+  let valueDisplayed = property.value;
+  if (property.type === "enum") {
+    defaultValue = property.enum.find((item) => item.value === property.value);
+    if (defaultValue) {
+      valueDisplayed = defaultValue.label;
+    }
+  }
+
   return (
     <InlineEdit
-      defaultValue={property.value}
+      defaultValue={defaultValue}
       label={property.label}
       editView={({ errorMessage, ...fieldProps }) => {
         if (property.type !== "enum") {
@@ -54,7 +63,7 @@ function Property({ objectId, property, dispatch }) {
               className="single-select"
               classNamePrefix="react-select"
               options={property.enum}
-              value={value || property.value}
+              value={value || defaultValue}
               onChange={(event) => onChange(event)}
             />
           );
@@ -62,7 +71,7 @@ function Property({ objectId, property, dispatch }) {
       }}
       readView={() => (
         <div css={readViewContainerStyles}>
-          {property.value || "Click to edit"}
+          {valueDisplayed || "Click to edit"}
         </div>
       )}
       onConfirm={async () => {
