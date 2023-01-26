@@ -7,6 +7,10 @@ import Microphone from "./components/objects/Microphone";
 import User from "./components/objects/User";
 import Camera from "./components/objects/Camera";
 import Turn from "./components/objects/Turn";
+import VideoEncodings from "./components/objects/VideoEncodings";
+import Sig from "./components/objects/Sig";
+import Supervisor from "./components/logic/Supervisor";
+import WebRTCMetrics from "./components/objects/WebRTCMetrics";
 import MenuItem from "./components/Menu/MenuItem";
 import Properties from "./components/properties/Properties";
 import {
@@ -16,9 +20,6 @@ import {
   select,
 } from "./actions/objectActions";
 import { getInitialPosition } from "./utils/editor";
-import VideoEncodings from "./components/objects/VideoEncodings";
-import Sig from "./components/objects/Sig";
-import Supervisor from "./components/logic/Supervisor";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -42,6 +43,7 @@ function App() {
     "turn",
     "sig",
     "videoEncodings",
+    "webrtcmetrics",
   ]);
   const [objects, setObjects] = useState(appState.objects);
 
@@ -207,6 +209,8 @@ function App() {
       case "sig":
         component = new Sig(x, y);
         break;
+      case "webrtcmetrics":
+        component = new WebRTCMetrics(x, y);
       default:
         break;
     }
