@@ -1,24 +1,27 @@
 .properties-editor {
-    margin-top: 40px;
-    padding: 8px;
+    margin-top: 80px;
 }
 
 table {
     padding: 4px;
     width: 100%;
-    background: #fff;
 }
 
 th {
     text-align: left;
-    color: #091e42;
+    color: #0c66e4;
 }
 
 tr {
     height: 24px;
 }
 
-.col-label, .col-value {
+.col-label {
+    text-align: left;
+    width: 150px;
+}
+
+.col-value {
     text-align: left;
 }
 
@@ -27,8 +30,20 @@ tr {
     font-size: 16px;
 }
 
-.properties {
-    margin-top: 20px;
+.property-title {
+    font-size: 16px;
+    font-weight: bold;
+    padding: 8px 6px;
+    border-bottom: 2px solid #f5cd47;
+    text-align: left;
+    color: #974f0c;
+}
+
+.properties-area {
+    padding: 8px;
+}
+
+.links {
     padding: 8px;
 }
 

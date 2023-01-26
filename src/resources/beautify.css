@@ -56,13 +56,13 @@ header a {
 
 .col {
     overflow: auto;
-    width: 300px;
+    width: 270px;
     height: 100%;
     border-right: 1px solid var(--border-color);
 }
 
 .col-properties {
-    width: 300px;
+    width: 270px;
     height: 100%;
     border-left: 1px solid var(--border-color);
 }
@@ -176,7 +176,7 @@ header a {
 
 #drawflow {
     position: relative;
-    width: calc(100vw - 602px);
+    width: calc(100vw - 542px);
     height: 100%;
     background: var(--background-color);
     background-size: 25px 25px;
@@ -378,4 +378,22 @@ header a {
     .modal-content {
         width: 80%;
     }
+}
+
+.mt-30 {
+    margin-top: 30px;
+}
+
+.mt-10 {
+    margin-top: 10px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+li {
+
 }

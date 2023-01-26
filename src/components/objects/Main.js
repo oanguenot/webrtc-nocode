@@ -4,6 +4,7 @@ class Main {
   constructor(posX = 0, posY = 0) {
     this._icon = "";
     this._inputs = 1;
+    this._inputsLinks = [];
     this._outputs = 1;
     this._info = {};
     this._properties = {};
@@ -27,6 +28,10 @@ class Main {
 
   get properties() {
     return this._properties;
+  }
+
+  get links() {
+    return this._inputsLinks;
   }
 
   get x() {
@@ -82,6 +87,16 @@ class Main {
 
   acceptConnection(node) {
     return this._accept.includes(node);
+  }
+
+  addInputLink(nodeId) {
+    if (!this._inputsLinks.includes(nodeId)) {
+      this._inputsLinks.push(nodeId);
+    } else {
+      console.warn(
+        `[main] connection already added from ${nodeId} to ${this._uuid}`
+      );
+    }
   }
 
   render() {

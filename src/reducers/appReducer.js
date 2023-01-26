@@ -11,6 +11,20 @@ const getObjectFromId = (objectId, objects) => {
   return objects.find((object) => object.id === objectId);
 };
 
+const updateValueInObject = (objectId, name, value, objects) => {
+  const index = objects.findIndex((object) => object.id === objectId);
+  const updatedObjects = [...objects];
+  updatedObjects[index].updateValueFor(name, value);
+  return updatedObjects;
+};
+
+const updateLinkInObject = (objectId, fromId, objects) => {
+  const index = objects.findIndex((object) => object.id === objectId);
+  const updatedObjects = [...objects];
+  updatedObjects[index].addInputLink(fromId);
+  return updatedObjects;
+};
+
 const appReducer = (state = initialAppState, action) => {
   if (!action) {
     console.error(`[reduc]:: no action}`);
@@ -43,13 +57,10 @@ const appReducer = (state = initialAppState, action) => {
       const objectId = action.payload.objectId;
       const name = action.payload.name;
       const value = action.payload.value;
-      const index = state.objects.findIndex((object) => object.id === objectId);
-      const updatedObjects = [...state.objects];
-      updatedObjects[index].updateValueFor(name, value);
       return {
         ...state,
         lastAdded: null,
-        objects: updatedObjects,
+        objects: updateValueInObject(objectId, name, value, state.objects),
       };
     }
     case OBJECT_ACTIONS.CREATE_CONNECTION_ATTEMPT: {
@@ -61,14 +72,18 @@ const appReducer = (state = initialAppState, action) => {
         !toObject ||
         (toObject && fromNode && !toObject.acceptConnection(fromNode.node))
       ) {
+        // link is not correct - remove it
         return {
           ...state,
           link: { action: "delete", connection: action.payload.connection },
         };
       }
+
+      // Add link to recipient node
       return {
         ...state,
         connection: null,
+        objects: updateLinkInObject(toObject.id, fromNode.id, state.objects),
       };
     }
     case OBJECT_ACTIONS.CREATE_CONNECTION_REMOVED: {
