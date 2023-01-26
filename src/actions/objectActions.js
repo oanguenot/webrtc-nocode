@@ -3,6 +3,8 @@ export const OBJECT_ACTIONS = {
   SELECT_OBJECT_SUCCESS: "SELECT_OBJECT_SUCCESS",
   UNSELECT_OBJECT_SUCCESS: "UNSELECT_OBJECT_SUCCESS",
   UPDATE_OBJECT_SUCCESS: "UPDATE_OBJECT_SUCCESS",
+  CREATE_CONNECTION_ATTEMPT: "CREATE_CONNECTION_ATTEMPT",
+  CREATE_CONNECTION_REMOVED: "CREATE_CONNECTION_REMOVED",
 };
 
 export const addObject = async (object, dispatch) => {
@@ -38,5 +40,21 @@ export const updateProperty = async (objectId, name, value, dispatch) => {
   dispatch({
     type: OBJECT_ACTIONS.UPDATE_OBJECT_SUCCESS,
     payload: { objectId, name, value },
+  });
+};
+
+export const createConnection = async (fromId, toId, connection, dispatch) => {
+  console.log(`[action] :: create connection from ${fromId} to ${toId}`);
+
+  dispatch({
+    type: OBJECT_ACTIONS.CREATE_CONNECTION_ATTEMPT,
+    payload: { fromId, toId, connection },
+  });
+};
+
+export const createConnectionRemoved = async (dispatch) => {
+  dispatch({
+    type: OBJECT_ACTIONS.CREATE_CONNECTION_REMOVED,
+    payload: {},
   });
 };

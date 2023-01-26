@@ -9,10 +9,16 @@ import Camera from "./components/objects/Camera";
 import Turn from "./components/objects/Turn";
 import MenuItem from "./components/Menu/MenuItem";
 import Properties from "./components/properties/Properties";
-import { addObject, clearSelection, select } from "./actions/objectActions";
+import {
+  addObject,
+  clearSelection,
+  createConnection,
+  select,
+} from "./actions/objectActions";
 import { getInitialPosition } from "./utils/editor";
 import VideoEncodings from "./components/objects/VideoEncodings";
 import Sig from "./components/objects/Sig";
+import Supervisor from "./components/logic/Supervisor";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -77,11 +83,24 @@ function App() {
         );
       }
     }
-  }, [appState.objects, appState.lastAdded]);
+  }, [appState.lastAdded]);
 
   useEffect(() => {
     setObjects(appState.objects);
   }, [appState.objects]);
+
+  useEffect(() => {
+    if (appState.link) {
+      if (appState.link.action === "delete") {
+        editor.removeSingleConnection(
+          appState.link.connection.output_id,
+          appState.link.connection.input_id,
+          appState.link.connection.output_class,
+          appState.link.connection.input_class
+        );
+      }
+    }
+  }, [appState.link]);
 
   const addFlowEvents = () => {
     editor.on("nodeCreated", function (id) {
@@ -97,7 +116,7 @@ function App() {
       await select(uuid, dispatch);
     });
 
-    editor.on("nodeUnselected", async function (id) {
+    editor.on("nodeUnselected", async function () {
       await clearSelection(dispatch);
     });
 
@@ -109,8 +128,25 @@ function App() {
       console.log("Module Changed " + name);
     });
 
-    editor.on("connectionCreated", function (connection) {
+    editor.on("connectionCreated", async function (connection) {
       console.log("Connection created");
+      const fromId = editor.getNodeFromId(connection.output_id).data.id;
+      const toId = editor.getNodeFromId(connection.input_id).data.id;
+      await createConnection(fromId, toId, connection, dispatch);
+    });
+
+    editor.on("connectionStart", function (connection) {
+      console.log("Connection started");
+      console.log(connection);
+    });
+
+    editor.on("connectionCancel", function (connection) {
+      console.log("Connection canceled");
+      console.log(connection);
+    });
+
+    editor.on("connectionEnd", function (connection) {
+      console.log("Connection ended");
       console.log(connection);
     });
 
@@ -303,6 +339,7 @@ function App() {
             <div className="properties-editor">
               <Properties dispatch={dispatch} />
             </div>
+            <Supervisor dispatch={dispatch} />
           </div>
         </div>
       </div>

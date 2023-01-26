@@ -4,9 +4,18 @@ const initialAppState = {
   objects: [],
   lastAdded: null,
   selected: null,
+  link: null,
+};
+
+const getObjectFromId = (objectId, objects) => {
+  return objects.find((object) => object.id === objectId);
 };
 
 const appReducer = (state = initialAppState, action) => {
+  if (!action) {
+    console.error(`[reduc]:: no action}`);
+    return;
+  }
   console.log(`[reduc]:: ${action.type}`);
   switch (action.type) {
     case OBJECT_ACTIONS.ADD_OBJECT_SUCCESS:
@@ -41,6 +50,31 @@ const appReducer = (state = initialAppState, action) => {
         ...state,
         lastAdded: null,
         objects: updatedObjects,
+      };
+    }
+    case OBJECT_ACTIONS.CREATE_CONNECTION_ATTEMPT: {
+      const fromNode = getObjectFromId(action.payload.fromId, state.objects);
+      const toObject = getObjectFromId(action.payload.toId, state.objects);
+
+      if (
+        !fromNode ||
+        !toObject ||
+        (toObject && fromNode && !toObject.acceptConnection(fromNode.node))
+      ) {
+        return {
+          ...state,
+          link: { action: "delete", connection: action.payload.connection },
+        };
+      }
+      return {
+        ...state,
+        connection: null,
+      };
+    }
+    case OBJECT_ACTIONS.CREATE_CONNECTION_REMOVED: {
+      return {
+        ...state,
+        connection: null,
       };
     }
     default:

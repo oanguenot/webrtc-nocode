@@ -8,6 +8,7 @@ class User extends Main {
     this._inputs = 2;
     this._outputs = 1;
     this._info = [{ key: "node", value: "user" }];
+    this._accept = ["microphone", "camera"];
     this._properties = [
       {
         prop: "name",

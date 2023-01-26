@@ -10,6 +10,7 @@ class Main {
     this._posX = posX;
     this._posY = posY;
     this._uuid = uuidv4();
+    this._accept = [];
   }
 
   get inputs() {
@@ -77,6 +78,10 @@ class Main {
     if (nameElt) {
       nameElt.innerHTML = name;
     }
+  }
+
+  acceptConnection(fromRole) {
+    return this._accept.includes(fromRole);
   }
 
   render() {
