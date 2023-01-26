@@ -5,11 +5,12 @@ class VideoEncodings extends Main {
     super(x, y);
     this._icon = "video";
     this._inputs = 1;
-    this._outputs = 1;
+    this._outputs = 0;
     this._info = [
       { key: "node", value: "encodings" },
       { key: "kind", value: "video" },
     ];
+    this._accept = ["camera"];
     this._properties = [
       {
         prop: "name",

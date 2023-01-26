@@ -8,7 +8,7 @@ class Camera extends Main {
     this._outputs = 1;
     this._info = [
       { key: "node", value: "camera" },
-      { key: "kind", value: "videoinput" },
+      { key: "kind", value: "video" },
       { key: "type", value: "real" },
     ];
     this._properties = [

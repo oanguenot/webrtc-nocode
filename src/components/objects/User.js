@@ -6,7 +6,7 @@ class User extends Main {
     super(x, y);
     this._icon = "user";
     this._inputs = 2;
-    this._outputs = 1;
+    this._outputs = 3;
     this._info = [{ key: "node", value: "user" }];
     this._accept = ["microphone", "camera"];
     this._properties = [

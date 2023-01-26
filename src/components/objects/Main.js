@@ -80,8 +80,8 @@ class Main {
     }
   }
 
-  acceptConnection(fromRole) {
-    return this._accept.includes(fromRole);
+  acceptConnection(node) {
+    return this._accept.includes(node);
   }
 
   render() {

@@ -8,7 +8,7 @@ class Microphone extends Main {
     this._outputs = 1;
     this._info = [
       { key: "node", value: "microphone" },
-      { key: "kind", value: "audioInput" },
+      { key: "kind", value: "audio" },
       { key: "type", value: "real" },
     ];
     this._properties = [
