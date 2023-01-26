@@ -54,6 +54,10 @@ class Main {
     return this._uuid;
   }
 
+  get accept() {
+    return this._accept;
+  }
+
   get node() {
     const infoNode = this._info.find((info) => info.key === "node");
     return infoNode ? infoNode.value : "Unknown";

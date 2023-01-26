@@ -4,6 +4,9 @@ import EmptyState from "@atlaskit/empty-state";
 import "./Properties.css";
 import Property from "./Property";
 import Lozenge from "@atlaskit/lozenge";
+import Badge from "@atlaskit/badge";
+import { SimpleTag as Tag } from "@atlaskit/tag";
+import TagGroup from "@atlaskit/tag-group";
 
 function Properties({ dispatch }) {
   const appState = useContext(AppContext);
@@ -62,8 +65,8 @@ function Properties({ dispatch }) {
     return (
       <div className="mt-30">
         <div className="property-title">
-          <i className="fas fa-caret-right"></i> Links (
-          {appState.selected.links.length})
+          <i className="fas fa-caret-right"></i> Links{" "}
+          <Badge appearance="primary">{appState.selected.links.length}</Badge>
         </div>
         {appState.selected.links.length > 0 && (
           <ul className="links">
@@ -76,6 +79,22 @@ function Properties({ dispatch }) {
           <div class="links">
             <label>No existing links for this object</label>
           </div>
+        )}
+        {appState.selected.accept.length > 0 && (
+          <table>
+            <tbody>
+              <tr>
+                <td className="col-label-accept">Acceptable:</td>
+                <td className="col-value-accept">
+                  <TagGroup alignment="start">
+                    {appState.selected.accept.map((name, key) => (
+                      <Tag color="blueLight" key={key} text={name}></Tag>
+                    ))}
+                  </TagGroup>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         )}
       </div>
     );
