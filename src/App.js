@@ -17,6 +17,7 @@ import {
   addObject,
   clearSelection,
   createConnection,
+  createConnectionRemoved,
   select,
 } from "./actions/objectActions";
 import { getInitialPosition } from "./utils/editor";
@@ -100,6 +101,7 @@ function App() {
           appState.link.connection.output_class,
           appState.link.connection.input_class
         );
+        createConnectionRemoved(dispatch);
       }
     }
   }, [appState.link]);

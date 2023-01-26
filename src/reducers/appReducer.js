@@ -74,7 +74,7 @@ const appReducer = (state = initialAppState, action) => {
     case OBJECT_ACTIONS.CREATE_CONNECTION_REMOVED: {
       return {
         ...state,
-        connection: null,
+        link: null,
       };
     }
     default:
