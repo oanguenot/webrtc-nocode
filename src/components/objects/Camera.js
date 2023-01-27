@@ -1,9 +1,11 @@
 import Main from "./Main";
 
 class Camera extends Main {
+  static description = "Add Camera";
+  static icon = "video";
+
   constructor(x, y) {
     super(x, y);
-    this._icon = "video";
     this._inputs = 0;
     this._outputs = 1;
     this._info = [
@@ -55,7 +57,7 @@ class Camera extends Main {
     const item = `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this._icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
         </div>
       </div>
       `;

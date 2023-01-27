@@ -1,11 +1,13 @@
 import Main from "./Main";
 
 class Sig extends Main {
+  static description = "Connect Direct";
+  static icon = "server";
+
   constructor(x, y) {
     super(x, y);
-    this._icon = "server";
     this._inputs = 1;
-    this._outputs = 0;
+    this._outputs = 1;
     this._info = [{ key: "node", value: "sig" }];
     this._accept = ["user"];
     this._properties = [
@@ -13,8 +15,8 @@ class Sig extends Main {
         prop: "name",
         label: "Name",
         type: "text",
-        value: "Basic SIG Server",
-        description: "Name of the SIG Server",
+        value: "Connect Direct",
+        description: "Action/Name",
       },
       {
         prop: "delay",
@@ -37,7 +39,7 @@ class Sig extends Main {
     return `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this._icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
         </div>
       </div>
     `;

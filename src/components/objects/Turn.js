@@ -1,11 +1,13 @@
 import Main from "./Main";
 
 class Turn extends Main {
+  static description = "Use Turn";
+  static icon = "bezier-curve";
+
   constructor(x, y) {
     super(x, y);
-    this._icon = "server";
-    this._inputs = 1;
-    this._outputs = 0;
+    this._inputs = 0;
+    this._outputs = 1;
     this._info = [{ key: "node", value: "turn" }];
     this._accept = ["user"];
     this._properties = [
@@ -44,7 +46,7 @@ class Turn extends Main {
     const item = `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this._icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
         </div>
       </div>
       `;

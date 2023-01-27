@@ -1,8 +1,10 @@
 import { v4 as uuidv4 } from "uuid";
 
 class Main {
+  static description = "a description";
+  static icon = "an icon";
+
   constructor(posX = 0, posY = 0) {
-    this._icon = "";
     this._inputs = 1;
     this._inputsLinks = [];
     this._outputs = 1;

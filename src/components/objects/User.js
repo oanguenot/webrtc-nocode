@@ -2,13 +2,15 @@ import Main from "./Main";
 import { nanoid } from "nanoid";
 
 class User extends Main {
+  static description = "Add User";
+  static icon = "user";
+
   constructor(x, y) {
     super(x, y);
-    this._icon = "user";
-    this._inputs = 2;
-    this._outputs = 3;
+    this._inputs = 1;
+    this._outputs = 1;
     this._info = [{ key: "node", value: "user" }];
-    this._accept = ["microphone", "camera"];
+    this._accept = ["microphone", "camera", "start"];
     this._properties = [
       {
         prop: "name",
@@ -46,7 +48,7 @@ class User extends Main {
     const item = `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this._icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
         </div>
       </div>
       `;

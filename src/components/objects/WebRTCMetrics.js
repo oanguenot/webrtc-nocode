@@ -2,9 +2,11 @@ import Main from "./Main";
 import { nanoid } from "nanoid";
 
 class WebRTCMetrics extends Main {
+  static description = "Analyze Metrics";
+  static icon = "ruler";
+
   constructor(x, y) {
     super(x, y);
-    this._icon = "user";
     this._inputs = 1;
     this._outputs = 0;
     this._info = [{ key: "node", value: "webrtcmetrics" }];
@@ -47,7 +49,7 @@ class WebRTCMetrics extends Main {
     const item = `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this._icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
         </div>
       </div>
       `;

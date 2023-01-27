@@ -1,13 +1,15 @@
 import Main from "./Main";
 
 class VideoEncodings extends Main {
+  static description = "Encode Video";
+  static icon = "shapes";
+
   constructor(x, y) {
     super(x, y);
-    this._icon = "video";
     this._inputs = 1;
     this._outputs = 0;
     this._info = [
-      { key: "node", value: "encodings" },
+      { key: "node", value: "videoEncodings" },
       { key: "kind", value: "video" },
     ];
     this._accept = ["camera"];
@@ -16,7 +18,7 @@ class VideoEncodings extends Main {
         prop: "name",
         label: "Name",
         type: "text",
-        value: "Video Encodings",
+        value: "Encode",
         description: "Name of the Encodings",
       },
       {
@@ -66,7 +68,7 @@ class VideoEncodings extends Main {
     const item = `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this._icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
         </div>
       </div>
       `;
