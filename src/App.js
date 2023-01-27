@@ -3,14 +3,7 @@ import "./resources/beautify.css";
 import { useEffect, useRef, useState, useReducer } from "react";
 import AppContext from "./contexts/appContext";
 import { appReducer, initialAppState } from "./reducers/appReducer";
-import Microphone from "./components/objects/Microphone";
-import User from "./components/objects/User";
-import Camera from "./components/objects/Camera";
-import Turn from "./components/objects/Turn";
-import VideoEncodings from "./components/objects/VideoEncodings";
-import Sig from "./components/objects/Sig";
 import Supervisor from "./components/logic/Supervisor";
-import WebRTCMetrics from "./components/objects/WebRTCMetrics";
 import MenuItem from "./components/Menu/MenuItem";
 import Properties from "./components/properties/Properties";
 import {
@@ -20,7 +13,8 @@ import {
   createConnectionRemoved,
   select,
 } from "./actions/objectActions";
-import { getInitialPosition } from "./utils/editor";
+import { getInitialPosition } from "./modules/editor";
+import { availableObjects, build } from "./modules/builder";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -37,15 +31,7 @@ function App() {
   const lock = useRef(null);
   const unlock = useRef(null);
 
-  const [menuItems, setMenuItems] = useState([
-    "microphone",
-    "camera",
-    "user",
-    "turn",
-    "sig",
-    "videoEncodings",
-    "webrtcmetrics",
-  ]);
+  const [menuItems, setMenuItems] = useState(availableObjects());
   const [objects, setObjects] = useState(appState.objects);
 
   useEffect(() => {
@@ -185,37 +171,14 @@ function App() {
   };
 
   const addNodeToDrawFlow = async (name, posX, posY) => {
+    console.log("name", name);
     if (editor.editor_mode === "fixed") {
       return false;
     }
 
     const { x, y } = getInitialPosition(editor, posX, posY);
-    let component = null;
 
-    switch (name) {
-      case "microphone":
-        component = new Microphone(x, y);
-        break;
-      case "camera":
-        component = new Camera(x, y);
-        break;
-      case "user":
-        component = new User(x, y);
-        break;
-      case "turn":
-        component = new Turn(x, y);
-        break;
-      case "videoEncodings":
-        component = new VideoEncodings(x, y);
-        break;
-      case "sig":
-        component = new Sig(x, y);
-        break;
-      case "webrtcmetrics":
-        component = new WebRTCMetrics(x, y);
-      default:
-        break;
-    }
+    const component = build(name, x, y);
 
     if (component) {
       await addObject(component, dispatch);
@@ -308,8 +271,9 @@ function App() {
             {menuItems &&
               menuItems.map((menuItem, key) => {
                 return new MenuItem({
-                  name: menuItem,
-                  icon: menuItem,
+                  name: menuItem.name,
+                  description: menuItem.description,
+                  icon: menuItem.icon,
                   onDrag: onDrag,
                   key,
                 });

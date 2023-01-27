@@ -1,4 +1,5 @@
 function MenuItem(props) {
+  console.log("PROPS", props);
   const onDrag = (event) => {
     props.onDrag(event);
   };
@@ -12,7 +13,7 @@ function MenuItem(props) {
       data-node={props.name}
     >
       <i className={`fas fa-${props.icon}`}></i>
-      <span> {props.name}</span>
+      <span> {props.description}</span>
     </div>
   );
 }
