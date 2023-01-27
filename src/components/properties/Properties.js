@@ -76,7 +76,7 @@ function Properties({ dispatch }) {
           </ul>
         )}
         {appState.selected.links.length === 0 && (
-          <div class="links">
+          <div className="links">
             <label>No existing links for this object</label>
           </div>
         )}
