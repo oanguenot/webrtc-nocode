@@ -1,10 +1,12 @@
 import { OBJECT_ACTIONS } from "../actions/objectActions";
+import { SUPERVISOR_ACTIONS } from "../actions/supervisonActions";
 
 const initialAppState = {
   objects: [],
   lastAdded: null,
   selected: null,
   link: null,
+  devices: [],
 };
 
 const getObjectFromId = (objectId, objects) => {
@@ -90,6 +92,13 @@ const appReducer = (state = initialAppState, action) => {
       return {
         ...state,
         link: null,
+      };
+    }
+    case SUPERVISOR_ACTIONS.GET_DEVICES_FAILED:
+    case SUPERVISOR_ACTIONS.GET_DEVICES_SUCCESS: {
+      return {
+        ...state,
+        devices: action.payload.devices,
       };
     }
     default:

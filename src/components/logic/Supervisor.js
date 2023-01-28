@@ -1,8 +1,13 @@
 import { useState, useContext, useEffect, useRef } from "react";
 import AppContext from "../../contexts/appContext";
+import { getListOfDevices } from "../../actions/supervisonActions";
 
-function Supervisor() {
+function Supervisor({ dispatch }) {
   const appState = useContext(AppContext);
+
+  useEffect(() => {
+    getListOfDevices(dispatch);
+  }, []);
 
   const domElt = useRef(null);
   const createUserIFrame = () => {};
