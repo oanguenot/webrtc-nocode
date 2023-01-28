@@ -84,7 +84,7 @@ function Properties({ dispatch }) {
           <table>
             <tbody>
               <tr>
-                <td className="col-label-accept">Acceptable:</td>
+                <td className="col-label-accept">Accept:</td>
                 <td className="col-value-accept">
                   <TagGroup alignment="start">
                     {appState.selected.accept.map((name, key) => (
