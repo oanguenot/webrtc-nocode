@@ -8,7 +8,7 @@ class WebRTCMetrics extends Main {
   constructor(x, y) {
     super(x, y);
     this._inputs = 1;
-    this._outputs = 0;
+    this._outputs = 1;
     this._info = [{ key: "node", value: "webrtcmetrics" }];
     this._accept = ["*"];
     this._properties = [
