@@ -61,6 +61,14 @@ class Camera extends Main {
     ];
   }
 
+  addDevices(list) {
+    list.forEach((mediaDevice) => {
+      if (mediaDevice.kind === "videoinput") {
+        // todo add video input devices
+      }
+    });
+  }
+
   render() {
     const item = `
       <div>

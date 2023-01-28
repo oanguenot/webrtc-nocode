@@ -66,6 +66,11 @@ class Main {
     return infoNode ? infoNode.value : "Unknown";
   }
 
+  getInfoValueFor(name) {
+    const info = this._info.find((info) => info.key === name);
+    return info ? info.value : "unknown";
+  }
+
   getPropertyValueFor(name) {
     const property = this._properties.find(
       (property) => property.prop === name

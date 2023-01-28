@@ -34,13 +34,19 @@ const appReducer = (state = initialAppState, action) => {
   }
   console.log(`[reduc]:: ${action.type}`);
   switch (action.type) {
-    case OBJECT_ACTIONS.ADD_OBJECT_SUCCESS:
+    case OBJECT_ACTIONS.ADD_OBJECT_SUCCESS: {
+      const object = action.payload.object;
+
+      if (["track"].includes(object.getInfoValueFor("node"))) {
+        object.addDevices(state.devices);
+      }
       return {
         ...state,
-        lastAdded: action.payload.object,
-        objects: [...state.objects, action.payload.object],
+        lastAdded: object,
+        objects: [...state.objects, object],
       };
-    case OBJECT_ACTIONS.SELECT_OBJECT_SUCCESS:
+    }
+    case OBJECT_ACTIONS.SELECT_OBJECT_SUCCESS: {
       const objectId = action.payload.objectId;
       const object = state.objects.find((object) => object.id === objectId);
       return {
@@ -48,13 +54,14 @@ const appReducer = (state = initialAppState, action) => {
         lastAdded: null,
         selected: object,
       };
-
-    case OBJECT_ACTIONS.UNSELECT_OBJECT_SUCCESS:
+    }
+    case OBJECT_ACTIONS.UNSELECT_OBJECT_SUCCESS: {
       return {
         ...state,
         selected: null,
         lastAdded: null,
       };
+    }
     case OBJECT_ACTIONS.UPDATE_OBJECT_SUCCESS: {
       const objectId = action.payload.objectId;
       const name = action.payload.name;

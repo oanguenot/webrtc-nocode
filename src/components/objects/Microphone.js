@@ -43,6 +43,14 @@ class Microphone extends Main {
     ];
   }
 
+  addDevices(list) {
+    list.forEach((mediaDevice) => {
+      if (mediaDevice.kind === "audioinput") {
+        // todo add audio input devices
+      }
+    });
+  }
+
   render() {
     return `
       <div>
