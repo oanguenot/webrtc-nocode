@@ -207,7 +207,7 @@ header a {
     -webkit-box-shadow: 0 2px 15px 2px var(--border-color);
     box-shadow: 0 2px 15px 2px var(--border-color);
     padding: 0px;
-    width: 200px;
+    width: auto;
 }
 
 .drawflow .drawflow-node.selected {
@@ -269,6 +269,7 @@ header a {
     border-bottom: 1px solid #e9e9e9;
     border-radius: 4px 4px 0px 0px;
     padding-left: 10px;
+    padding-right: 15px;
 }
 
 .drawflow .title-box svg {
