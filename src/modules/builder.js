@@ -1,16 +1,20 @@
 import Microphone from "../components/objects/Microphone";
 import Camera from "../components/objects/Camera";
-import User from "../components/objects/User";
+import PeerConnection from "../components/objects/PeerConnection";
 import Turn from "../components/objects/Turn";
 import VideoEncodings from "../components/objects/VideoEncodings";
 import Sig from "../components/objects/Sig";
 import WebRTCMetrics from "../components/objects/WebRTCMetrics";
 import Start from "../components/objects/basic/Start";
 import End from "../components/objects/basic/End";
+import Step from "../components/objects/basic/Step";
+import Goto from "../components/objects/basic/Goto";
 
 const ObjectBuilder = {
   Start,
-  User,
+  Step,
+  Goto,
+  PeerConnection,
   Microphone,
   Camera,
   Turn,
