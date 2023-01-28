@@ -1,7 +1,7 @@
 import Main from "./Main";
 
 class Camera extends Main {
-  static description = "Add Camera";
+  static description = "Add a Video Track";
   static icon = "video";
 
   constructor(x, y) {
@@ -10,17 +10,24 @@ class Camera extends Main {
     this._outputs = 1;
     this._accept = ["*"];
     this._info = [
-      { key: "node", value: "camera" },
+      { key: "node", value: "track" },
       { key: "kind", value: "video" },
-      { key: "type", value: "real" },
     ];
     this._properties = [
       {
         prop: "name",
         label: "Name",
         type: "text",
-        value: "Camera",
-        description: "Name of the Camera",
+        value: "Video Track",
+        description: "Name of the track",
+      },
+      {
+        prop: "from",
+        label: "From",
+        type: "enum",
+        enum: [{ label: "Fake", value: "fake" }],
+        value: "fake",
+        description: "Choose the preferred camera",
       },
       {
         prop: "framerate",

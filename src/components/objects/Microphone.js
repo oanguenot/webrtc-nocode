@@ -1,7 +1,7 @@
 import Main from "./Main";
 
 class Microphone extends Main {
-  static description = "Add Microphone";
+  static description = "Add Audio Track";
   static icon = "microphone";
 
   constructor(x, y) {
@@ -10,17 +10,24 @@ class Microphone extends Main {
     this._outputs = 1;
     this._accept = ["*"];
     this._info = [
-      { key: "node", value: "microphone" },
+      { key: "node", value: "track" },
       { key: "kind", value: "audio" },
-      { key: "type", value: "real" },
     ];
     this._properties = [
       {
         prop: "name",
         label: "Name",
         type: "text",
-        value: "Microphone",
-        description: "Name of the Microphone",
+        value: "Audio Track",
+        description: "Name of the track",
+      },
+      {
+        prop: "from",
+        label: "From",
+        type: "enum",
+        enum: [{ label: "Fake", value: "fake" }],
+        value: "fake",
+        description: "Choose the preferred microphone",
       },
       {
         prop: "channelCount",

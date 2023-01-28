@@ -9,6 +9,7 @@ import Start from "../components/objects/basic/Start";
 import End from "../components/objects/basic/End";
 import Step from "../components/objects/basic/Step";
 import Goto from "../components/objects/basic/Goto";
+import AudioEncodings from "../components/objects/AudioEncodings";
 
 const ObjectBuilder = {
   Start,
@@ -18,6 +19,7 @@ const ObjectBuilder = {
   Microphone,
   Camera,
   Turn,
+  AudioEncodings,
   VideoEncodings,
   WebRTCMetrics,
   Sig,
