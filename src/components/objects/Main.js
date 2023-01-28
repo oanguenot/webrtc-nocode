@@ -14,6 +14,7 @@ class Main {
     this._posY = posY;
     this._uuid = uuidv4();
     this._accept = [];
+    this._type = "";
   }
 
   get inputs() {
@@ -92,6 +93,9 @@ class Main {
   }
 
   acceptConnection(node) {
+    if (this._accept.includes("*")) {
+      return true;
+    }
     return this._accept.includes(node);
   }
 

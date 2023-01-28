@@ -6,8 +6,9 @@ class Camera extends Main {
 
   constructor(x, y) {
     super(x, y);
-    this._inputs = 0;
+    this._inputs = 1;
     this._outputs = 1;
+    this._accept = ["*"];
     this._info = [
       { key: "node", value: "camera" },
       { key: "kind", value: "video" },

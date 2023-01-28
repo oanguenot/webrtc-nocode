@@ -6,10 +6,10 @@ class Turn extends Main {
 
   constructor(x, y) {
     super(x, y);
-    this._inputs = 0;
+    this._inputs = 1;
     this._outputs = 1;
     this._info = [{ key: "node", value: "turn" }];
-    this._accept = ["user"];
+    this._accept = ["*"];
     this._properties = [
       {
         prop: "name",

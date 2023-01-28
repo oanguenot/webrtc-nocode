@@ -7,12 +7,12 @@ class VideoEncodings extends Main {
   constructor(x, y) {
     super(x, y);
     this._inputs = 1;
-    this._outputs = 0;
+    this._outputs = 1;
     this._info = [
       { key: "node", value: "videoEncodings" },
       { key: "kind", value: "video" },
     ];
-    this._accept = ["camera"];
+    this._accept = ["*"];
     this._properties = [
       {
         prop: "name",
