@@ -32,14 +32,20 @@ export const clearSelection = async (dispatch) => {
   });
 };
 
-export const updateProperty = async (objectId, name, value, dispatch) => {
+export const updateProperty = async (
+  objectId,
+  name,
+  value,
+  label,
+  dispatch
+) => {
   console.log(
     `[action] :: update value for prop ${name} in object ${objectId}`
   );
 
   dispatch({
     type: OBJECT_ACTIONS.UPDATE_OBJECT_SUCCESS,
-    payload: { objectId, name, value },
+    payload: { objectId, name, value, label },
   });
 };
 

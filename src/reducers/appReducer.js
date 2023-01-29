@@ -19,10 +19,10 @@ const getObjectFromId = (objectId, objects) => {
   return objects.find((object) => object.id === objectId);
 };
 
-const updateValueInObject = (objectId, name, value, objects) => {
+const updateValueInObject = (objectId, name, value, label, objects) => {
   const index = objects.findIndex((object) => object.id === objectId);
   const updatedObjects = [...objects];
-  updatedObjects[index].updateValueFor(name, value);
+  updatedObjects[index].updateValueFor(name, value, label);
   return updatedObjects;
 };
 
@@ -42,9 +42,26 @@ const appReducer = (state = initialAppState, action) => {
   switch (action.type) {
     case OBJECT_ACTIONS.ADD_OBJECT_SUCCESS: {
       const object = action.payload.object;
-
-      if (["track"].includes(object.getInfoValueFor("node"))) {
+      const node = object.getInfoValueFor("node");
+      if (["track"].includes(node)) {
         object.addDevices(state.devices);
+      } else if (["step"].includes(node)) {
+        state.objects
+          .filter((obj) => obj.getInfoValueFor("node") === "goto")
+          .forEach((obj) => {
+            obj.addStep(
+              object.getInfoValueFor("uuid"),
+              object.getPropertyValueFor("name")
+            );
+          });
+      } else if (["goto"].includes(node)) {
+        const steps = state.objects
+          .filter((obj) => obj.getInfoValueFor("node") === "step")
+          .map((obj) => ({
+            value: obj.getInfoValueFor("uuid"),
+            label: obj.getPropertyValueFor("name"),
+          }));
+        object.addSteps(steps);
       }
       return {
         ...state,
@@ -72,10 +89,17 @@ const appReducer = (state = initialAppState, action) => {
       const objectId = action.payload.objectId;
       const name = action.payload.name;
       const value = action.payload.value;
+      const label = action.payload.label;
       return {
         ...state,
         lastAdded: null,
-        objects: updateValueInObject(objectId, name, value, state.objects),
+        objects: updateValueInObject(
+          objectId,
+          name,
+          value,
+          label,
+          state.objects
+        ),
       };
     }
     case OBJECT_ACTIONS.CREATE_CONNECTION_ATTEMPT: {

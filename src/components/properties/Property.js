@@ -80,7 +80,13 @@ function Property({ objectId, property, dispatch }) {
             ? value || property.value
             : (value && value.value) || property.value;
 
-        await updateProperty(objectId, property.prop, newValue, dispatch);
+        await updateProperty(
+          objectId,
+          property.prop,
+          newValue,
+          property.type === "enum" ? value.label : null,
+          dispatch
+        );
         setValue(null);
       }}
     />

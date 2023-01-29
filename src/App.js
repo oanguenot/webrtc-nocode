@@ -173,7 +173,6 @@ function App() {
   };
 
   const addNodeToDrawFlow = async (name, posX, posY) => {
-    console.log("name", name);
     if (editor.editor_mode === "fixed") {
       return false;
     }

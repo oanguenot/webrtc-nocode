@@ -14,7 +14,6 @@ class Main {
     this._posY = posY;
     this._uuid = uuidv4();
     this._accept = [];
-    this._type = "";
   }
 
   get inputs() {
@@ -78,14 +77,14 @@ class Main {
     return property ? property.value : "unknown";
   }
 
-  updateValueFor(name, value) {
+  updateValueFor(name, value, label) {
     const property = this._properties.find(
       (property) => property.prop === name
     );
     if (property) {
       property.value = value;
-      if (name === "name") {
-        this.updateName(value);
+      if (name === "name" || name === "next") {
+        this.updateName(label || value);
       }
     }
   }
@@ -113,6 +112,8 @@ class Main {
       );
     }
   }
+
+  update(objects) {}
 
   render() {
     return "";

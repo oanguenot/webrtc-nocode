@@ -9,7 +9,10 @@ class Step extends Main {
     super(x, y);
     this._inputs = 0;
     this._outputs = 1;
-    this._info = [{ key: "node", value: "step" }];
+    this._info = [
+      { key: "node", value: "step" },
+      { key: "uuid", value: nanoid(15) },
+    ];
     this._properties = [
       {
         prop: "name",
