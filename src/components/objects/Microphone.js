@@ -44,9 +44,19 @@ class Microphone extends Main {
   }
 
   addDevices(list) {
+    const prop = this._properties.find((property) => property.prop === "from");
+    const existingDevices = prop.enum;
     list.forEach((mediaDevice) => {
       if (mediaDevice.kind === "audioinput") {
-        // todo add audio input devices
+        const found = existingDevices.find((device) =>
+          [mediaDevice.label].includes(device.label)
+        );
+        if (!found) {
+          existingDevices.push({
+            label: mediaDevice.label,
+            value: mediaDevice.label,
+          });
+        }
       }
     });
   }
