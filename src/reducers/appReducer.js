@@ -26,6 +26,10 @@ const updateValueInObject = (objectId, name, value, label, objects) => {
   return updatedObjects;
 };
 
+const filterObjectsWithNode = (value, objects) => {
+  return objects.filter((obj) => obj.getInfoValueFor("node") === value);
+};
+
 const updateLinkInObject = (objectId, fromId, objects) => {
   const index = objects.findIndex((object) => object.id === objectId);
   const updatedObjects = [...objects];
@@ -46,21 +50,19 @@ const appReducer = (state = initialAppState, action) => {
       if (["track"].includes(node)) {
         object.addDevices(state.devices);
       } else if (["step"].includes(node)) {
-        state.objects
-          .filter((obj) => obj.getInfoValueFor("node") === "goto")
-          .forEach((obj) => {
-            obj.addStep(
-              object.getInfoValueFor("uuid"),
-              object.getPropertyValueFor("name")
-            );
-          });
+        filterObjectsWithNode("goto", state.objects).forEach((obj) => {
+          obj.addStep(
+            object.getInfoValueFor("uuid"),
+            object.getPropertyValueFor("name")
+          );
+        });
       } else if (["goto"].includes(node)) {
-        const steps = state.objects
-          .filter((obj) => obj.getInfoValueFor("node") === "step")
-          .map((obj) => ({
+        const steps = filterObjectsWithNode("step", state.objects).map(
+          (obj) => ({
             value: obj.getInfoValueFor("uuid"),
             label: obj.getPropertyValueFor("name"),
-          }));
+          })
+        );
         object.addSteps(steps);
       }
       return {
@@ -90,16 +92,29 @@ const appReducer = (state = initialAppState, action) => {
       const name = action.payload.name;
       const value = action.payload.value;
       const label = action.payload.label;
+
+      // Update property for object
+      const objects = updateValueInObject(
+        objectId,
+        name,
+        value,
+        label,
+        state.objects
+      );
+
+      // Update related object (step --> goto)
+      const object = objects.find((object) => object.id === objectId);
+      if (object.getInfoValueFor("node") === "step") {
+        const relatedGoto = filterObjectsWithNode("goto", objects);
+        relatedGoto.forEach((obj) =>
+          obj.updateStep(object.getInfoValueFor("uuid"), value)
+        );
+      }
+
       return {
         ...state,
         lastAdded: null,
-        objects: updateValueInObject(
-          objectId,
-          name,
-          value,
-          label,
-          state.objects
-        ),
+        objects,
       };
     }
     case OBJECT_ACTIONS.CREATE_CONNECTION_ATTEMPT: {

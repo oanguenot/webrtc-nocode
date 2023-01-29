@@ -113,8 +113,6 @@ class Main {
     }
   }
 
-  update(objects) {}
-
   render() {
     return "";
   }

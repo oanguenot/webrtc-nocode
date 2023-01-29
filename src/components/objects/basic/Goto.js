@@ -35,11 +35,29 @@ class Goto extends Main {
     steps.forEach((step) => this.addStep(step.value, step.label));
   }
 
+  updateStep(value, label) {
+    const prop = this._properties.find((property) => property.prop === "next");
+    const existingSteps = prop.enum;
+    existingSteps.forEach((step) => {
+      if (step.value === value) {
+        step.label = label;
+      }
+    });
+    if (prop.value === value) {
+      this.updateName(label);
+    }
+  }
+
   render() {
+    const value = this._properties[0].value;
+    const enumLabel = this._properties[0].enum.find(
+      (item) => item.value === value
+    ).label;
+
     return `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${enumLabel}</span>
         </div>
       </div>
     `;
