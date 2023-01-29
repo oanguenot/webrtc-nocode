@@ -1,5 +1,4 @@
 function MenuItem(props) {
-  console.log("PROPS", props);
   const onDrag = (event) => {
     props.onDrag(event);
   };

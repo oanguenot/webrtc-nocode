@@ -1,12 +1,18 @@
 import { OBJECT_ACTIONS } from "../actions/objectActions";
 import { SUPERVISOR_ACTIONS } from "../actions/supervisonActions";
 
+export const STATE = {
+  NOT_INITIALIZED: "NOT_INITIALIZED",
+  READY: "READY",
+};
+
 const initialAppState = {
   objects: [],
   lastAdded: null,
   selected: null,
   link: null,
   devices: [],
+  state: STATE.NOT_INITIALIZED,
 };
 
 const getObjectFromId = (objectId, objects) => {
@@ -106,6 +112,7 @@ const appReducer = (state = initialAppState, action) => {
       return {
         ...state,
         devices: action.payload.devices,
+        state: STATE.READY,
       };
     }
     default:

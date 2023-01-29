@@ -5,9 +5,7 @@ import { getListOfDevices } from "../../actions/supervisonActions";
 function Supervisor({ dispatch }) {
   const appState = useContext(AppContext);
 
-  useEffect(() => {
-    getListOfDevices(dispatch);
-  }, []);
+  useEffect(() => {}, []);
 
   const domElt = useRef(null);
   const createUserIFrame = () => {};

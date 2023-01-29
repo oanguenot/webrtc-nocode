@@ -2,7 +2,7 @@ import "./App.css";
 import "./resources/beautify.css";
 import { useEffect, useRef, useState, useReducer } from "react";
 import AppContext from "./contexts/appContext";
-import { appReducer, initialAppState } from "./reducers/appReducer";
+import { appReducer, initialAppState, STATE } from "./reducers/appReducer";
 import Supervisor from "./components/logic/Supervisor";
 import MenuItem from "./components/Menu/MenuItem";
 import Properties from "./components/properties/Properties";
@@ -15,6 +15,9 @@ import {
 } from "./actions/objectActions";
 import { getInitialPosition } from "./modules/editor";
 import { availableObjects, build } from "./modules/builder";
+import { getListOfDevices } from "./actions/supervisonActions";
+import MenuItems from "./components/Menu/MenuItems";
+import EmptyState from "@atlaskit/empty-state";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -31,8 +34,7 @@ function App() {
   const lock = useRef(null);
   const unlock = useRef(null);
 
-  const [menuItems, setMenuItems] = useState(availableObjects());
-  const [objects, setObjects] = useState(appState.objects);
+  const [menuItems, setMenuItems] = useState([]);
 
   useEffect(() => {
     if (!editor) {
@@ -47,6 +49,10 @@ function App() {
         elements[i].addEventListener("touchmove", positionMobile, false);
         elements[i].addEventListener("touchstart", onDrop, false);
       }
+
+      const items = availableObjects();
+      setMenuItems(items);
+      getListOfDevices(dispatch);
     }
   }, []);
 
@@ -73,10 +79,6 @@ function App() {
       }
     }
   }, [appState.lastAdded]);
-
-  useEffect(() => {
-    setObjects(appState.objects);
-  }, [appState.objects]);
 
   useEffect(() => {
     if (appState.link) {
@@ -268,16 +270,15 @@ function App() {
       <div className="global">
         <div className="wrapper">
           <div className="col">
-            {menuItems &&
-              menuItems.map((menuItem, key) => {
-                return new MenuItem({
-                  name: menuItem.name,
-                  description: menuItem.description,
-                  icon: menuItem.icon,
-                  onDrag: onDrag,
-                  key,
-                });
-              })}
+            {appState.state === STATE.READY && (
+              <MenuItems items={menuItems || []} onDrag={onDrag} />
+            )}
+            {appState.state !== STATE.READY && (
+              <EmptyState
+                header="Loading..."
+                description="Please wait some seconds while retrieving the devices"
+              />
+            )}
           </div>
           <div className="col-right">
             <div className="menu">
