@@ -57,7 +57,13 @@ class Goto extends Main {
     return `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${enumLabel}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+        </div>
+        <div class="box">
+            <span class="object-full">Select the next step to execute. Once this line is completed, the next step will be executed.</span>
+             <div class="object-footer">
+                <span class="object-node object-title-box">Go to</span>    
+            </div>
         </div>
       </div>
     `;

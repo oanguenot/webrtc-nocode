@@ -17,7 +17,13 @@ class End extends Main {
     return `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">END</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">FINISH</span>
+        </div>
+        <div class="box">
+            <span class="object-full">Well done! Your scenario is finished and stopped.</span>
+             <div class="object-footer">
+                <span class="object-node object-title-box">End</span>    
+            </div>
         </div>
       </div>
     `;

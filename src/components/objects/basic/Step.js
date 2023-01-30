@@ -28,7 +28,13 @@ class Step extends Main {
     return `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+        </div>
+        <div class="box">
+            <span class="object-full">This is a new step. Call it from a Goto node to execute this line</span>
+             <div class="object-footer">
+                <span class="object-node object-title-box">Go to</span>    
+            </div>
         </div>
       </div>
     `;
