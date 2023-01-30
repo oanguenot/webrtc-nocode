@@ -1,9 +1,11 @@
 import Main from "./Main";
 import { nanoid } from "nanoid";
 
+import "./Main.css";
+
 class PeerConnection extends Main {
   static description = "Add Peer Connection";
-  static icon = "user";
+  static icon = "portrait";
 
   constructor(x, y) {
     super(x, y);
@@ -34,10 +36,22 @@ class PeerConnection extends Main {
   }
 
   render() {
+    const network = this._properties.find(
+      (property) => property.prop === "network"
+    );
+    const value = network.value;
+    const label = network.enum.find((item) => item.value === value).label;
+
     const item = `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+        </div>
+        <div class="box">
+            <i class="fas fa-bone"></i> <span class="object-details-value">${label}</span>
+             <div class="object-footer">
+                <span class="object-node object-title-box">Peer Connection</span>    
+            </div>
         </div>
       </div>
       `;

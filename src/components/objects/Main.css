@@ -1,0 +1,25 @@
+
+.object-node {
+    color: #974f0c;
+}
+
+.object-details {
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.object-details-value {
+    padding-left: 24px;
+}
+
+.object-footer {
+    margin-top: 24px;
+    font-size: 12px;
+    font-style: italic;
+    margin-bottom: 0px;
+    text-align: right;
+}
+
+.object-full {
+    text-align: left;
+}

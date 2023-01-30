@@ -263,10 +263,19 @@ header a {
 }
 
 .drawflow-node .title-box {
-    height: 50px;
-    line-height: 50px;
+    height: 34px;
+    line-height: 34px;
     background: var(--background-box-title);
     border-bottom: 1px solid #e9e9e9;
+    border-radius: 4px 4px 0px 0px;
+    padding-left: 10px;
+    padding-right: 15px;
+}
+
+.drawflow-node .title-box-min {
+    height: 34px;
+    line-height: 34px;
+    background: var(--background-box-title);
     border-radius: 4px 4px 0px 0px;
     padding-left: 10px;
     padding-right: 15px;
@@ -277,7 +286,7 @@ header a {
 }
 
 .drawflow-node .box {
-    padding: 10px 20px 20px 20px;
+    padding: 10px 12px 4px 16px;
     font-size: 14px;
     color: #555555;
 
