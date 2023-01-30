@@ -77,6 +77,15 @@ class Main {
     return property ? property.value : "unknown";
   }
 
+  getPropertyFor(name) {
+    return this._properties.find((property) => property.prop === name);
+  }
+
+  getLabelFromPropertySelect(property) {
+    const value = property.value;
+    return property.enum.find((item) => item.value === value).label;
+  }
+
   updateValueFor(name, value, label) {
     const property = this._properties.find(
       (property) => property.prop === name

@@ -80,10 +80,28 @@ class Camera extends Main {
   }
 
   render() {
+    const device = this.getPropertyFor("from");
+    const label = this.getLabelFromPropertySelect(device);
+    const resolution = this.getPropertyFor("resolution");
+    const labelResolution = this.getLabelFromPropertySelect(resolution);
+    const framerate = this.getPropertyFor("framerate");
+    const labelFramerate = this.getLabelFromPropertySelect(framerate);
+
     const item = `
-      <div>
+     <div>
         <div class="title-box">
-          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+        </div>
+        <div class="box">
+        <div class="object-box-line">
+          <i class="fas fa-chevron-right"></i><span class="object-details-value">${label}</span>
+        </div>
+        <div class="object-box-line">
+          <i class="fas fa-chevron-right"></i><span class="object-details-value">${labelResolution} at ${labelFramerate}</span>
+        </div>
+          <div class="object-footer">
+            <span class="object-node object-title-box">Video Track</span>    
+          </div>
         </div>
       </div>
       `;

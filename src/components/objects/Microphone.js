@@ -62,10 +62,19 @@ class Microphone extends Main {
   }
 
   render() {
+    const device = this.getPropertyFor("from");
+    const label = this.getLabelFromPropertySelect(device);
+
     return `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+        </div>
+        <div class="box">
+            <i class="fas fa-chevron-right"></i><span class="object-details-value">${label}</span>
+             <div class="object-footer">
+                <span class="object-node object-title-box">Audio Track</span>    
+            </div>
         </div>
       </div>
     `;

@@ -19,7 +19,7 @@ class Start extends Main {
            <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">START HERE</span>
         </div>
         <div class="box">
-            <span class="object-full">Initial node in your scenario. Add more nodes to this one</span>
+            <span class="object-full">Initial node. Add and connect other nodes to this one to build your scenario.</span>
              <div class="object-footer">
                 <span class="object-node object-title-box">Start</span>    
             </div>

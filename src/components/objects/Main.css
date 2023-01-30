@@ -9,7 +9,7 @@
 }
 
 .object-details-value {
-    padding-left: 24px;
+    padding-left: 16px;
 }
 
 .object-footer {
@@ -22,4 +22,8 @@
 
 .object-full {
     text-align: left;
+}
+
+.object-box-line {
+    height: 24px;
 }
