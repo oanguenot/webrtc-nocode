@@ -1,5 +1,5 @@
 .properties-editor {
-    margin-top: 80px;
+    margin-top: 0px;
 }
 
 table {
@@ -34,9 +34,9 @@ tr {
     font-size: 16px;
     font-weight: bold;
     padding: 8px 6px;
-    border-bottom: 2px solid #f5cd47;
+    border-bottom: 1px solid #0650C4AA;
     text-align: left;
-    color: #974f0c;
+    color: #0650C4;
 }
 
 .properties-area {
