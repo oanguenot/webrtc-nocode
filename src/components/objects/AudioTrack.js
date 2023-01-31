@@ -1,6 +1,6 @@
 import Main from "./Main";
 
-class Microphone extends Main {
+class AudioTrack extends Main {
   static item = "Audio Track";
   static description = "Add an audio source from a microphone";
   static icon = "microphone";
@@ -83,4 +83,4 @@ class Microphone extends Main {
   }
 }
 
-export default Microphone;
+export default AudioTrack;

@@ -1,6 +1,6 @@
 import Main from "./Main";
 
-class Camera extends Main {
+class VideoTrack extends Main {
   static item = "Video Track";
   static description = "Add a video source from a webcam";
   static icon = "video";
@@ -111,4 +111,4 @@ class Camera extends Main {
   }
 }
 
-export default Camera;
+export default VideoTrack;

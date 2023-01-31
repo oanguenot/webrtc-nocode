@@ -1,5 +1,5 @@
-import Microphone from "../components/objects/Microphone";
-import Camera from "../components/objects/Camera";
+import AudioTrack from "../components/objects/AudioTrack";
+import VideoTrack from "../components/objects/VideoTrack";
 import PeerConnection from "../components/objects/PeerConnection";
 import Turn from "../components/objects/Turn";
 import VideoEncodings from "../components/objects/VideoEncodings";
@@ -16,8 +16,8 @@ const ObjectBuilder = {
   Step,
   Goto,
   PeerConnection,
-  Microphone,
-  Camera,
+  AudioTrack,
+  VideoTrack,
   Turn,
   AudioEncodings,
   VideoEncodings,
