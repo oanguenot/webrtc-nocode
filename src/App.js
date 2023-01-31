@@ -18,6 +18,13 @@ import { availableObjects, build } from "./modules/builder";
 import { getListOfDevices } from "./actions/supervisonActions";
 import MenuItems from "./components/Menu/MenuItems";
 import EmptyState from "@atlaskit/empty-state";
+import {
+  AtlassianNavigation,
+  Create,
+  CustomProductHome,
+  PrimaryButton,
+  ProductHome,
+} from "@atlaskit/atlassian-navigation";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -266,8 +273,34 @@ function App() {
     }
   };
 
+  const renderProductHome = () => (
+    <CustomProductHome href="#" siteTitle="WebRTC NoCode" />
+  );
+
+  const RunButton = () => (
+    <Create
+      buttonTooltip="Run Scenario"
+      iconButtonTooltip="Run Scenario"
+      text="Run"
+      href="#"
+    />
+  );
+
   return (
     <AppContext.Provider value={appState}>
+      <AtlassianNavigation
+        label="WebRTC NoCode"
+        primaryItems={[
+          <PrimaryButton onClick={() => onZoomIn()}>+</PrimaryButton>,
+          <PrimaryButton onClick={() => onZoomOut()}>-</PrimaryButton>,
+          <PrimaryButton onClick={() => onZoomReset()}>100%</PrimaryButton>,
+          <PrimaryButton>Import</PrimaryButton>,
+          <PrimaryButton>Export</PrimaryButton>,
+          <PrimaryButton onClick={() => onClear()}>Reset</PrimaryButton>,
+        ]}
+        renderProductHome={renderProductHome}
+        renderCreate={RunButton}
+      />
       <div className="global">
         <div className="wrapper">
           <div className="col">
@@ -282,20 +315,6 @@ function App() {
             )}
           </div>
           <div className="col-right">
-            <div className="menu">
-              <ul>
-                <li className="selected">Home</li>
-                <li className="selected" onClick={() => onZoomIn()}>
-                  <i className="fas fa-search-plus" />
-                </li>
-                <li className="selected" onClick={() => onZoomOut()}>
-                  <i className="fas fa-search-minus" />
-                </li>
-                <li className="selected" onClick={() => onZoomReset()}>
-                  <i className="fas fa-search" />
-                </li>
-              </ul>
-            </div>
             <div
               id="drawflow"
               ref={drawFlowElt}
@@ -304,10 +323,6 @@ function App() {
             ></div>
           </div>
           <div className="col-properties">
-            <div className="btn-export">Export</div>
-            <div className="btn-clear" onClick={() => onClear()}>
-              Clear
-            </div>
             <div className="properties-editor">
               <Properties dispatch={dispatch} />
             </div>
