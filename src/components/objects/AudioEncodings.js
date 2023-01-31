@@ -1,8 +1,10 @@
 import Main from "./Main";
 
 class AudioEncodings extends Main {
-  static description = "Encode Audio";
+  static item = "Audio Encodings";
+  static description = "Select the encodings parameters";
   static icon = "shapes";
+  static section = "builtin";
 
   constructor(x, y) {
     super(x, y);

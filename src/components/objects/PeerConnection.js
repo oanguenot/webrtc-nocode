@@ -4,8 +4,10 @@ import { nanoid } from "nanoid";
 import "./Main.css";
 
 class PeerConnection extends Main {
-  static description = "Add Peer Connection";
+  static item = "Peer Connection";
+  static description = "Create a new peer connection";
   static icon = "portrait";
+  static section = "builtin";
 
   constructor(x, y) {
     super(x, y);

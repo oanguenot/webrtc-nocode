@@ -1,8 +1,10 @@
 import Main from "./Main";
 
 class Turn extends Main {
-  static description = "Use Turn";
+  static item = "Turn Server";
+  static description = "Connect using a Turn Server";
   static icon = "bezier-curve";
+  static section = "builtin";
 
   constructor(x, y) {
     super(x, y);

@@ -2,8 +2,10 @@ import Main from "../Main";
 import { nanoid } from "nanoid";
 
 class Step extends Main {
-  static description = "Step";
+  static item = "Step";
+  static description = "Define a new step";
   static icon = "hashtag";
+  static section = "basic";
 
   constructor(x, y) {
     super(x, y);

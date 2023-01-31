@@ -1,19 +1,20 @@
+import { ButtonItem } from "@atlaskit/menu";
+
 function MenuItem(props) {
   const onDrag = (event) => {
     props.onDrag(event);
   };
 
   return (
-    <div
+    <ButtonItem
+      description={props.description}
       key={props.key}
-      className="drag-drawflow"
       draggable="true"
       onDragStart={(event) => onDrag(event)}
       data-node={props.name}
     >
-      <i className={`fas fa-${props.icon}`}></i>
-      <span> {props.description}</span>
-    </div>
+      <i className={`fas fa-${props.icon}`}></i> <span> {props.item}</span>
+    </ButtonItem>
   );
 }
 

@@ -1,8 +1,10 @@
 import Main from "../Main";
 
 class End extends Main {
-  static description = "End";
+  static item = "End";
+  static description = "Terminate the scenario";
   static icon = "flag-checkered";
+  static section = "basic";
 
   constructor(x, y) {
     super(x, y);

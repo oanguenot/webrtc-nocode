@@ -1,8 +1,10 @@
 import Main from "./Main";
 
 class Microphone extends Main {
-  static description = "Add Audio Track";
+  static item = "Audio Track";
+  static description = "Add an audio source from a microphone";
   static icon = "microphone";
+  static section = "builtin";
 
   constructor(x, y) {
     super(x, y);
@@ -73,7 +75,7 @@ class Microphone extends Main {
         <div class="box">
             <i class="fas fa-chevron-right"></i><span class="object-details-value">${label}</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">Audio Track</span>    
+                <span class="object-node object-title-box">${Microphone.name}</span>    
             </div>
         </div>
       </div>

@@ -1,8 +1,10 @@
 import Main from "./Main";
 
 class Sig extends Main {
+  static item = "Call";
   static description = "Connect Direct";
   static icon = "server";
+  static section = "builtin";
 
   constructor(x, y) {
     super(x, y);

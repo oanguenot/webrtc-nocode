@@ -1,8 +1,10 @@
 import Main from "./Main";
 
 class Camera extends Main {
-  static description = "Add a Video Track";
+  static item = "Video Track";
+  static description = "Add a video source from a webcam";
   static icon = "video";
+  static section = "builtin";
 
   constructor(x, y) {
     super(x, y);

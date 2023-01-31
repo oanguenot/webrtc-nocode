@@ -1,8 +1,10 @@
 import Main from "./Main";
 
 class VideoEncodings extends Main {
-  static description = "Encode Video";
+  static item = "Video Encodings";
+  static description = "Select the encodings parameters";
   static icon = "shapes";
+  static section = "builtin";
 
   constructor(x, y) {
     super(x, y);

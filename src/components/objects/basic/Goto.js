@@ -1,8 +1,10 @@
 import Main from "../Main";
 
 class Goto extends Main {
-  static description = "Goto";
+  static item = "Goto";
+  static description = "Route to a new step";
   static icon = "level-down-alt";
+  static section = "basic";
 
   constructor(x, y) {
     super(x, y);

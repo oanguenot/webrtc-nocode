@@ -210,7 +210,9 @@ function App() {
       mobile_item_selec = "";
     } else {
       event.preventDefault();
+
       var data = event.dataTransfer.getData("node");
+      console.log(">>>EVent", data);
       addNodeToDrawFlow(data, event.clientX, event.clientY);
     }
   };
