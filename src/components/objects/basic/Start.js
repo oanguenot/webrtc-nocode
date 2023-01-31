@@ -23,7 +23,7 @@ class Start extends Main {
         <div class="box">
             <span class="object-full">Initial node. Add and connect other nodes to this one to build your scenario.</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">Start</span>    
+                <span class="object-node object-title-box">${this.constructor.name}</span>    
             </div>
         </div>
       </div>

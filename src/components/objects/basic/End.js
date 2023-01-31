@@ -24,7 +24,7 @@ class End extends Main {
         <div class="box">
             <span class="object-full">Well done! Your scenario is finished and stopped.</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">End</span>    
+                <span class="object-node object-title-box">${this.constructor.name}</span>    
             </div>
         </div>
       </div>

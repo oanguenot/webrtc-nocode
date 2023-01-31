@@ -75,7 +75,7 @@ class Microphone extends Main {
         <div class="box">
             <i class="fas fa-chevron-right"></i><span class="object-details-value">${label}</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">${Microphone.name}</span>    
+                <span class="object-node object-title-box">${this.constructor.name}</span>    
             </div>
         </div>
       </div>

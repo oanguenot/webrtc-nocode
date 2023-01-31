@@ -2,8 +2,10 @@ import Main from "./Main";
 import { nanoid } from "nanoid";
 
 class WebRTCMetrics extends Main {
-  static description = "Analyze Metrics";
+  static item = "WebRTC Metrics";
+  static description = "Analyze call metrics";
   static icon = "ruler";
+  static section = "builtin";
 
   constructor(x, y) {
     super(x, y);

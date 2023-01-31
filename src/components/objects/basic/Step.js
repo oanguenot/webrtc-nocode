@@ -35,7 +35,7 @@ class Step extends Main {
         <div class="box">
             <span class="object-full">This is a new step. Call it from a Goto node to execute this line</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">Go to</span>    
+                <span class="object-node object-title-box">${this.constructor.name}</span>    
             </div>
         </div>
       </div>

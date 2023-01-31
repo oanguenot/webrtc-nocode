@@ -102,7 +102,7 @@ class Camera extends Main {
           <i class="fas fa-chevron-right"></i><span class="object-details-value">${labelResolution} at ${labelFramerate}</span>
         </div>
           <div class="object-footer">
-            <span class="object-node object-title-box">Video Track</span>    
+            <span class="object-node object-title-box">${this.constructor.name}</span>    
           </div>
         </div>
       </div>
