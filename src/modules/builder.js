@@ -10,11 +10,13 @@ import End from "../components/objects/basic/End";
 import Step from "../components/objects/basic/Step";
 import Goto from "../components/objects/basic/Goto";
 import AudioEncodings from "../components/objects/AudioEncodings";
+import Waiting from "../components/objects/basic/Waiting";
 
 const ObjectBuilder = {
   Start,
   Step,
   Goto,
+  Waiting,
   PeerConnection,
   AudioTrack,
   VideoTrack,
