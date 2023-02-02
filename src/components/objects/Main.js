@@ -94,16 +94,14 @@ class Main {
     );
     if (property) {
       property.value = value;
-      if (name === "name" || name === "next") {
-        this.updateName(label || value);
-      }
+      this.updateDisplayInObject(name, label || value);
     }
   }
 
-  updateName(name) {
-    const nameElt = document.querySelector(`#name-${this._uuid}`);
+  updateDisplayInObject(propertyName, value) {
+    const nameElt = document.querySelector(`#${propertyName}-${this._uuid}`);
     if (nameElt) {
-      nameElt.innerHTML = name;
+      nameElt.innerHTML = value;
     }
   }
 

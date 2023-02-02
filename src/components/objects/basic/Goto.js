@@ -46,20 +46,18 @@ class Goto extends Main {
       }
     });
     if (prop.value === value) {
-      this.updateName(label);
+      this.updateDisplayInObject("next", label);
     }
   }
 
   render() {
-    const value = this._properties[0].value;
-    const enumLabel = this._properties[0].enum.find(
-      (item) => item.value === value
-    ).label;
+    const next = this.getPropertyFor("next");
+    const label = this.getLabelFromPropertySelect(next);
 
     return `
       <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="next-${this._uuid}">${label}</span>
         </div>
         <div class="box">
             <span class="object-full">Select the next step to execute. Once this line is completed, the next step will be executed.</span>

@@ -44,7 +44,7 @@ class Waiting extends Main {
     return `
       <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${label}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="period-${this._uuid}">${label}</span>
         </div>
         <div class="box">
             <span class="object-full">Wait before executing the next node</span>

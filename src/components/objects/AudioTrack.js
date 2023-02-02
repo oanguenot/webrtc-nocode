@@ -17,13 +17,6 @@ class AudioTrack extends Main {
     ];
     this._properties = [
       {
-        prop: "name",
-        label: "Name",
-        type: "text",
-        value: "Audio Track",
-        description: "Name of the track",
-      },
-      {
         prop: "from",
         label: "From",
         type: "enum",
@@ -66,14 +59,16 @@ class AudioTrack extends Main {
   render() {
     const device = this.getPropertyFor("from");
     const label = this.getLabelFromPropertySelect(device);
+    const channel = this.getPropertyFor("channelCount");
+    const labelChannel = this.getLabelFromPropertySelect(channel);
 
     return `
       <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="from-${this._uuid}">${label}</span>
         </div>
         <div class="box">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value">${label}</span>
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="channelCount-${this._uuid}">${labelChannel}</span>
              <div class="object-footer">
                 <span class="object-node object-title-box">${this.constructor.name}</span>    
             </div>
