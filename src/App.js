@@ -219,7 +219,6 @@ function App() {
       event.preventDefault();
 
       var data = event.dataTransfer.getData("node");
-      console.log(">>>EVent", data);
       addNodeToDrawFlow(data, event.clientX, event.clientY);
     }
   };

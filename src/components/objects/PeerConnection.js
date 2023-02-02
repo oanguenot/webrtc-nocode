@@ -43,8 +43,8 @@ class PeerConnection extends Main {
 
     const item = `
       <div>
-        <div class="title-box object-title">
-           <i class="fas fa-${this.constructor.icon} object-title"></i> <span class="object-title" id="name-${this._uuid}">${this._properties[0].value}</span>
+        <div class="title-box">
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
         </div>
         <div class="box">
             <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="network-${this._uuid}">${label}</span>

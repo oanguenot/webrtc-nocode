@@ -84,8 +84,11 @@ class Main {
   }
 
   getLabelFromPropertySelect(property) {
-    const value = property.value;
-    return property.enum.find((item) => item.value === value).label;
+    if (property) {
+      const value = property.value;
+      return property.enum.find((item) => item.value === value).label;
+    }
+    return "???";
   }
 
   updateValueFor(name, value, label) {

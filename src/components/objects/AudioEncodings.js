@@ -67,10 +67,32 @@ class AudioEncodings extends Main {
   }
 
   render() {
+    const name = this.getPropertyValueFor("name");
+    const codec = this.getPropertyFor("preference");
+    const labelCodec = this.getLabelFromPropertySelect(codec);
+    const active = this.getPropertyFor("active");
+    const labelActive = this.getLabelFromPropertySelect(active);
+    const bitrate = this.getPropertyFor("maxBitrate");
+    const labelBitrate = this.getLabelFromPropertySelect(bitrate);
+
     const item = `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${name}</span>
+        </div>
+         <div class="box">
+            <div class="object-box-line">
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="preference-${this._uuid}">${labelCodec}</span>
+            </div>
+            <div class="object-box-line">
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="active-${this._uuid}">${labelActive}</span>
+            </div>
+            <div class="object-box-line">
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="maxBitrate-${this._uuid}">${labelBitrate}</span>
+            </div>
+             <div class="object-footer">
+                <span class="object-node object-title-box">${this.constructor.name}</span>    
+            </div>
         </div>
       </div>
       `;
