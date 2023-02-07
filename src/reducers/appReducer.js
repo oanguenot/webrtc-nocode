@@ -31,9 +31,12 @@ const filterObjectsWithNode = (value, objects) => {
 };
 
 const updateLinkInObject = (objectId, fromId, objects) => {
-  const index = objects.findIndex((object) => object.id === objectId);
+  const recipientIndex = objects.findIndex((object) => object.id === objectId);
+  const initiatorIndex = objects.findIndex((object) => object.id === fromId);
+
   const updatedObjects = [...objects];
-  updatedObjects[index].addInputLink(fromId);
+  updatedObjects[recipientIndex].addInputLink(fromId);
+  updatedObjects[initiatorIndex].addOutputLink(objectId);
   return updatedObjects;
 };
 
@@ -126,6 +129,8 @@ const appReducer = (state = initialAppState, action) => {
         !toObject ||
         (toObject && fromNode && !toObject.acceptInputConnection(fromNode.node)) ||
         (toObject && fromNode && !fromNode.acceptOutputConnection(toObject.node))
+        //(toObject.linksInput.length > 0) || // force limit to 1 input node
+        //(fromNode.linksOutput.length > 0)   // force limit to 1 output node
       ) {
         // link is not correct - remove it
         return {

@@ -36,8 +36,12 @@ class Main {
     return this._properties;
   }
 
-  get links() {
+  get linksInput() {
     return this._linksInputs;
+  }
+
+  get linksOutput() {
+    return this._linksOutputs;
   }
 
   get x() {
@@ -115,6 +119,11 @@ class Main {
   }
 
   acceptInputConnection(node) {
+    console.log(">>>", this._linksInputs.length, this._inputs);
+    if(this._linksInputs.length >= this._inputs) {
+      return false;
+    }
+
     if (this._acceptInputs.includes("*")) {
       return true;
     }
@@ -122,6 +131,9 @@ class Main {
   }
 
   acceptOutputConnection(node) {
+    if(this._linksOutputs.length >= this._outputs) {
+      return false;
+    }
     if (this._acceptOutputs.includes("*")) {
       return true;
     }
