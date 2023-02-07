@@ -13,7 +13,8 @@ class PeerConnection extends Main {
     super(x, y);
     this._inputs = 1;
     this._outputs = 1;
-    this._accept = ["start", "step"];
+    this._acceptInputs = ["start", "step"];
+    this._acceptOutputs = ["*"];
     this._info = [{ key: "node", value: "peerconnection" }];
     this._properties = [
       {

@@ -80,19 +80,35 @@ function Properties({ dispatch }) {
             <label>No existing links for this object</label>
           </div>
         )}
-        {appState.selected.accept.length > 0 && (
+        {appState.selected.acceptInput.length > 0 && (
           <table>
             <tbody>
               <tr>
-                <td className="col-label-accept">Accept:</td>
+                <td className="col-label-accept">Accept Input:</td>
                 <td className="col-value-accept">
                   <TagGroup alignment="start">
-                    {appState.selected.accept.map((name, key) => (
+                    {appState.selected.acceptInput.map((name, key) => (
                       <Tag color="blueLight" key={key} text={name}></Tag>
                     ))}
                   </TagGroup>
                 </td>
               </tr>
+            </tbody>
+          </table>
+        )}
+        {appState.selected.acceptOutput.length > 0 && (
+          <table>
+            <tbody>
+            <tr>
+              <td className="col-label-accept">Accept Output:</td>
+              <td className="col-value-accept">
+                <TagGroup alignment="start">
+                  {appState.selected.acceptOutput.map((name, key) => (
+                    <Tag color="blueLight" key={key} text={name}></Tag>
+                  ))}
+                </TagGroup>
+              </td>
+            </tr>
             </tbody>
           </table>
         )}

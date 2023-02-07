@@ -124,7 +124,8 @@ const appReducer = (state = initialAppState, action) => {
       if (
         !fromNode ||
         !toObject ||
-        (toObject && fromNode && !toObject.acceptConnection(fromNode.node))
+        (toObject && fromNode && !toObject.acceptInputConnection(fromNode.node)) ||
+        (toObject && fromNode && !fromNode.acceptOutputConnection(toObject.node))
       ) {
         // link is not correct - remove it
         return {

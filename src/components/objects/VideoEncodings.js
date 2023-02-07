@@ -14,7 +14,7 @@ class VideoEncodings extends Main {
       { key: "node", value: "encodings" },
       { key: "kind", value: "video" },
     ];
-    this._accept = ["*"];
+    this._acceptInputs = ["*"];
     this._properties = [
       {
         prop: "name",

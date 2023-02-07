@@ -11,7 +11,7 @@ class Sig extends Main {
     this._inputs = 1;
     this._outputs = 1;
     this._info = [{ key: "node", value: "sig" }];
-    this._accept = ["user"];
+    this._acceptInputs = ["user"];
     this._properties = [
       {
         prop: "name",

@@ -10,7 +10,7 @@ class VideoTrack extends Main {
     super(x, y);
     this._inputs = 1;
     this._outputs = 1;
-    this._accept = ["*"];
+    this._acceptInputs = ["*"];
     this._info = [
       { key: "node", value: "track" },
       { key: "kind", value: "video" },

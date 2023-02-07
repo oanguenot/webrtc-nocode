@@ -10,7 +10,8 @@ class Goto extends Main {
     super(x, y);
     this._inputs = 1;
     this._outputs = 0;
-    this._accept = ["*"];
+    this._acceptInputs = ["*"];
+    this._acceptOutputs = [];
     this._info = [{ key: "node", value: "goto" }];
     this._properties = [
       {

@@ -12,6 +12,8 @@ class Start extends Main {
     this._outputs = 1;
     this._info = [{ key: "node", value: "start" }];
     this._properties = [];
+    this._acceptOutputs = ["peerconnection"];
+    this._acceptInputs = [];
   }
 
   render() {

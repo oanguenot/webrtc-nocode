@@ -8,14 +8,16 @@ class Main {
 
   constructor(posX = 0, posY = 0) {
     this._inputs = 1;
-    this._inputsLinks = [];
     this._outputs = 1;
+    this._linksInputs = [];
+    this._linksOutputs = [];
     this._info = {};
     this._properties = {};
     this._posX = posX;
     this._posY = posY;
     this._uuid = uuidv4();
-    this._accept = [];
+    this._acceptInputs = [];
+    this._acceptOutputs = [];
   }
 
   get inputs() {
@@ -35,7 +37,7 @@ class Main {
   }
 
   get links() {
-    return this._inputsLinks;
+    return this._linksInputs;
   }
 
   get x() {
@@ -58,8 +60,12 @@ class Main {
     return this._uuid;
   }
 
-  get accept() {
-    return this._accept;
+  get acceptInput() {
+    return this._acceptInputs;
+  }
+
+  get acceptOutput() {
+    return this._acceptOutputs;
   }
 
   get node() {
@@ -108,16 +114,33 @@ class Main {
     }
   }
 
-  acceptConnection(node) {
-    if (this._accept.includes("*")) {
+  acceptInputConnection(node) {
+    if (this._acceptInputs.includes("*")) {
       return true;
     }
-    return this._accept.includes(node);
+    return this._acceptInputs.includes(node);
+  }
+
+  acceptOutputConnection(node) {
+    if (this._acceptOutputs.includes("*")) {
+      return true;
+    }
+    return this._acceptOutputs.includes(node);
   }
 
   addInputLink(nodeId) {
-    if (!this._inputsLinks.includes(nodeId)) {
-      this._inputsLinks.push(nodeId);
+    if (!this._linksInputs.includes(nodeId)) {
+      this._linksInputs.push(nodeId);
+    } else {
+      console.warn(
+        `[main] connection already added from ${nodeId} to ${this._uuid}`
+      );
+    }
+  }
+
+  addOutputLink(nodeId) {
+    if (!this._linksOutputs.includes(nodeId)) {
+      this._linksOutputs.push(nodeId);
     } else {
       console.warn(
         `[main] connection already added from ${nodeId} to ${this._uuid}`

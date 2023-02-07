@@ -14,7 +14,7 @@ class AudioEncodings extends Main {
       { key: "node", value: "encodings" },
       { key: "kind", value: "audio" },
     ];
-    this._accept = ["*"];
+    this._acceptInputs = ["*"];
     this._properties = [
       {
         prop: "name",
