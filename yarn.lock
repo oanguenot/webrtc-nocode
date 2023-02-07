@@ -117,10 +117,10 @@
     "@babel/runtime" "^7.0.0"
     bind-event-listener "^2.1.1"
 
-"@atlaskit/empty-state@^7.4.6":
-  version "7.4.6"
-  resolved "https://registry.yarnpkg.com/@atlaskit/empty-state/-/empty-state-7.4.6.tgz#1948823aeed27adf544278ab42a50d0020f68470"
-  integrity sha512-GpRgayf4g4VKCxTWe+eV5XvYwNDWPsugEswqd9m4o21zOB8+D+xR3jxxddZ6zC3hFJWY7z15U31JXkHNkz1DBQ==
+"@atlaskit/empty-state@7.4.7":
+  version "7.4.7"
+  resolved "https://registry.yarnpkg.com/@atlaskit/empty-state/-/empty-state-7.4.7.tgz#e9225e5fcca9ef77e24f33df6cb0a90846b4dc8e"
+  integrity sha512-5iZAIufwj+2NzP3+jIRXwiIcwWWG9I8qYGlWyQGTxAUT6sP+Eog1H/3YGxNaWROQu8DXCIKGdJLl0eCV2sV4VA==
   dependencies:
     "@atlaskit/button" "^16.5.0"
     "@atlaskit/spinner" "^15.3.0"
@@ -186,10 +186,10 @@
     bind-event-listener "^2.1.1"
     react-node-resolver "^1.0.1"
 
-"@atlaskit/inline-edit@^12.2.6":
-  version "12.2.6"
-  resolved "https://registry.yarnpkg.com/@atlaskit/inline-edit/-/inline-edit-12.2.6.tgz#9a9fdf074d5a757e70471e41619f89e9a92e93ed"
-  integrity sha512-xuYEzRirFtpEjsS0oWabaXBpQHhEBycn53EUgXnzUK6iWp2OpptrQcvi8gr7M2oAoKXujZqFsyhGor6XZJoYPA==
+"@atlaskit/inline-edit@12.2.7":
+  version "12.2.7"
+  resolved "https://registry.yarnpkg.com/@atlaskit/inline-edit/-/inline-edit-12.2.7.tgz#9ae2436f9257fb603c0137ac4c2f0fbcb27c9441"
+  integrity sha512-ybGRajVCO7lWDuAW0YWhKiy92pYvaPQcT6pBZ6QaJiceo2e+iZ3HUZsSwWvv3HquwlPTOUgz2FmrBn71obfbYA==
   dependencies:
     "@atlaskit/analytics-next" "^8.2.0"
     "@atlaskit/button" "^16.5.0"
@@ -233,10 +233,10 @@
     "@atlaskit/tokens" "^0.13.0"
     "@babel/runtime" "^7.0.0"
 
-"@atlaskit/menu@^1.4.6":
-  version "1.4.6"
-  resolved "https://registry.yarnpkg.com/@atlaskit/menu/-/menu-1.4.6.tgz#96d86fdd2838c4465aefe15b417f5ee74ad6e2d6"
-  integrity sha512-2iVQ2ohi8heix6Fu3rdT0N7cykMCYK8uCV8NF8s3seiYQP7v8lZ9PsBNBWUM5OedXVFhN3aVdqV2wkilFSoQMg==
+"@atlaskit/menu@1.4.8":
+  version "1.4.8"
+  resolved "https://registry.yarnpkg.com/@atlaskit/menu/-/menu-1.4.8.tgz#8faaa922bbfc582fa19e8cb20c8eb9bb901412e5"
+  integrity sha512-+nfuRjD+fhapqwB8lD2Xjg5I/3IF8zrMW6Wg4OPTFe+yuM+ohKq+axYlfYV+/T3WtKPzM7MZpX0+4EN7N96epA==
   dependencies:
     "@atlaskit/ds-explorations" "^2.0.0"
     "@atlaskit/ds-lib" "^2.1.0"
@@ -297,10 +297,10 @@
     "@atlaskit/theme" "^12.2.0"
     "@babel/runtime" "^7.0.0"
 
-"@atlaskit/select@^16.1.0":
-  version "16.1.0"
-  resolved "https://registry.yarnpkg.com/@atlaskit/select/-/select-16.1.0.tgz#ff23e880132495c858fc93d015635ec5d1605c41"
-  integrity sha512-6Tz/4Nk45ubky7nt8QmTjlF18+EAC5AiXrfwMVQScPfdSoRjI1/t1V1jFYSPxlqElj1fMxQ5blzLVyATskdNLQ==
+"@atlaskit/select@16.1.2":
+  version "16.1.2"
+  resolved "https://registry.yarnpkg.com/@atlaskit/select/-/select-16.1.2.tgz#1e1c3f5e984e555cb08722edc20499b41f75e94f"
+  integrity sha512-CrLa08zR582CwwsKeocMas9OS433Oxi5pxPLUh30i/sYQtiN2QaHYbMebmyr+W1t9b+kA4nqZDWkTPSgMu5mGg==
   dependencies:
     "@atlaskit/analytics-next" "^8.2.0"
     "@atlaskit/icon" "^21.11.0"
@@ -332,10 +332,10 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/table-tree@^9.2.7":
-  version "9.2.7"
-  resolved "https://registry.yarnpkg.com/@atlaskit/table-tree/-/table-tree-9.2.7.tgz#ab5375c5068ac52d6ab78605d04868f7a0a6a55c"
-  integrity sha512-pEt1FHXa59rt28q1fnz46fb0kW9QonK9tMcRBAqF44EoigeEMhLo7lY8/6tDqU55crHR8hbJE/NEqtM8z4Uq6w==
+"@atlaskit/table-tree@9.2.8":
+  version "9.2.8"
+  resolved "https://registry.yarnpkg.com/@atlaskit/table-tree/-/table-tree-9.2.8.tgz#78895e643c89638791fccc4e953be087590b1e26"
+  integrity sha512-JeNHNO6K/7WatbKiH13APX9cDxfvfk0BYcIPj4rzGsXrBSla120pMSaLCRuxeCQdvbueMuk68IwJ5q/ffCwx4Q==
   dependencies:
     "@atlaskit/analytics-next" "^8.2.0"
     "@atlaskit/button" "^16.5.0"
@@ -356,10 +356,10 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/tag@^11.4.6":
-  version "11.4.6"
-  resolved "https://registry.yarnpkg.com/@atlaskit/tag/-/tag-11.4.6.tgz#b6d335d985757544a9a5a2cfab9ca1aed877073e"
-  integrity sha512-SiCEf2eOSGrSpWmnJ99paUQg6kxk8q+isHZpH4bA+gCYuK7L7y/nXvnvcDwDnCkymxv3SSsI14lRyVPSSaySIg==
+"@atlaskit/tag@11.4.7":
+  version "11.4.7"
+  resolved "https://registry.yarnpkg.com/@atlaskit/tag/-/tag-11.4.7.tgz#da8b5e84442dcb8552ab1e669f1adbd48e6e4a99"
+  integrity sha512-80mvlcCt/FurNVExSyVyR5mx19DhPyrRGoBsLfx/YMg6F97kvM4Cm86jOiaLzzuGk77hYeqpSqD4eQwHGYUAIg==
   dependencies:
     "@atlaskit/analytics-next" "^8.0.0"
     "@atlaskit/ds-lib" "^2.1.0"
@@ -401,7 +401,17 @@
     "@atlaskit/tokens" "^0.13.0"
     "@babel/runtime" "^7.0.0"
 
-"@atlaskit/tokens@^0.13.0", "@atlaskit/tokens@^0.13.3":
+"@atlaskit/tokens@0.13.5":
+  version "0.13.5"
+  resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-0.13.5.tgz#5e8b7b24332fd3d99dbc3978ad9e92dd354ae937"
+  integrity sha512-xtQY1I7oDatlEDOzBqtFEWQW1G18b9rT7eCERSFu/4J9c+XVRS+p0tH6L704LWlwcl3mRMevmPUhCMFWaGymHg==
+  dependencies:
+    "@atlaskit/ds-lib" "^2.1.0"
+    "@babel/runtime" "^7.0.0"
+    "@babel/traverse" "^7.15.0"
+    "@babel/types" "^7.15.0"
+
+"@atlaskit/tokens@^0.13.0":
   version "0.13.3"
   resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-0.13.3.tgz#99efca561d26d5d8559d26e2e72a9b71bdce4105"
   integrity sha512-4uocQFVvAi6DWdY9KnCtOMKgu7F6ewiYREKglbetUq4OuPSQIQadi3Qfx6VEgh/3Ylf/Hawe9cFxtAO2WSmdJg==
@@ -6945,15 +6955,15 @@ multicast-dns@^7.2.5:
     dns-packet "^5.2.2"
     thunky "^1.0.2"
 
+nanoid@4.0.1:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-4.0.1.tgz#398d7ccfdbf9faf2231b2ca7e8fff5dbca6a509b"
+  integrity sha512-udKGtCCUafD3nQtJg9wBhRP3KMbPglUsgV5JVsXhvyBs/oefqb4sqMEhKBBgqZncYowu58p1prsZQBYvAj/Gww==
+
 nanoid@^3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.4.tgz#730b67e3cd09e2deacf03c027c81c9d9dbc5e8ab"
   integrity sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw==
-
-nanoid@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-4.0.0.tgz#6e144dee117609232c3f415c34b0e550e64999a5"
-  integrity sha512-IgBP8piMxe/gf73RTQx7hmnhwz0aaEXYakvqZyE302IXW3HyVNhdNGC+O2MwMAVhLEnvXlvKtGbtJf6wvHihCg==
 
 natural-compare-lite@^1.4.0:
   version "1.4.0"
