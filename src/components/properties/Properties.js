@@ -61,7 +61,8 @@ function Properties({ dispatch }) {
   const getLinkName = (objectId) => {
     const found = appState.objects.find((object) => object.id === objectId);
     if (found) {
-      return found.getPropertyValueFor("node");
+      const name = `${found.getInfoValueFor("node")}-${objectId}`;
+      return name;
     }
     return objectId;
   };
@@ -76,16 +77,26 @@ function Properties({ dispatch }) {
         {(appState.selected.linksInput.length > 0 ||
           appState.selected.linksOutput.length > 0) && (
           <div>
-            <ul className="links">
-              {appState.selected.linksInput.map((link, index) => (
-                <li key={index}>{getLinkName(link)}</li>
-              ))}
-            </ul>
-            <ul className="links">
-              {appState.selected.linksOutput.map((link, index) => (
-                <li key={index}>{getLinkName(link)}</li>
-              ))}
-            </ul>
+            <table>
+              <tbody>
+                {appState.selected.linksInput.map((link, index) => (
+                  <tr key={index}>
+                    <td className="col-label">input:</td>
+                    <td className="col-value-accept">{getLinkName(link)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <table>
+              <tbody>
+                {appState.selected.linksOutput.map((link, index) => (
+                  <tr key={index}>
+                    <td className="col-label">output:</td>
+                    <td className="col-value-accept">{getLinkName(link)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
         {appState.selected.linksInput.length +

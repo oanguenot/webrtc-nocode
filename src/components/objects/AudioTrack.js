@@ -15,6 +15,10 @@ class AudioTrack extends Main {
     this._info = [
       { key: "node", value: "rtc.track" },
       { key: "kind", value: "audio" },
+      {
+        key: "info",
+        value: "Get the MediaStreamTrack instance from the selected device",
+      },
     ];
     this._properties = [
       {
@@ -57,21 +61,37 @@ class AudioTrack extends Main {
     });
   }
 
-  render() {
-    const device = this.getPropertyFor("from");
-    const label = this.getLabelFromPropertySelect(device);
-    const channel = this.getPropertyFor("channelCount");
-    const labelChannel = this.getLabelFromPropertySelect(channel);
+  renderProp(prop) {
+    switch (prop) {
+      case "from":
+        const device = this.getPropertyFor("from");
+        const label = this.getLabelFromPropertySelect(device);
+        return label;
+      case "channelCount":
+        const channel = this.getPropertyFor("channelCount");
+        const labelChannel = this.getLabelFromPropertySelect(channel);
+        return `Capture in ${labelChannel}`;
+      default:
+        return "";
+    }
+  }
 
+  render() {
     return `
       <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="from-${this._uuid}">${label}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="from-${
+      this._uuid
+    }">${this.renderProp("from")}</span>
         </div>
         <div class="box">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="channelCount-${this._uuid}">${labelChannel}</span>
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="channelCount-${
+              this._uuid
+            }">${this.renderProp("channelCount")}</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">${this._info[0].value}</span>    
+                <span class="object-node object-title-box">${
+                  this._info[0].value
+                }.${this._uuid}</span>    
             </div>
         </div>
       </div>

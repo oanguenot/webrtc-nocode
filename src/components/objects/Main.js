@@ -1,4 +1,7 @@
-import { v4 as uuidv4 } from "uuid";
+import { customAlphabet } from "nanoid";
+
+const CUSTOM_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
+const nanoid = customAlphabet(CUSTOM_ALPHABET, 6);
 
 class Main {
   static item = "a name"; // Used in the menu
@@ -15,7 +18,7 @@ class Main {
     this._properties = {};
     this._posX = posX;
     this._posY = posY;
-    this._uuid = uuidv4();
+    this._uuid = nanoid();
     this._acceptInputs = [];
     this._acceptOutputs = [];
   }

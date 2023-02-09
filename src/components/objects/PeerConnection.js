@@ -27,7 +27,7 @@ class PeerConnection extends Main {
         prop: "name",
         label: "Name",
         type: "text",
-        value: `PC-${nanoid(10)}`,
+        value: `PC-${this._uuid}`,
         description: "Name of the Peer Connection",
       },
       {
@@ -56,7 +56,7 @@ class PeerConnection extends Main {
         <div class="box">
             <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="network-${this._uuid}">${label}</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">${this._info[0].value}</span>    
+                <span class="object-node object-title-box">${this._info[0].value}.${this._uuid}</span>    
             </div>
         </div>
       </div>

@@ -1,5 +1,4 @@
 import Main from "../Main";
-import { nanoid } from "nanoid";
 
 class Ready extends Main {
   static item = "Ready";

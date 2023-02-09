@@ -50,16 +50,16 @@ const appReducer = (state = initialAppState, action) => {
     case OBJECT_ACTIONS.ADD_OBJECT_SUCCESS: {
       const object = action.payload.object;
       const node = object.getInfoValueFor("node");
-      if (["track"].includes(node)) {
+      if (node.includes("rtc.track")) {
         object.addDevices(state.devices);
-      } else if (["step"].includes(node)) {
+      } else if (node.includes("step")) {
         filterObjectsWithNode("goto", state.objects).forEach((obj) => {
           obj.addStep(
             object.getInfoValueFor("uuid"),
             object.getPropertyValueFor("name")
           );
         });
-      } else if (["goto"].includes(node)) {
+      } else if (node.includes("goto")) {
         const steps = filterObjectsWithNode("step", state.objects).map(
           (obj) => ({
             value: obj.getInfoValueFor("uuid"),
@@ -124,6 +124,7 @@ const appReducer = (state = initialAppState, action) => {
       const fromNode = getObjectFromId(action.payload.fromId, state.objects);
       const toObject = getObjectFromId(action.payload.toId, state.objects);
 
+      // Don't create the connection twice
       if (
         fromNode.linksOutput.includes(action.payload.toId) &&
         toObject.linksInput.includes(action.payload.fromId)
