@@ -61,7 +61,7 @@ function Properties({ dispatch }) {
   const getLinkName = (objectId) => {
     const found = appState.objects.find((object) => object.id === objectId);
     if (found) {
-      return found.getPropertyValueFor("name");
+      return found.getPropertyValueFor("node");
     }
     return objectId;
   };
@@ -71,15 +71,22 @@ function Properties({ dispatch }) {
       <div className="mt-30">
         <div className="property-title">
           <i className="fas fa-caret-right"></i> Links{" "}
-          <Badge appearance="primary">{`${appState.selected.linksInput.length}-${appState.selected.linksOutput}`}</Badge>
+          <Badge appearance="primary">{`${appState.selected.linksInput.length}-${appState.selected.linksOutput.length}`}</Badge>
         </div>
         {(appState.selected.linksInput.length > 0 ||
           appState.selected.linksOutput.length > 0) && (
-          <ul className="links">
-            {appState.selected.links.map((link, index) => (
-              <li key={index}>{getLinkName(link)}</li>
-            ))}
-          </ul>
+          <div>
+            <ul className="links">
+              {appState.selected.linksInput.map((link, index) => (
+                <li key={index}>{getLinkName(link)}</li>
+              ))}
+            </ul>
+            <ul className="links">
+              {appState.selected.linksOutput.map((link, index) => (
+                <li key={index}>{getLinkName(link)}</li>
+              ))}
+            </ul>
+          </div>
         )}
         {appState.selected.linksInput.length +
           appState.selected.linksOutput.length ===

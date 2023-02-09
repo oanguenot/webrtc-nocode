@@ -125,12 +125,21 @@ const appReducer = (state = initialAppState, action) => {
       const toObject = getObjectFromId(action.payload.toId, state.objects);
 
       if (
+        fromNode.linksOutput.includes(action.payload.toId) &&
+        toObject.linksInput.includes(action.payload.fromId)
+      ) {
+        return state;
+      }
+
+      if (
         !fromNode ||
         !toObject ||
-        (toObject && fromNode && !toObject.acceptInputConnection(fromNode.node)) ||
-        (toObject && fromNode && !fromNode.acceptOutputConnection(toObject.node))
-        //(toObject.linksInput.length > 0) || // force limit to 1 input node
-        //(fromNode.linksOutput.length > 0)   // force limit to 1 output node
+        (toObject &&
+          fromNode &&
+          !toObject.acceptInputConnection(fromNode.node)) ||
+        (toObject &&
+          fromNode &&
+          !fromNode.acceptOutputConnection(toObject.node))
       ) {
         // link is not correct - remove it
         return {

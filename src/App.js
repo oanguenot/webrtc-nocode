@@ -131,6 +131,7 @@ function App() {
       console.log("Connection created");
       const fromId = editor.getNodeFromId(connection.output_id).data.id;
       const toId = editor.getNodeFromId(connection.input_id).data.id;
+
       await createConnection(fromId, toId, connection, dispatch);
     });
 
