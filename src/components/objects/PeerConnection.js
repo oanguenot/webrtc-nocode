@@ -11,12 +11,12 @@ class PeerConnection extends Main {
 
   constructor(x, y) {
     super(x, y);
-    this._inputs = 1;
-    this._outputs = 1;
-    this._acceptInputs = ["start", "step"];
-    this._acceptOutputs = ["*"];
+    this._inputs = 2;
+    this._outputs = 3;
+    this._acceptInputs = ["rtc.track"];
+    this._acceptOutputs = ["rtc.encodings", "rtc.analysis"];
     this._info = [
-      { key: "node", value: "peerconnection" },
+      { key: "node", value: "rtc.peer" },
       {
         key: "info",
         value: "Create a new RTCPeerConnection instance for a user",
@@ -56,7 +56,7 @@ class PeerConnection extends Main {
         <div class="box">
             <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="network-${this._uuid}">${label}</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">${this.constructor.name}</span>    
+                <span class="object-node object-title-box">${this._info[0].value}</span>    
             </div>
         </div>
       </div>

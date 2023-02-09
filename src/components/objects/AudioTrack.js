@@ -8,11 +8,12 @@ class AudioTrack extends Main {
 
   constructor(x, y) {
     super(x, y);
-    this._inputs = 1;
+    this._inputs = 0;
     this._outputs = 1;
-    this._acceptInputs = ["*"];
+    this._acceptInputs = [];
+    this._acceptOutputs = ["rtc.peer"];
     this._info = [
-      { key: "node", value: "track" },
+      { key: "node", value: "rtc.track" },
       { key: "kind", value: "audio" },
     ];
     this._properties = [
@@ -70,7 +71,7 @@ class AudioTrack extends Main {
         <div class="box">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="channelCount-${this._uuid}">${labelChannel}</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">${this.constructor.name}</span>    
+                <span class="object-node object-title-box">${this._info[0].value}</span>    
             </div>
         </div>
       </div>

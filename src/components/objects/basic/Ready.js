@@ -73,7 +73,7 @@ class Ready extends Main {
             </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${
-                  this.constructor.name
+                  this._info[0].value
                 }</span>    
             </div>
         </div>

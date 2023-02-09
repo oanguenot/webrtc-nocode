@@ -8,11 +8,12 @@ class VideoTrack extends Main {
 
   constructor(x, y) {
     super(x, y);
-    this._inputs = 1;
+    this._inputs = 0;
     this._outputs = 1;
-    this._acceptInputs = ["*"];
+    this._acceptInputs = [];
+    this._acceptOutputs = ["rtc.peer"];
     this._info = [
-      { key: "node", value: "track" },
+      { key: "node", value: "rtc.track" },
       { key: "kind", value: "video" },
     ];
     this._properties = [
@@ -102,7 +103,7 @@ class VideoTrack extends Main {
           <i class="fas fa-chevron-right"></i><span class="object-details-value">${labelResolution} at ${labelFramerate}</span>
         </div>
           <div class="object-footer">
-            <span class="object-node object-title-box">${this.constructor.name}</span>    
+            <span class="object-node object-title-box">${this._info[0].value}</span>    
           </div>
         </div>
       </div>

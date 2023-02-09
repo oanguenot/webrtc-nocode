@@ -71,18 +71,21 @@ function Properties({ dispatch }) {
       <div className="mt-30">
         <div className="property-title">
           <i className="fas fa-caret-right"></i> Links{" "}
-          <Badge appearance="primary">{appState.selected.links.length}</Badge>
+          <Badge appearance="primary">{`${appState.selected.linksInput.length}-${appState.selected.linksOutput}`}</Badge>
         </div>
-        {appState.selected.links.length > 0 && (
+        {(appState.selected.linksInput.length > 0 ||
+          appState.selected.linksOutput.length > 0) && (
           <ul className="links">
             {appState.selected.links.map((link, index) => (
               <li key={index}>{getLinkName(link)}</li>
             ))}
           </ul>
         )}
-        {appState.selected.links.length === 0 && (
+        {appState.selected.linksInput.length +
+          appState.selected.linksOutput.length ===
+          0 && (
           <div className="links">
-            <label>No existing links for this object</label>
+            <label>No links for this object</label>
           </div>
         )}
         {appState.selected.acceptInput.length > 0 && (
@@ -133,7 +136,10 @@ function Properties({ dispatch }) {
 
       {appState.selected && appState.selected.properties && getProperties()}
 
-      {appState.selected && appState.selected.links && getLinks()}
+      {appState.selected &&
+        appState.selected.linksInput &&
+        appState.selected.linksOutput &&
+        getLinks()}
     </div>
   );
 }
