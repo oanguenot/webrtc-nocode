@@ -22,9 +22,14 @@ function Properties({ dispatch }) {
             {appState.selected.info.map((info, key) => (
               <tr key={key}>
                 <td className="col-label">{info.key}:</td>
-                <td className="col-value">
-                  <Lozenge isBold={info.key === "node"}>{info.value}</Lozenge>
-                </td>
+                {info.key === "info" && (
+                  <td className="col-info">{info.value}</td>
+                )}
+                {info.key !== "info" && (
+                  <td className="col-value">
+                    <Lozenge isBold={info.key === "node"}>{info.value}</Lozenge>
+                  </td>
+                )}
               </tr>
             ))}
           </tbody>
@@ -99,16 +104,16 @@ function Properties({ dispatch }) {
         {appState.selected.acceptOutput.length > 0 && (
           <table>
             <tbody>
-            <tr>
-              <td className="col-label-accept">Accept Output:</td>
-              <td className="col-value-accept">
-                <TagGroup alignment="start">
-                  {appState.selected.acceptOutput.map((name, key) => (
-                    <Tag color="blueLight" key={key} text={name}></Tag>
-                  ))}
-                </TagGroup>
-              </td>
-            </tr>
+              <tr>
+                <td className="col-label-accept">Accept Output:</td>
+                <td className="col-value-accept">
+                  <TagGroup alignment="start">
+                    {appState.selected.acceptOutput.map((name, key) => (
+                      <Tag color="blueLight" key={key} text={name}></Tag>
+                    ))}
+                  </TagGroup>
+                </td>
+              </tr>
             </tbody>
           </table>
         )}

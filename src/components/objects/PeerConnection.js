@@ -15,7 +15,13 @@ class PeerConnection extends Main {
     this._outputs = 1;
     this._acceptInputs = ["start", "step"];
     this._acceptOutputs = ["*"];
-    this._info = [{ key: "node", value: "peerconnection" }];
+    this._info = [
+      { key: "node", value: "peerconnection" },
+      {
+        key: "info",
+        value: "Create a new RTCPeerConnection instance for a user",
+      },
+    ];
     this._properties = [
       {
         prop: "name",

@@ -18,11 +18,17 @@ tr {
 
 .col-label {
     text-align: left;
-    width: 150px;
+    width: 80px;
 }
 
 .col-value {
     text-align: left;
+}
+
+.col-info {
+    text-align: left;
+    font-size: 14px;
+    color: #5e6c84;
 }
 
 .col-label {

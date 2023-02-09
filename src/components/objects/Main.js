@@ -111,16 +111,20 @@ class Main {
     }
   }
 
+  renderProp() {
+    return "";
+  }
+
   updateDisplayInObject(propertyName, value) {
     const nameElt = document.querySelector(`#${propertyName}-${this._uuid}`);
     if (nameElt) {
-      nameElt.innerHTML = value;
+      //nameElt.innerHTML = value;
+      nameElt.innerHTML = this.renderProp(propertyName);
     }
   }
 
   acceptInputConnection(node) {
-    console.log(">>>", this._linksInputs.length, this._inputs);
-    if(this._linksInputs.length >= this._inputs) {
+    if (this._linksInputs.length >= this._inputs) {
       return false;
     }
 
@@ -131,7 +135,7 @@ class Main {
   }
 
   acceptOutputConnection(node) {
-    if(this._linksOutputs.length >= this._outputs) {
+    if (this._linksOutputs.length >= this._outputs) {
       return false;
     }
     if (this._acceptOutputs.includes("*")) {
