@@ -112,6 +112,7 @@ function App() {
 
     editor.on("nodeSelected", async function (id) {
       const uuid = editor.getNodeFromId(id).data.id;
+      console.log("NODE", editor.getNodeFromId(id));
       await select(uuid, dispatch);
     });
 
@@ -128,7 +129,26 @@ function App() {
     });
 
     editor.on("connectionCreated", async function (connection) {
-      console.log("Connection created");
+      console.log("Connection created", connection);
+
+      const fromNode = editor.getNodeFromId(connection.output_id);
+      const toNode = editor.getNodeFromId(connection.input_id);
+
+      const nbOutputs =
+        fromNode.outputs[connection.output_class].connections.length;
+      const nbInputs = toNode.inputs[connection.input_class].connections.length;
+
+      if (nbInputs > 1 || nbOutputs > 1) {
+        console.log("connection removed - too many connections");
+        editor.removeSingleConnection(
+          connection.output_id,
+          connection.input_id,
+          connection.output_class,
+          connection.input_class
+        );
+        return;
+      }
+
       const fromId = editor.getNodeFromId(connection.output_id).data.id;
       const toId = editor.getNodeFromId(connection.input_id).data.id;
 
@@ -152,6 +172,11 @@ function App() {
 
     editor.on("connectionRemoved", function (connection) {
       console.log("Connection removed");
+      console.log(connection);
+    });
+
+    editor.on("connectionSelected", function (connection) {
+      console.log("Connection selected");
       console.log(connection);
     });
 
