@@ -62,15 +62,14 @@ class AudioTrack extends Main {
   }
 
   renderProp(prop) {
+    const property = this.getPropertyFor(prop);
+    const label = this.getLabelFromPropertySelect(property);
+
     switch (prop) {
       case "from":
-        const device = this.getPropertyFor("from");
-        const label = this.getLabelFromPropertySelect(device);
         return label;
       case "channelCount":
-        const channel = this.getPropertyFor("channelCount");
-        const labelChannel = this.getLabelFromPropertySelect(channel);
-        return `Capture in ${labelChannel}`;
+        return `Capture in ${label}`;
       default:
         return "";
     }

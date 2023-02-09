@@ -96,14 +96,7 @@ class VideoTrack extends Main {
   }
 
   render() {
-    const device = this.getPropertyFor("from");
-    const label = this.getLabelFromPropertySelect(device);
-    const resolution = this.getPropertyFor("resolution");
-    const labelResolution = this.getLabelFromPropertySelect(resolution);
-    const framerate = this.getPropertyFor("framerate");
-    const labelFramerate = this.getLabelFromPropertySelect(framerate);
-
-    const item = `
+    return `
      <div>
         <div class="title-box">
            <i class="fas fa-${this.constructor.icon}"></i> <span id="from-${
@@ -129,7 +122,6 @@ class VideoTrack extends Main {
         </div>
       </div>
       `;
-    return item;
   }
 }
 
