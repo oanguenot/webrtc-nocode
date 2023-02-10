@@ -112,7 +112,6 @@ function App() {
 
     editor.on("nodeSelected", async function (id) {
       const uuid = editor.getNodeFromId(id).data.id;
-      console.log("NODE", editor.getNodeFromId(id));
       await select(uuid, dispatch);
     });
 

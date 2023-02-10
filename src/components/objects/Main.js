@@ -99,6 +99,9 @@ class Main {
   getLabelFromPropertySelect(property) {
     if (property) {
       const value = property.value;
+      if (!property.enum) {
+        return "";
+      }
       return property.enum.find((item) => item.value === value).label;
     }
     return "???";

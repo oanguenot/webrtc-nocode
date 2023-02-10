@@ -44,19 +44,36 @@ class PeerConnection extends Main {
     ];
   }
 
-  render() {
-    const network = this.getPropertyFor("network");
-    const label = this.getLabelFromPropertySelect(network);
+  renderProp(prop) {
+    const property = this.getPropertyFor(prop);
+    const label = this.getLabelFromPropertySelect(property);
 
+    switch (prop) {
+      case "network":
+        return property.value === "any" ? "Unforced network" : label;
+      case "name":
+        return property.value;
+      default:
+        return "";
+    }
+  }
+
+  render() {
     const item = `
       <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
+      this._uuid
+    }">${this.renderProp("name")}</span>
         </div>
         <div class="box">
-            <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="network-${this._uuid}">${label}</span>
+            <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="network-${
+              this._uuid
+            }">${this.renderProp("network")}</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">${this._info[0].value}.${this._uuid}</span>    
+                <span class="object-node object-title-box">${
+                  this._info[0].value
+                }.${this._uuid}</span>    
             </div>
         </div>
       </div>
