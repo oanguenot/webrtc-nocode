@@ -80,11 +80,16 @@ function Property({ objectId, property, dispatch }) {
             ? value || property.value
             : (value && value.value) || property.value;
 
+        const label =
+          property.type === "enum"
+            ? property.enum.find((item) => item.value === newValue).label
+            : "";
+
         await updateProperty(
           objectId,
           property.prop,
           newValue,
-          property.type === "enum" ? value.label : null,
+          property.type === "enum" ? (value && value.label) || label : null,
           dispatch
         );
         setValue(null);
