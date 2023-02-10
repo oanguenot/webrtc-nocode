@@ -14,7 +14,7 @@ class PeerConnection extends Main {
     this._inputs = 2;
     this._outputs = 3;
     this._acceptInputs = ["rtc.track"];
-    this._acceptOutputs = ["rtc.encodings", "rtc.analysis"];
+    this._acceptOutputs = ["action.encode", "rtc.analysis"];
     this._info = [
       { key: "node", value: "rtc.peer" },
       {
