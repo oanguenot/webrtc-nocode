@@ -8,16 +8,23 @@ class Turn extends Main {
 
   constructor(x, y) {
     super(x, y);
-    this._inputs = 1;
-    this._outputs = 1;
-    this._info = [{ key: "node", value: "turn" }];
-    this._acceptInputs = ["*"];
+    this._inputs = 0;
+    this._outputs = 0;
+    this._info = [
+      { key: "node", value: "rtc.turn" },
+      {
+        key: "info",
+        value: "Configure a STUN and TURN server to use for any calls",
+      },
+    ];
+    this._acceptInputs = [];
+    this._acceptOutputs = [];
     this._properties = [
       {
         prop: "name",
         label: "Name",
         type: "text",
-        value: "Turn",
+        value: "STUN & TURN",
         description: "Name of the Turn server",
       },
       {
@@ -44,15 +51,55 @@ class Turn extends Main {
     ];
   }
 
+  renderProp(prop) {
+    const property = this.getPropertyFor(prop);
+    const label = this.getLabelFromPropertySelect(property);
+
+    switch (prop) {
+      case "name":
+        return property.value;
+      case "stun":
+        return !!property.value.length ? property.value : "no STUN configured";
+      case "turn":
+        return !!property.value.length ? property.value : "no TURN configured";
+      case "token":
+        return !!property.value.length ? property.value : "no token configured";
+    }
+  }
+
   render() {
-    const item = `
+    return `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this._properties[0].value}</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
+      this._uuid
+    }">${this.renderProp("name")}</span>
+        </div>
+         <div class="box">
+            <div class="object-box-line">
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="stun-${
+              this._uuid
+            }">${this.renderProp("stun")}</span>
+            </div>
+            <div class="object-box-line">
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="turn-${
+              this._uuid
+            }">${this.renderProp("turn")}</span>
+            </div>
+            <div class="object-box-line">
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="token-${
+              this._uuid
+            }">${this.renderProp("token")}</span>
+            </div>
+             <div class="object-footer">
+                <span class="object-node object-title-box">${
+                  this._info[0].value
+                }.${this._uuid}
+                </span>    
+            </div>
         </div>
       </div>
       `;
-    return item;
   }
 }
 
