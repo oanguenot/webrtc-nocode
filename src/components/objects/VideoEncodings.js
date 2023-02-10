@@ -86,7 +86,7 @@ class VideoEncodings extends Main {
 
     switch (prop) {
       case "name":
-        return property.value;
+        return `on track ${property.value}`;
       case "preference":
         return `use ${label}`;
       case "active":
