@@ -61,7 +61,7 @@ function Properties({ dispatch }) {
   const getLinkName = (objectId) => {
     const found = appState.objects.find((object) => object.id === objectId);
     if (found) {
-      const name = `${found.getInfoValueFor("node")}-${objectId}`;
+      const name = `${found.getInfoValueFor("node")}.${objectId}`;
       return name;
     }
     return objectId;

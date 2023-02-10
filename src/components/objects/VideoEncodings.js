@@ -86,7 +86,7 @@ class VideoEncodings extends Main {
 
     switch (prop) {
       case "name":
-        return `on track ${property.value}`;
+        return property.value;
       case "preference":
         return `use ${label}`;
       case "active":
@@ -96,7 +96,7 @@ class VideoEncodings extends Main {
           ? "no rate limit"
           : `limited to ${label}`;
       case "track":
-        return property.value === "none" ? "no track" : label;
+        return property.value === "none" ? "no track" : `encode ${label}`;
     }
   }
 

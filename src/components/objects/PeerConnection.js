@@ -1,5 +1,4 @@
 import Main from "./Main";
-import { nanoid } from "nanoid";
 
 import "./Main.css";
 
