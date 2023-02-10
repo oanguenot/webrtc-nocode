@@ -25,19 +25,6 @@ class Goto extends Main {
     ];
   }
 
-  addStep(value, label) {
-    const prop = this._properties.find((property) => property.prop === "next");
-    const existingSteps = prop.enum;
-    const found = existingSteps.find((step) => [value].includes(step.value));
-    if (!found) {
-      existingSteps.push({ label, value });
-    }
-  }
-
-  addSteps(steps) {
-    steps.forEach((step) => this.addStep(step.value, step.label));
-  }
-
   updateStep(value, label) {
     const prop = this._properties.find((property) => property.prop === "next");
     const existingSteps = prop.enum;

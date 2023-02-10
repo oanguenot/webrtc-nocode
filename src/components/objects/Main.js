@@ -170,6 +170,23 @@ class Main {
     }
   }
 
+  addNewOptionToSelect(value, label, propertyName) {
+    const prop = this._properties.find(
+      (property) => property.prop === propertyName
+    );
+    const existingSteps = prop.enum;
+    const found = existingSteps.find((step) => [value].includes(step.value));
+    if (!found) {
+      existingSteps.push({ label, value });
+    }
+  }
+
+  addMultipleOptionsToSelect(options, propertyName) {
+    options.forEach((option) =>
+      this.addNewOptionToSelect(option.value, option.label, propertyName)
+    );
+  }
+
   render() {
     return "";
   }

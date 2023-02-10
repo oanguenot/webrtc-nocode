@@ -52,21 +52,36 @@ const appReducer = (state = initialAppState, action) => {
       const node = object.getInfoValueFor("node");
       if (node.includes("rtc.track")) {
         object.addDevices(state.devices);
+        const encodes = filterObjectsWithNode(
+          "action.encode",
+          state.objects
+        ).forEach((obj) => {
+          obj.addNewOptionToSelect(object.id, object.id, "track");
+        });
       } else if (node.includes("step")) {
         filterObjectsWithNode("goto", state.objects).forEach((obj) => {
-          obj.addStep(
-            object.getInfoValueFor("uuid"),
-            object.getPropertyValueFor("name")
+          obj.addNewOptionToSelect(
+            object.id,
+            object.getPropertyValueFor("name"),
+            "next"
           );
         });
       } else if (node.includes("goto")) {
         const steps = filterObjectsWithNode("step", state.objects).map(
           (obj) => ({
-            value: obj.getInfoValueFor("uuid"),
+            value: obj.id,
             label: obj.getPropertyValueFor("name"),
           })
         );
-        object.addSteps(steps);
+        object.addMultipleOptionsToSelect(steps, "next");
+      } else if (node.includes("action.encode")) {
+        const tracks = filterObjectsWithNode("rtc.track", state.objects).map(
+          (obj) => ({
+            value: obj.id,
+            label: obj.id,
+          })
+        );
+        object.addMultipleOptionsToSelect(tracks, "track");
       }
       return {
         ...state,
