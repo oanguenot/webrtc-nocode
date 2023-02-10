@@ -101,7 +101,7 @@ class AudioEncodings extends Main {
   }
 
   render() {
-    const item = `
+    return `
       <div>
         <div class="title-box">
           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
@@ -133,12 +133,11 @@ class AudioEncodings extends Main {
                 <span class="object-node object-title-box">${
                   this._info[0].value
                 }.${this._uuid}
-                }</span>    
+                </span>    
             </div>
         </div>
       </div>
       `;
-    return item;
   }
 }
 

@@ -298,7 +298,7 @@ function App() {
   };
 
   const renderProductHome = () => (
-    <CustomProductHome href="#" siteTitle="WebRTC NoCode" />
+    <CustomProductHome href="#" siteTitle="WebRTC Playground" />
   );
 
   const RunButton = () => (
@@ -313,7 +313,7 @@ function App() {
   return (
     <AppContext.Provider value={appState}>
       <AtlassianNavigation
-        label="WebRTC NoCode"
+        label="WebRTC Playground"
         primaryItems={[
           <PrimaryButton onClick={() => onZoomIn()}>+</PrimaryButton>,
           <PrimaryButton onClick={() => onZoomOut()}>-</PrimaryButton>,
