@@ -306,16 +306,6 @@ function App() {
     <CustomProductHome href="#" siteTitle="WebRTC Playground" />
   );
 
-  const RunButton = () => (
-    <Create
-      buttonTooltip="Run Scenario"
-      iconButtonTooltip="Run Scenario"
-      text="Run"
-      href="#"
-      onClick={() => onRunPlayground()}
-    />
-  );
-
   return (
     <AppContext.Provider value={appState}>
       <AtlassianNavigation
@@ -327,9 +317,9 @@ function App() {
           <PrimaryButton>Import</PrimaryButton>,
           <PrimaryButton>Export</PrimaryButton>,
           <PrimaryButton onClick={() => onClear()}>Reset</PrimaryButton>,
+          <PrimaryButton onClick={() => onRunPlayground()}>Run</PrimaryButton>,
         ]}
         renderProductHome={renderProductHome}
-        renderCreate={RunButton}
       />
       <div className="global">
         <div className="wrapper">
@@ -357,6 +347,7 @@ function App() {
               <Properties dispatch={dispatch} />
             </div>
             <Supervisor dispatch={dispatch} />
+            <div id="frames"></div>
           </div>
         </div>
       </div>

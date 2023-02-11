@@ -186,7 +186,7 @@ const appReducer = (state = initialAppState, action) => {
       };
     }
     default:
-      break;
+      return state;
   }
 };
 
