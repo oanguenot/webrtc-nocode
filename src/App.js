@@ -25,6 +25,7 @@ import {
   PrimaryButton,
   ProductHome,
 } from "@atlaskit/atlassian-navigation";
+import {run} from "./actions/playgroundActions";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -265,6 +266,10 @@ function App() {
     editor.clearModuleSelected();
   };
 
+  const onRunPlayground = () => {
+    run(appState.objects, dispatch);
+  }
+
   const onLock = () => {
     editor.editor_mode = "fixed";
     changeMode("lock");
@@ -307,6 +312,7 @@ function App() {
       iconButtonTooltip="Run Scenario"
       text="Run"
       href="#"
+      onClick={() => onRunPlayground()}
     />
   );
 
