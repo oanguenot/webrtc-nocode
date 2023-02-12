@@ -54,7 +54,7 @@ class AudioTrack extends Main {
         if (!found) {
           existingDevices.push({
             label: mediaDevice.label,
-            value: mediaDevice.label,
+            value: mediaDevice.deviceId,
           });
         }
       }
