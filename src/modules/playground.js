@@ -1,3 +1,5 @@
+import {getDimensionFromResolution} from "./helper";
+
 const frames = {};
 
 const createIFrame = (peerNode) => {
@@ -31,7 +33,6 @@ const createMedia = (peerNode, nodes) => {
       const constraints = {audio: false, video: false};
 
       peerNode.linksInput.forEach(inputId => {
-
         let input = nodes.find(node => node.id === inputId);
         if(input) {
           const kind = input.getInfoValueFor('kind');
@@ -42,11 +43,21 @@ const createMedia = (peerNode, nodes) => {
               channelCount,
               deviceId
             }
+          } else {
+            const framerate = input.getPropertyValueFor("framerate");
+            const resolution = input.getPropertyValueFor("resolution");
+            const dimension = getDimensionFromResolution(resolution);
+            constraints.video = {
+              framerate,
+              deviceId,
+              width: dimension.width,
+              height: dimension.height
+            }
           }
         }
       });
-      console.log(">>>With constraints", constraints);
       const stream = await win.navigator.mediaDevices.getUserMedia(constraints);
+      win.document.querySelector("#localVideo").srcObject = stream;
       resolve(stream);
     } catch(err) {
       console.log(">>>Reject", err);

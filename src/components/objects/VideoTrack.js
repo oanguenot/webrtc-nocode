@@ -52,7 +52,6 @@ class VideoTrack extends Main {
           { label: "480p", value: "480p" },
           { label: "HD", value: "720p" },
           { label: "Full HD", value: "1080p" },
-          { label: "2K", value: "2k" },
           { label: "4K", value: "4k" },
         ],
         value: "720p",
@@ -72,7 +71,7 @@ class VideoTrack extends Main {
         if (!found) {
           existingDevices.push({
             label: mediaDevice.label,
-            value: mediaDevice.label,
+            value: mediaDevice.deviceId,
           });
         }
       }
