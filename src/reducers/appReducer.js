@@ -82,6 +82,21 @@ const appReducer = (state = initialAppState, action) => {
           })
         );
         object.addMultipleOptionsToSelect(tracks, "track");
+      } else if (node.includes("rtc.peer")) {
+        const peers = filterObjectsWithNode(
+          "event.ready",
+          state.objects
+        ).forEach((obj) => {
+          obj.addNewOptionToSelect(object.id, object.id, "peer");
+        });
+      } else if (node.includes("event.ready")) {
+        const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
+          (obj) => ({
+            value: obj.id,
+            label: obj.id,
+          })
+        );
+        object.addMultipleOptionsToSelect(peers, "peer");
       }
       return {
         ...state,

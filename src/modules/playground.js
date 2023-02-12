@@ -16,9 +16,7 @@ const createIFrame = (peerNode) => {
 }
 
 const addDefaultMediaInIFrame = (win, kind, id) => {
-  console.log("<ww", win);
   const localElt = win.document.querySelector("#local");
-  console.log(">>>", localElt);
   const elt = win.document.createElement(kind);
   elt.setAttribute("id", `local-${id}`);
   elt.setAttribute("width", "64");
@@ -30,12 +28,15 @@ const addDefaultMediaInIFrame = (win, kind, id) => {
 }
 
 
-const createPeerConnection = (peerNode) => {
+const createPeerConnection = (peerNode, stream) => {
   return new Promise((resolve, reject) => {
     const win = frames[peerNode.id];
 
     if(win) {
       const pc = new win.RTCPeerConnection();
+      stream.getTracks().forEach(track => {
+        pc.addTrack(track);
+      });
     }
     resolve();
   });
@@ -96,8 +97,8 @@ export const execute = (nodes) => {
       const win = await createIFrame(peer);
       // Store iframe window context associated to a peer connection
       frames[peer.id] = win;
-      await createPeerConnection(peer);
       const stream = await createMedia(peer, nodes);
+      await createPeerConnection(peer, stream);
     }
     resolve();
   });

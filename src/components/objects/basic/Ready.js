@@ -35,6 +35,14 @@ class Ready extends Main {
         value: "none",
         description: "Name of the Step",
       },
+      {
+        prop: "peer",
+        label: "Peer",
+        type: "enum",
+        enum: [{ label: "None", value: "none" }],
+        value: "none",
+        description: "Choose the RTCPeerConnection to execute an action",
+      },
     ];
     this._acceptOutputs = ["action.*"];
     this._acceptInputs = [];
