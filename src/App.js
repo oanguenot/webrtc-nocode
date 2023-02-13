@@ -210,6 +210,7 @@ function App() {
       return false;
     }
 
+    console.log(">>> name", name);
     const { x, y } = getInitialPosition(editor, posX, posY);
 
     const component = build(name, x, y);
@@ -233,6 +234,7 @@ function App() {
           mobile_last_move.touches[0].clientY
         )
         .closest("#drawflow");
+      console.log(">>> onDrop", mobile_item_selec);
       if (parentdrawflow != null) {
         addNodeToDrawFlow(
           mobile_item_selec,
@@ -244,7 +246,9 @@ function App() {
     } else {
       event.preventDefault();
 
+      console.log(">>> datatransfer", event.dataTransfer);
       var data = event.dataTransfer.getData("node");
+      console.log(">>> got data", data);
       addNodeToDrawFlow(data, event.clientX, event.clientY);
     }
   };
