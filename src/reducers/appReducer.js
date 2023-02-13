@@ -135,14 +135,15 @@ const appReducer = (state = initialAppState, action) => {
         state.objects
       );
 
-      // Update related object (step --> goto)
+      // Update all goto nodes when step name changed
       const object = objects.find((object) => object.id === objectId);
       if (object.getInfoValueFor("node") === "step") {
         const relatedGoto = filterObjectsWithNode("goto", objects);
         relatedGoto.forEach((obj) =>
-          obj.updateLabelInSelect(object.getInfoValueFor("uuid"), value, "step")
+          obj.updateLabelInSelect(object.id, value, "step")
         );
       }
+      // Update all ready nodes when peer name changed
       if (object.getInfoValueFor("node") === "rtc.peer") {
         const relatedReady = filterObjectsWithNode("event.ready", objects);
         relatedReady.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer")
