@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/webrtc-nocode/static/css/main.1d81c537.css",
+    "main.js": "/webrtc-nocode/static/js/main.19230a29.js",
+    "static/js/496.4b99d8ae.chunk.js": "/webrtc-nocode/static/js/496.4b99d8ae.chunk.js",
+    "index.html": "/webrtc-nocode/index.html",
+    "main.1d81c537.css.map": "/webrtc-nocode/static/css/main.1d81c537.css.map",
+    "main.19230a29.js.map": "/webrtc-nocode/static/js/main.19230a29.js.map",
+    "496.4b99d8ae.chunk.js.map": "/webrtc-nocode/static/js/496.4b99d8ae.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.1d81c537.css",
+    "static/js/main.19230a29.js"
+  ]
+}
