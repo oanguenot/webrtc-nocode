@@ -25,19 +25,6 @@ class Goto extends Main {
     ];
   }
 
-  updateStep(value, label) {
-    const prop = this._properties.find((property) => property.prop === "next");
-    const existingSteps = prop.enum;
-    existingSteps.forEach((step) => {
-      if (step.value === value) {
-        step.label = label;
-      }
-    });
-    if (prop.value === value) {
-      this.updateDisplayInObject("next", label);
-    }
-  }
-
   render() {
     const next = this.getPropertyFor("next");
     const label = this.getLabelFromPropertySelect(next);

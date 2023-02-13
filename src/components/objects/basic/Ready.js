@@ -59,6 +59,12 @@ class Ready extends Main {
         }
         return `after ${label}`;
       }
+      case "peer": {
+        if(property.value === "none") {
+          return "No peer";
+        }
+        return this.getLabelFromPropertySelect(property);
+      }
       default:
         return "";
     }
@@ -74,10 +80,16 @@ class Ready extends Main {
         </div>
         <div class="box">
             <div class="object-box-line">
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="peer-${
+      this._uuid
+    }">${this.renderProp("peer")}</span>
+          </div>
+            <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="delay-${
               this._uuid
             }">${this.renderProp("delay")}</span>
             </div>
+            
              <div class="object-footer">
                 <span class="object-node object-title-box">${
                   this._info[0].value

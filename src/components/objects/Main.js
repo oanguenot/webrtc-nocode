@@ -121,10 +121,9 @@ class Main {
     return "";
   }
 
-  updateDisplayInObject(propertyName, value) {
+  updateDisplayInObject(propertyName) {
     const nameElt = document.querySelector(`#${propertyName}-${this._uuid}`);
     if (nameElt) {
-      //nameElt.innerHTML = value;
       nameElt.innerHTML = this.renderProp(propertyName);
     }
   }
@@ -185,6 +184,19 @@ class Main {
     options.forEach((option) =>
       this.addNewOptionToSelect(option.value, option.label, propertyName)
     );
+  }
+
+  updateLabelInSelect(value, label, propertyName) {
+    const prop = this._properties.find((property) => property.prop === propertyName);
+    const existingSteps = prop.enum;
+    existingSteps.forEach((step) => {
+      if (step.value === value) {
+        step.label = label;
+      }
+    });
+    if (prop.value === value) {
+      this.updateDisplayInObject(propertyName, label);
+    }
   }
 
   render() {

@@ -93,7 +93,7 @@ const appReducer = (state = initialAppState, action) => {
         const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
           (obj) => ({
             value: obj.id,
-            label: obj.id,
+            label: obj.getPropertyValueFor("name"),
           })
         );
         object.addMultipleOptionsToSelect(peers, "peer");
@@ -140,8 +140,13 @@ const appReducer = (state = initialAppState, action) => {
       if (object.getInfoValueFor("node") === "step") {
         const relatedGoto = filterObjectsWithNode("goto", objects);
         relatedGoto.forEach((obj) =>
-          obj.updateStep(object.getInfoValueFor("uuid"), value)
+          obj.updateLabelInSelect(object.getInfoValueFor("uuid"), value, "step")
         );
+      }
+      if (object.getInfoValueFor("node") === "rtc.peer") {
+        const relatedReady = filterObjectsWithNode("event.ready", objects);
+        relatedReady.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer")
+        )
       }
 
       return {
