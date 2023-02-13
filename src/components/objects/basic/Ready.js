@@ -50,6 +50,7 @@ class Ready extends Main {
 
   renderProp(prop) {
     const property = this.getPropertyFor(prop);
+    const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
       case "delay": {
@@ -63,7 +64,7 @@ class Ready extends Main {
         if(property.value === "none") {
           return "No peer";
         }
-        return this.getLabelFromPropertySelect(property);
+        return label;
       }
       default:
         return "";

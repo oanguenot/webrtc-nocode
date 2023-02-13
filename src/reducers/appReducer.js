@@ -83,12 +83,22 @@ const appReducer = (state = initialAppState, action) => {
         );
         object.addMultipleOptionsToSelect(tracks, "track");
       } else if (node.includes("rtc.peer")) {
-        const peers = filterObjectsWithNode(
+        // Add peer to all ready
+        filterObjectsWithNode(
           "event.ready",
           state.objects
         ).forEach((obj) => {
           obj.addNewOptionToSelect(object.id, object.id, "peer");
         });
+
+        // Add peer to all call
+        filterObjectsWithNode(
+          "action.p2p",
+          state.objects
+        ).forEach((obj) => {
+          obj.addNewOptionToSelect(object.id, object.id, "peer");
+        });
+
       } else if (node.includes("event.ready")) {
         const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
           (obj) => ({
@@ -97,7 +107,16 @@ const appReducer = (state = initialAppState, action) => {
           })
         );
         object.addMultipleOptionsToSelect(peers, "peer");
+      } else if (node.includes("action.p2p")) {
+        const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
+          (obj) => ({
+            value: obj.id,
+            label: obj.getPropertyValueFor("name"),
+          })
+        );
+        object.addMultipleOptionsToSelect(peers, "peer");
       }
+
       return {
         ...state,
         lastAdded: object,
@@ -143,9 +162,15 @@ const appReducer = (state = initialAppState, action) => {
           obj.updateLabelInSelect(object.id, value, "step")
         );
       }
-      // Update all ready nodes when peer name changed
+
       if (object.getInfoValueFor("node") === "rtc.peer") {
+        // Update all ready nodes when peer name changed
         const relatedReady = filterObjectsWithNode("event.ready", objects);
+        relatedReady.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer")
+        )
+
+        // Update all callP2P nodes when peer name changed
+        const relatedP2P = filterObjectsWithNode("action.p2p", objects);
         relatedReady.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer")
         )
       }

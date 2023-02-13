@@ -3,7 +3,7 @@ import VideoTrack from "../components/objects/VideoTrack";
 import PeerConnection from "../components/objects/PeerConnection";
 import Turn from "../components/objects/Turn";
 import VideoEncodings from "../components/objects/VideoEncodings";
-import Sig from "../components/objects/Sig";
+import CallP2P from "../components/objects/CallP2P";
 import WebRTCMetrics from "../components/objects/WebRTCMetrics";
 import Ready from "../components/objects/basic/Ready";
 import End from "../components/objects/basic/End";
@@ -24,7 +24,7 @@ const ObjectBuilder = {
   AudioEncodings,
   VideoEncodings,
   WebRTCMetrics,
-  Sig,
+  CallP2P,
   End,
 };
 
