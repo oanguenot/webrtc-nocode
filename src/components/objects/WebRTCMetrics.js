@@ -5,6 +5,7 @@ class WebRTCMetrics extends Main {
   static description = "Analyze call metrics";
   static icon = "ruler";
   static section = "builtin";
+  static name = "WebRTCMetrics";
 
   constructor(x, y) {
     super(x, y);

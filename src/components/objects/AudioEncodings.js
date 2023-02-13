@@ -5,6 +5,7 @@ class AudioEncodings extends Main {
   static description = "Select the encodings parameters";
   static icon = "shapes";
   static section = "builtin";
+  static name = "AudioEncodings";
 
   constructor(x, y) {
     super(x, y);

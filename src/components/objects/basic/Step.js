@@ -6,6 +6,7 @@ class Step extends Main {
   static description = "Define a new step";
   static icon = "hashtag";
   static section = "basic";
+  static name = "Step";
 
   constructor(x, y) {
     super(x, y);

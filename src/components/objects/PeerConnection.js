@@ -7,6 +7,7 @@ class PeerConnection extends Main {
   static description = "Create a new peer connection";
   static icon = "portrait";
   static section = "builtin";
+  static name = "PeerConnection";
 
   constructor(x, y) {
     super(x, y);

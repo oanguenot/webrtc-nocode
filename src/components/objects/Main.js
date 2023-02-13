@@ -8,6 +8,7 @@ class Main {
   static description = "a description"; // Used in the menu
   static icon = "an icon"; // Used in the menu
   static section = "section"; // Can be Basic, BuiltIn, External
+  static name = "Main";
 
   constructor(posX = 0, posY = 0) {
     this._inputs = 1;

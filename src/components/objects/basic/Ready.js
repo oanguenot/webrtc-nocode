@@ -5,6 +5,7 @@ class Ready extends Main {
   static description = "Handle playground ready";
   static icon = "bolt";
   static section = "basic";
+  static name = "Ready";
 
   constructor(x, y) {
     super(x, y);

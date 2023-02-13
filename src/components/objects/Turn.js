@@ -5,6 +5,7 @@ class Turn extends Main {
   static description = "Connect using a Turn Server";
   static icon = "bezier-curve";
   static section = "builtin";
+  static name = "Turn";
 
   constructor(x, y) {
     super(x, y);

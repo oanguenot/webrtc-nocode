@@ -5,6 +5,7 @@ class Waiting extends Main {
   static description = "Wait a period before executing the next node";
   static icon = "stopwatch";
   static section = "basic";
+  static name = "Waiting";
 
   constructor(x, y) {
     super(x, y);

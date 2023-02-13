@@ -5,6 +5,7 @@ class CallP2P extends Main {
   static description = "Call P2P";
   static icon = "phone-volume";
   static section = "builtin";
+  static name = "CallP2P";
 
   constructor(x, y) {
     super(x, y);

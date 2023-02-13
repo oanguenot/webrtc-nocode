@@ -5,6 +5,7 @@ class AudioTrack extends Main {
   static description = "Add an audio source from a microphone";
   static icon = "microphone";
   static section = "builtin";
+  static name = "AudioTrack";
 
   constructor(x, y) {
     super(x, y);

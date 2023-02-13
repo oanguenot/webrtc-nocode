@@ -5,6 +5,7 @@ class Goto extends Main {
   static description = "Route to a new step";
   static icon = "level-down-alt";
   static section = "basic";
+  static name = "Goto";
 
   constructor(x, y) {
     super(x, y);

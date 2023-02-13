@@ -5,6 +5,7 @@ class VideoTrack extends Main {
   static description = "Add a video source from a webcam";
   static icon = "video";
   static section = "builtin";
+  static name = "VideoTrack";
 
   constructor(x, y) {
     super(x, y);

@@ -13,19 +13,19 @@ import AudioEncodings from "../components/objects/AudioEncodings";
 import Waiting from "../components/objects/basic/Waiting";
 
 const ObjectBuilder = {
-  Ready,
-  Step,
-  Goto,
-  Waiting,
-  PeerConnection,
-  AudioTrack,
-  VideoTrack,
-  Turn,
-  AudioEncodings,
-  VideoEncodings,
-  WebRTCMetrics,
-  CallP2P,
-  End,
+  "Ready": Ready,
+  "Step":Step,
+  "Goto": Goto,
+  "Waiting": Waiting,
+  "PeerConnection": PeerConnection,
+  "AudioTrack": AudioTrack,
+  "VideoTrack": VideoTrack,
+  "Turn": Turn,
+  "AudioEncodings": AudioEncodings,
+  "VideoEncodings": VideoEncodings,
+  "WebRTCMetrics": WebRTCMetrics,
+  "CallP2P": CallP2P,
+  "End": End,
 };
 
 const getClassFromName = (name) => {
