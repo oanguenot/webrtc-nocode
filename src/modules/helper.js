@@ -10,3 +10,13 @@ export const getDimensionFromResolution = (resolution)  =>{
       return {width: {ideal: 3840}, height: {ideal: 2160}};
   }
 }
+
+export const includes = (nodeName, list) => {
+  let found = false;
+  list.forEach(item => {
+    if(item === nodeName || nodeName.includes(item)) {
+      found = true;
+    }
+  });
+  return found;
+}

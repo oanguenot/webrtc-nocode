@@ -1,4 +1,5 @@
 import { customAlphabet } from "nanoid";
+import {includes} from "../../modules/helper";
 
 const CUSTOM_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 6);
@@ -129,25 +130,27 @@ class Main {
     }
   }
 
-  acceptInputConnection(node) {
+  acceptInputConnection(nodeName) {
     if (this._linksInputs.length >= this._inputs) {
       return false;
     }
-
     if (this._acceptInputs.includes("*")) {
       return true;
     }
-    return this._acceptInputs.includes(node);
+
+    const accepts = this._acceptInputs.map(acceptName => acceptName.replace(/.\*$/, ''));
+    return includes(nodeName, accepts);
   }
 
-  acceptOutputConnection(node) {
+  acceptOutputConnection(nodeName) {
     if (this._linksOutputs.length >= this._outputs) {
       return false;
     }
     if (this._acceptOutputs.includes("*")) {
       return true;
     }
-    return this._acceptOutputs.includes(node);
+    const accepts = this._acceptOutputs.map(acceptName => acceptName.replace(/.\*$/, ''));
+    return includes(nodeName, accepts);
   }
 
   addInputLink(nodeId) {
