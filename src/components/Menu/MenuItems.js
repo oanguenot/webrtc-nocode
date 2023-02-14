@@ -3,19 +3,16 @@ import MenuItem from "./MenuItem";
 import "./MenuItems.css";
 
 function MenuItems({ items, onDrag }) {
-  const basics = items.filter((item) => item.section === "basic");
-  const builtIn = items.filter((item) => item.section === "builtin");
-  const external = items.filter((item) => item.section === "external");
+  const builtin = items.filter((item) => item.section === "builtin");
+  const events = items.filter((item) => item.section === "events");
+  const actions = items.filter((item) => item.section === "actions");
 
   return (
     <MenuGroup>
       {[
-        { list: basics, label: "Basic Nodes" },
-        { list: builtIn, label: "Built-in Nodes" },
-        {
-          list: external,
-          label: "External Nodes",
-        },
+        { list: builtin, label: "Built-in Nodes" },
+        { list: events, label: "Events" },
+        { list: actions, label: "Actions"},
       ].map(({ list, label }, keySection) => (
         <Section key={keySection} title={label}>
           {list.length > 0 &&

@@ -1,10 +1,10 @@
-import Main from "./Main";
+import Main from "../Main";
 
 class WebRTCMetrics extends Main {
   static item = "WebRTC Metrics";
   static description = "Analyze call metrics";
   static icon = "ruler";
-  static section = "builtin";
+  static section = "actions";
   static name = "WebRTCMetrics";
 
   constructor(x, y) {
@@ -12,7 +12,7 @@ class WebRTCMetrics extends Main {
     this._inputs = 1;
     this._outputs = 0;
     this._info = [
-      { key: "node", value: "rtc.analysis" },
+      { key: "node", value: "action.analysis" },
       {
         key: "info",
         value:

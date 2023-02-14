@@ -4,7 +4,7 @@ class Goto extends Main {
   static item = "Goto";
   static description = "Route to a new step";
   static icon = "level-down-alt";
-  static section = "basic";
+  static section = "events";
   static name = "Goto";
 
   constructor(x, y) {

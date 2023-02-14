@@ -1,21 +1,21 @@
-import AudioTrack from "../components/objects/AudioTrack";
-import VideoTrack from "../components/objects/VideoTrack";
-import PeerConnection from "../components/objects/PeerConnection";
-import Turn from "../components/objects/Turn";
-import VideoEncodings from "../components/objects/VideoEncodings";
-import CallP2P from "../components/objects/CallP2P";
-import WebRTCMetrics from "../components/objects/WebRTCMetrics";
-import Ready from "../components/objects/basic/Ready";
-import End from "../components/objects/basic/End";
-import Step from "../components/objects/basic/Step";
-import Goto from "../components/objects/basic/Goto";
-import AudioEncodings from "../components/objects/AudioEncodings";
-import Waiting from "../components/objects/basic/Waiting";
+import AudioTrack from "../components/objects/builtin/AudioTrack";
+import VideoTrack from "../components/objects/builtin/VideoTrack";
+import PeerConnection from "../components/objects/builtin/PeerConnection";
+import Turn from "../components/objects/builtin/Turn";
+import VideoEncodings from "../components/objects/actions/VideoEncodings";
+import CallP2P from "../components/objects/actions/CallP2P";
+import WebRTCMetrics from "../components/objects/actions/WebRTCMetrics";
+import Ready from "../components/objects/events/Ready";
+import End from "../components/objects/events/End";
+import Step from "../components/objects/events/Step";
+import Goto from "../components/objects/events/Goto";
+import AudioEncodings from "../components/objects/actions/AudioEncodings";
+import Waiting from "../components/objects/actions/Waiting";
 
 const ObjectBuilder = {
   "Ready": Ready,
-  "Step":Step,
-  "Goto": Goto,
+  //"Step":Step,
+  //"Goto": Goto,
   "Waiting": Waiting,
   "PeerConnection": PeerConnection,
   "AudioTrack": AudioTrack,

@@ -4,7 +4,7 @@ class Waiting extends Main {
   static item = "Waiting";
   static description = "Wait a period before executing the next node";
   static icon = "stopwatch";
-  static section = "basic";
+  static section = "actions";
   static name = "Waiting";
 
   constructor(x, y) {
@@ -13,7 +13,7 @@ class Waiting extends Main {
     this._outputs = 1;
     this._acceptInputs = ["*"];
     this._acceptOutputs = ["*"];
-    this._info = [{ key: "node", value: "waiting" }];
+    this._info = [{ key: "node", value: "action.waiting" }];
     this._properties = [
       {
         prop: "period",

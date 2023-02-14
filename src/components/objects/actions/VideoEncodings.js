@@ -1,11 +1,11 @@
-import Main from "./Main";
+import Main from "../Main";
 
-class AudioEncodings extends Main {
-  static item = "Audio Encodings";
+class VideoEncodings extends Main {
+  static item = "Video Encodings";
   static description = "Select the encodings parameters";
   static icon = "shapes";
-  static section = "builtin";
-  static name = "AudioEncodings";
+  static section = "actions";
+  static name = "VideoEncodings";
 
   constructor(x, y) {
     super(x, y);
@@ -13,7 +13,7 @@ class AudioEncodings extends Main {
     this._outputs = 1;
     this._info = [
       { key: "node", value: "action.encode" },
-      { key: "kind", value: "audio" },
+      { key: "kind", value: "video" },
       {
         key: "info",
         value:
@@ -27,7 +27,7 @@ class AudioEncodings extends Main {
         prop: "name",
         label: "Name",
         type: "text",
-        value: "Audio Encode",
+        value: "Video Encode",
         description: "Name of the Encodings",
       },
       {
@@ -35,10 +35,12 @@ class AudioEncodings extends Main {
         label: "Codec Preferences",
         type: "enum",
         enum: [
-          { label: "Opus", value: "opus" },
-          { label: "G711", value: "g711" },
+          { label: "VP8", value: "vp8" },
+          { label: "VP9", value: "vp9" },
+          { label: "H264", value: "h264" },
+          { label: "AV1", value: "AV1" },
         ],
-        value: "opus",
+        value: "vp8",
         description: "Choose the preferred codec to use",
       },
       {
@@ -58,14 +60,12 @@ class AudioEncodings extends Main {
         type: "enum",
         enum: [
           { label: "Unlimited", value: "unlimited" },
-          { label: "512 Kbps", value: 5120000 },
-          { label: "256 Kbps", value: 2560000 },
-          { label: "128 Kbps", value: 1280000 },
-          { label: "96 Kbps", value: 96000 },
-          { label: "64 Kbps", value: 640000 },
-          { label: "48 Kbps", value: 480000 },
-          { label: "32 Kbps", value: 320000 },
-          { label: "16 Kbps", value: 160000 },
+          { label: "2 Mbps", value: 2000000 },
+          { label: "1,5 Mbps", value: 1500000 },
+          { label: "1 Mbps", value: 1000000 },
+          { label: "500 Kbps", value: 500000 },
+          { label: "250 Kbps", value: 250000 },
+          { label: "100 Kbps", value: 100000 },
         ],
         value: "unlimited",
         description: "Choose the maximum bitrate to use",
@@ -142,4 +142,4 @@ class AudioEncodings extends Main {
   }
 }
 
-export default AudioEncodings;
+export default VideoEncodings;

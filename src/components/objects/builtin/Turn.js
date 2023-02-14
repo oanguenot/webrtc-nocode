@@ -1,4 +1,4 @@
-import Main from "./Main";
+import Main from "../Main";
 
 class Turn extends Main {
   static item = "Turn Server";

@@ -5,7 +5,7 @@ class Step extends Main {
   static item = "Step";
   static description = "Define a new step";
   static icon = "hashtag";
-  static section = "basic";
+  static section = "events";
   static name = "Step";
 
   constructor(x, y) {

@@ -1,4 +1,4 @@
-import Main from "./Main";
+import Main from "../Main";
 
 class AudioTrack extends Main {
   static item = "Audio Track";

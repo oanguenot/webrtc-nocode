@@ -1,10 +1,10 @@
-import Main from "./Main";
+import Main from "../Main";
 
 class CallP2P extends Main {
   static item = "CallP2P";
   static description = "Call P2P";
   static icon = "phone-volume";
-  static section = "builtin";
+  static section = "actions";
   static name = "CallP2P";
 
   constructor(x, y) {
@@ -25,7 +25,7 @@ class CallP2P extends Main {
         prop: "name",
         label: "Name",
         type: "text",
-        value: "Connect Direct",
+        value: "Call P2P",
         description: "Action/Name",
       },
       {
@@ -64,9 +64,9 @@ class CallP2P extends Main {
         return property.value;
       case "peer":
         if(property.value === "none") {
-          return "No peer";
+          return "No recipient";
         }
-        return label;
+        return `To ${label}`;
       default:
         return "";
     }

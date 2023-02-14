@@ -4,7 +4,7 @@ class Ready extends Main {
   static item = "Ready";
   static description = "Handle playground ready";
   static icon = "bolt";
-  static section = "basic";
+  static section = "events";
   static name = "Ready";
 
   constructor(x, y) {
