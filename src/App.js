@@ -24,6 +24,7 @@ import {
 } from "@atlaskit/atlassian-navigation";
 import {run} from "./actions/playgroundActions";
 import {saveAs} from "file-saver";
+import {nanoid} from "nanoid";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -291,17 +292,36 @@ function App() {
   };
 
   const onExport = () => {
-    const exportedData = editor.export();
-    const blob = new Blob([JSON.stringify(exportedData)], { type: "text/plain;charset=utf-8" });
-    saveAs(blob, `test_playground.txt`);
+    // Export Nodes
+    const JSON_exportedNodes = editor.export();
+
+    // Export data Model
+    const JSON_exportedModel = appState.objects;
+
+    // Create exported data
+    const exported = {
+      nodes: JSON_exportedNodes,
+      objects: JSON_exportedModel,
+    }
+
+    const blob = new Blob([JSON.stringify(exported)], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, `playground_${nanoid(6)}.txt`);
   }
 
   const onImport = async () => {
     const [fileHandle] = await window.showOpenFilePicker();
     const file = await fileHandle.getFile();
     const contents = await file.text();
-    const importedData = JSON.parse(contents);
-    editor.import(importedData);
+    const imported = JSON.parse(contents);
+
+    if(imported.nodes) {
+      editor.import(imported.nodes);
+    }
+
+    if(imported.objects) {
+
+    }
+
   }
 
   const changeMode = (option) => {

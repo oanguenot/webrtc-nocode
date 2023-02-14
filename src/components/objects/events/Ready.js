@@ -95,8 +95,8 @@ class Ready extends Main {
             
              <div class="object-footer">
                 <span class="object-node object-title-box">${
-                  this._info[0].value
-                }</span>    
+      this._info[0].value
+    }.${this._uuid}</span>    
             </div>
         </div>
       </div>

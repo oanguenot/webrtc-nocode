@@ -1,6 +1,7 @@
 import { OBJECT_ACTIONS } from "../actions/objectActions";
 import { SUPERVISOR_ACTIONS } from "../actions/supervisonActions";
 import {getNodeById, getNodeIndexById} from "../modules/helper";
+import {PLAYGROUND_ACTIONS} from "../actions/playgroundActions";
 
 export const STATE = {
   NOT_INITIALIZED: "NOT_INITIALIZED",
@@ -225,6 +226,12 @@ const appReducer = (state = initialAppState, action) => {
         devices: action.payload.devices,
         state: STATE.READY,
       };
+    }
+    case PLAYGROUND_ACTIONS.PLAYGROUND_LOAD_SUCCESS: {
+      return {
+        ...initialAppState,
+        objects: action.payload.objects,
+      }
     }
     default:
       return state;

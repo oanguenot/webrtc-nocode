@@ -3,7 +3,8 @@ import {execute} from "../modules/playground";
 export const PLAYGROUND_ACTIONS = {
   PLAYGROUND_RUN_IN_PROGRESS: "PLAYGROUND_RUN_IN_PROGRESS",
   PLAYGROUND_RUN_SUCCESS: "PLAYGROUND_RUN_SUCCESS",
-  PLAYGROUND_RUN_FAILED: "PLAYGROUND_RUN_FAILED"
+  PLAYGROUND_RUN_FAILED: "PLAYGROUND_RUN_FAILED",
+  PLAYGROUND_LOAD_SUCCESS: "PLAYGROUND_LOAD_SUCCESS"
 };
 
 export const run = (nodes, dispatch) => {
@@ -22,5 +23,12 @@ export const run = (nodes, dispatch) => {
       type: PLAYGROUND_ACTIONS.PLAYGROUND_RUN_FAILED,
       payload: {},
     });
+  });
+}
+
+export const load = (nodes, dispatch) => {
+  dispatch({
+    type: PLAYGROUND_ACTIONS.PLAYGROUND_LOAD_SUCCESS,
+    payload: {nodes},
   });
 }
