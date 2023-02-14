@@ -99,7 +99,7 @@ const executeReadyStep = (readyNode, nodes) => {
     let fromPeer = getNodeById(currentNode.getPropertyValueFor("peer"), nodes);
 
     if(!fromPeer) {
-      console.warning("[play] can't call - missing caller");
+      console.warn("[play] can't call - missing caller");
       reject("no caller");
     }
 
@@ -114,7 +114,7 @@ const executeReadyStep = (readyNode, nodes) => {
           if (recipientPeer && fromPeer) {
             await call(fromPeer, recipientPeer, currentNode);
           } else {
-            console.warning("[play] can't call - missing callee");
+            console.warn("[play] can't call - missing callee");
           }
           break;
         default:

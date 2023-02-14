@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, useReducer } from "react";
 import AppContext from "./contexts/appContext";
 import { appReducer, initialAppState, STATE } from "./reducers/appReducer";
 import Supervisor from "./components/logic/Supervisor";
-import MenuItem from "./components/Menu/MenuItem";
 import Properties from "./components/properties/Properties";
 import {
   addObject,
@@ -20,12 +19,11 @@ import MenuItems from "./components/Menu/MenuItems";
 import EmptyState from "@atlaskit/empty-state";
 import {
   AtlassianNavigation,
-  Create,
   CustomProductHome,
   PrimaryButton,
-  ProductHome,
 } from "@atlaskit/atlassian-navigation";
 import {run} from "./actions/playgroundActions";
+import {saveAs} from "file-saver";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -292,6 +290,20 @@ function App() {
     editor.zoom_reset();
   };
 
+  const onExport = () => {
+    const exportedData = editor.export();
+    const blob = new Blob([JSON.stringify(exportedData)], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, `test_playground.txt`);
+  }
+
+  const onImport = async () => {
+    const [fileHandle] = await window.showOpenFilePicker();
+    const file = await fileHandle.getFile();
+    const contents = await file.text();
+    const importedData = JSON.parse(contents);
+    editor.import(importedData);
+  }
+
   const changeMode = (option) => {
     if (option === "lock") {
       lock["style"].display = "none";
@@ -314,8 +326,8 @@ function App() {
           <PrimaryButton onClick={() => onZoomIn()}>+</PrimaryButton>,
           <PrimaryButton onClick={() => onZoomOut()}>-</PrimaryButton>,
           <PrimaryButton onClick={() => onZoomReset()}>100%</PrimaryButton>,
-          <PrimaryButton>Import</PrimaryButton>,
-          <PrimaryButton>Export</PrimaryButton>,
+          <PrimaryButton onClick={() => onImport()}>Import</PrimaryButton>,
+          <PrimaryButton onClick={() => onExport()}>Export</PrimaryButton>,
           <PrimaryButton onClick={() => onClear()}>Reset</PrimaryButton>,
           <PrimaryButton onClick={() => onRunPlayground()}>Run</PrimaryButton>,
         ]}
