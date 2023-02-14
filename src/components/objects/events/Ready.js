@@ -66,7 +66,7 @@ class Ready extends Main {
         if(property.value === "none") {
           return "No peer";
         }
-        return label;
+        return `from ${label}`;
       }
       default:
         return "";

@@ -26,3 +26,5 @@ export const getPeers = (nodes) => (nodes.filter(item => (item.node === "rtc.pee
 export const getReady = (nodes) => (nodes.find(item => (item.node === "event.ready")));
 
 export const getNodeById = (id, nodes) => (nodes.find((node) => (node.id === id)));
+
+export const getNodeIndexById = (id, nodes) => (nodes.findIndex((object) => (object.id === id)));

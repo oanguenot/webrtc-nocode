@@ -1,4 +1,5 @@
 import {getDimensionFromResolution, getNodeById, getPeers, getReady} from "./helper";
+import {NODES} from "./model";
 
 const frames = {};
 
@@ -51,7 +52,7 @@ const createMedia = (peerNode, nodes) => {
       const constraints = {audio: false, video: false};
 
       for (const inputId of peerNode.linksInput) {
-        let input = nodes.find(node => node.id === inputId);
+        let input = getNodeById(inputId, nodes);
         if (input) {
           const kind = input.getInfoValueFor('kind');
           const deviceId = input.getPropertyValueFor("from");
@@ -87,14 +88,37 @@ const createMedia = (peerNode, nodes) => {
   });
 }
 
+const call = async (callerNode, calleeNode, callNode) => {
+
+}
+
 const executeReadyStep = (readyNode, nodes) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     let hasTerminated = false;
     let currentNode = readyNode;
+    let fromPeer = getNodeById(currentNode.getPropertyValueFor("peer"), nodes);
+
+    if(!fromPeer) {
+      console.warning("[play] can't call - missing caller");
+      reject("no caller");
+    }
+
     while(!hasTerminated) {
       currentNode = getNodeById(readyNode.linksOutput[0], nodes);
       if(!currentNode) {
         hasTerminated = true;
+      }
+      switch (currentNode.node) {
+        case NODES.CALL:
+          const recipientPeer = getNodeById(currentNode.getPropertyValueFor("peer"), nodes);
+          if (recipientPeer && fromPeer) {
+            await call(fromPeer, recipientPeer, currentNode);
+          } else {
+            console.warning("[play] can't call - missing callee");
+          }
+          break;
+        default:
+          break;
       }
     }
     resolve();
