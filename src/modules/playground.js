@@ -1,4 +1,4 @@
-import {getDimensionFromResolution} from "./helper";
+import {getDimensionFromResolution, getNodeById, getPeers, getReady} from "./helper";
 
 const frames = {};
 
@@ -87,11 +87,26 @@ const createMedia = (peerNode, nodes) => {
   });
 }
 
+const executeReadyStep = (readyNode, nodes) => {
+  return new Promise((resolve, reject) => {
+    let hasTerminated = false;
+    let currentNode = readyNode;
+    while(!hasTerminated) {
+      currentNode = getNodeById(readyNode.linksOutput[0], nodes);
+      if(!currentNode) {
+        hasTerminated = true;
+      }
+    }
+    resolve();
+  });
+}
+
 
 export const execute = (nodes) => {
   return new Promise(async (resolve, reject) => {
+    console.log("[play] started...");
     // found peer connections for creating iFrame
-    const peers = nodes.filter(item => (item.node === "rtc.peer"));
+    const peers = getPeers(nodes);
 
     // Initialize Peer Connections
     for(const peer of peers) {
@@ -102,8 +117,14 @@ export const execute = (nodes) => {
       await createPeerConnection(peer, stream);
     }
 
-    // Check the ready event
+    // Check for the ready event and execute it
+    const ready = getReady(nodes);
+    if(!ready) {
+      reject("No ready event");
+    }
+    await executeReadyStep(ready, nodes);
 
+    console.log("[play] ended...");
     resolve();
   });
 }

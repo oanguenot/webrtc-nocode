@@ -1,5 +1,6 @@
 import { OBJECT_ACTIONS } from "../actions/objectActions";
 import { SUPERVISOR_ACTIONS } from "../actions/supervisonActions";
+import {getNodeById} from "../modules/helper";
 
 export const STATE = {
   NOT_INITIALIZED: "NOT_INITIALIZED",
@@ -15,12 +16,8 @@ const initialAppState = {
   state: STATE.NOT_INITIALIZED,
 };
 
-const getObjectFromId = (objectId, objects) => {
-  return objects.find((object) => object.id === objectId);
-};
-
 const updateValueInObject = (objectId, name, value, label, objects) => {
-  const index = objects.findIndex((object) => object.id === objectId);
+  const index = getNodeById(objectId, objects);
   const updatedObjects = [...objects];
   updatedObjects[index].updateValueFor(name, value, label);
   return updatedObjects;
@@ -52,7 +49,7 @@ const appReducer = (state = initialAppState, action) => {
       const node = object.getInfoValueFor("node");
       if (node.includes("rtc.track")) {
         object.addDevices(state.devices);
-        const encodes = filterObjectsWithNode(
+        filterObjectsWithNode(
           "action.encode",
           state.objects
         ).forEach((obj) => {
@@ -125,7 +122,7 @@ const appReducer = (state = initialAppState, action) => {
     }
     case OBJECT_ACTIONS.SELECT_OBJECT_SUCCESS: {
       const objectId = action.payload.objectId;
-      const object = state.objects.find((object) => object.id === objectId);
+      const object = getNodeById(objectId, state.objects);
       return {
         ...state,
         lastAdded: null,
@@ -155,7 +152,7 @@ const appReducer = (state = initialAppState, action) => {
       );
 
       // Update all goto nodes when step name changed
-      const object = objects.find((object) => object.id === objectId);
+      const object = getNodeById(objectId, objects);
       if (object.getInfoValueFor("node") === "step") {
         const relatedGoto = filterObjectsWithNode("goto", objects);
         relatedGoto.forEach((obj) =>
@@ -180,8 +177,8 @@ const appReducer = (state = initialAppState, action) => {
       };
     }
     case OBJECT_ACTIONS.CREATE_CONNECTION_ATTEMPT: {
-      const fromNode = getObjectFromId(action.payload.fromId, state.objects);
-      const toObject = getObjectFromId(action.payload.toId, state.objects);
+      const fromNode = getNodeById(action.payload.fromId, state.objects);
+      const toObject = getNodeById(action.payload.toId, state.objects);
 
       // Don't create the connection twice
       if (

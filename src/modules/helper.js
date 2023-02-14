@@ -21,6 +21,8 @@ export const includes = (nodeName, list) => {
   return found;
 }
 
-export const peers = (nodes) => (nodes.filter(item => (item.node === "rtc.peer")));
+export const getPeers = (nodes) => (nodes.filter(item => (item.node === "rtc.peer")));
 
-export const ready = (nodes) => (nodes.find(item => (item.node === "event.ready")));
+export const getReady = (nodes) => (nodes.find(item => (item.node === "event.ready")));
+
+export const getNodeById = (id, nodes) => (nodes.find((node) => (node.id === id)));
