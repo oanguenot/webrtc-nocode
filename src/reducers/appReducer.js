@@ -166,13 +166,11 @@ const appReducer = (state = initialAppState, action) => {
       if (object.getInfoValueFor("node") === "rtc.peer") {
         // Update all ready nodes when peer name changed
         const relatedReady = filterObjectsWithNode("event.ready", objects);
-        relatedReady.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer")
-        )
+        relatedReady.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer"));
 
         // Update all callP2P nodes when peer name changed
         const relatedP2P = filterObjectsWithNode("action.p2p", objects);
-        relatedReady.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer")
-        )
+        relatedP2P.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer"));
       }
 
       return {

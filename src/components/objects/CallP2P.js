@@ -79,13 +79,18 @@ class CallP2P extends Main {
           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this.renderProp("name")}</span>
         </div>
         <div class="box">
+         <div class="object-box-line">
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="peer-${this._uuid
+    }">${this.renderProp("peer")}</span>
+            </div>
         <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="delay-${this._uuid
     }">${this.renderProp("delay")}</span>
             </div>
-            <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="peer-${this._uuid
-    }">${this.renderProp("peer")}</span>
+            <div class="object-footer">
+                <span class="object-node object-title-box">${
+      this._info[0].value
+    }.${this._uuid}</span>    
             </div>
         </div>
       </div>
