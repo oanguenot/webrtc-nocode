@@ -1,4 +1,5 @@
 import Main from "../Main";
+import {KEY_TYPE, KEYS, NODES} from "../../../modules/model";
 
 class CallP2P extends Main {
   static item = "CallP2P";
@@ -12,26 +13,26 @@ class CallP2P extends Main {
     this._inputs = 1;
     this._outputs = 1;
     this._info = [
-      { key: "node", value: "action.call" },
+      { key: KEYS.NODE, value: NODES.CALL },
       {
-        key: "info",
+        key: KEYS.INFO,
         value: "Initiate a P2P call to a recipient by sending an offer",
       },
     ];
-    this._acceptInputs = ["event.*"];
-    this._acceptOutputs = ["action.*"];
+    this._acceptInputs = [NODES.EVENTS];
+    this._acceptOutputs = [NODES.ACTIONS];
     this._properties = [
       {
-        prop: "name",
+        prop: KEYS.NAME,
         label: "Name",
-        type: "text",
+        type: KEY_TYPE.TEXT,
         value: "Call P2P",
         description: "Action/Name",
       },
       {
-        prop: "delay",
+        prop: KEYS.DELAY,
         label: "Delay",
-        type: "enum",
+        type: KEY_TYPE.ENUM,
         enum: [
           { label: "Immediate", value: 0 },
           { label: "Low latency (100ms)", value: 100 },
@@ -43,9 +44,9 @@ class CallP2P extends Main {
         description: "Delay to wait before sending message to recipient",
       },
       {
-        prop: "peer",
+        prop: KEYS.PEER,
         label: "Recipient",
-        type: "enum",
+        type: KEY_TYPE.ENUM,
         enum: [{ label: "None", value: "none" }],
         value: "none",
         description: "Choose the RTCPeerConnection to call",
@@ -58,11 +59,11 @@ class CallP2P extends Main {
     const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
-      case "delay":
+      case KEYS.DELAY:
         return property.value === "0" ? "No latency" : `Latency of ${property.value}`;
-      case "name":
+      case KEYS.NAME:
         return property.value;
-      case "peer":
+      case KEYS.PEER:
         if(property.value === "none") {
           return "No recipient";
         }
@@ -81,11 +82,11 @@ class CallP2P extends Main {
         <div class="box">
          <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="peer-${this._uuid
-    }">${this.renderProp("peer")}</span>
+    }">${this.renderProp(KEYS.PEER)}</span>
             </div>
         <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="delay-${this._uuid
-    }">${this.renderProp("delay")}</span>
+    }">${this.renderProp(KEYS.DELAY)}</span>
             </div>
             <div class="object-footer">
                 <span class="object-node object-title-box">${
