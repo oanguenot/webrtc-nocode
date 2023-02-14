@@ -93,6 +93,7 @@ export const execute = (nodes) => {
     // found peer connections for creating iFrame
     const peers = nodes.filter(item => (item.node === "rtc.peer"));
 
+    // Initialize Peer Connections
     for(const peer of peers) {
       const win = await createIFrame(peer);
       // Store iframe window context associated to a peer connection
@@ -100,6 +101,9 @@ export const execute = (nodes) => {
       const stream = await createMedia(peer, nodes);
       await createPeerConnection(peer, stream);
     }
+
+    // Check the ready event
+
     resolve();
   });
 }

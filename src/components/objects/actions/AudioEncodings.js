@@ -1,4 +1,5 @@
 import Main from "../Main";
+import {KEY_TYPE, KEYS, KIND, NODES} from "../../../modules/model";
 
 class AudioEncodings extends Main {
   static item = "Audio Encodings";
@@ -12,28 +13,28 @@ class AudioEncodings extends Main {
     this._inputs = 1;
     this._outputs = 1;
     this._info = [
-      { key: "node", value: "action.encode" },
-      { key: "kind", value: "audio" },
+      { key: KEYS.NODE, value: NODES.ENCODE },
+      { key: KEYS.KIND, value: KIND.AUDIO },
       {
-        key: "info",
+        key: KEYS.INFO,
         value:
           "Change the track's encoding associated to the RTCRtpSender. Equivalent to setParameters",
       },
     ];
-    this._acceptInputs = ["rtc.peer", "event.*", "action.*"];
-    this._acceptOutputs = ["action.*"];
+    this._acceptInputs = [NODES.PEER, NODES.EVENTS, NODES.ACTIONS];
+    this._acceptOutputs = [NODES.ACTIONS];
     this._properties = [
       {
-        prop: "name",
+        prop: KEYS.NAME,
         label: "Name",
-        type: "text",
+        type: KEY_TYPE.TEXT,
         value: "Audio Encode",
         description: "Name of the Encodings",
       },
       {
-        prop: "preference",
+        prop: KEYS.PREFERENCE,
         label: "Codec Preferences",
-        type: "enum",
+        type: KEY_TYPE.ENUM,
         enum: [
           { label: "Opus", value: "opus" },
           { label: "G711", value: "g711" },
@@ -42,7 +43,7 @@ class AudioEncodings extends Main {
         description: "Choose the preferred codec to use",
       },
       {
-        prop: "active",
+        prop: KEYS.ACTIVE,
         label: "Active",
         type: "enum",
         enum: [
@@ -53,9 +54,9 @@ class AudioEncodings extends Main {
         description: "Choose if the stream is active",
       },
       {
-        prop: "maxBitrate",
+        prop: KEYS.MAX_BITRATE,
         label: "Max Bitrate",
-        type: "enum",
+        type: KEY_TYPE.ENUM,
         enum: [
           { label: "Unlimited", value: "unlimited" },
           { label: "512 Kbps", value: 5120000 },
@@ -71,9 +72,9 @@ class AudioEncodings extends Main {
         description: "Choose the maximum bitrate to use",
       },
       {
-        prop: "track",
+        prop: KEYS.TRACK,
         label: "Track",
-        type: "enum",
+        type: KEY_TYPE.ENUM,
         enum: [{ label: "None", value: "none" }],
         value: "none",
         description: "Choose the track to update",
@@ -86,17 +87,17 @@ class AudioEncodings extends Main {
     const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
-      case "name":
+      case KEYS.NAME:
         return property.value;
-      case "preference":
+      case KEYS.PREFERENCE:
         return `use ${label}`;
-      case "active":
+      case KEYS.ACTIVE:
         return property.value === "yes" ? "active" : "inactive";
-      case "maxBitrate":
+      case KEYS.MAX_BITRATE:
         return property.value === "unlimited"
           ? "no rate limit"
           : `limited to ${label}`;
-      case "track":
+      case KEYS.TRACK:
         return property.value === "none" ? "no track" : `encode ${label}`;
     }
   }
@@ -107,28 +108,28 @@ class AudioEncodings extends Main {
         <div class="title-box">
           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
       this._uuid
-    }">${this.renderProp("name")}</span>
+    }">${this.renderProp(KEYS.NAME)}</span>
         </div>
          <div class="box">
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="track-${
               this._uuid
-            }">${this.renderProp("track")}</span>
+            }">${this.renderProp(KEYS.TRACK)}</span>
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="preference-${
               this._uuid
-            }">${this.renderProp("preference")}</span>
+            }">${this.renderProp(KEYS.PREFERENCE)}</span>
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="active-${
               this._uuid
-            }">${this.renderProp("active")}</span>
+            }">${this.renderProp(KEYS.ACTIVE)}</span>
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="maxBitrate-${
               this._uuid
-            }">${this.renderProp("maxBitrate")}</span>
+            }">${this.renderProp(KEYS.MAX_BITRATE)}</span>
             </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${

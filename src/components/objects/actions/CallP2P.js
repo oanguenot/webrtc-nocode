@@ -12,7 +12,7 @@ class CallP2P extends Main {
     this._inputs = 1;
     this._outputs = 1;
     this._info = [
-      { key: "node", value: "action.p2p" },
+      { key: "node", value: "action.call" },
       {
         key: "info",
         value: "Initiate a P2P call to a recipient by sending an offer",

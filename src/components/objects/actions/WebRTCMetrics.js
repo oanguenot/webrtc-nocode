@@ -12,7 +12,7 @@ class WebRTCMetrics extends Main {
     this._inputs = 1;
     this._outputs = 0;
     this._info = [
-      { key: "node", value: "action.analysis" },
+      { key: "node", value: "action.analyze" },
       {
         key: "info",
         value:

@@ -20,3 +20,7 @@ export const includes = (nodeName, list) => {
   });
   return found;
 }
+
+export const peers = (nodes) => (nodes.filter(item => (item.node === "rtc.peer")));
+
+export const ready = (nodes) => (nodes.find(item => (item.node === "event.ready")));

@@ -93,7 +93,7 @@ const appReducer = (state = initialAppState, action) => {
 
         // Add peer to all call
         filterObjectsWithNode(
-          "action.p2p",
+          "action.call",
           state.objects
         ).forEach((obj) => {
           obj.addNewOptionToSelect(object.id, object.id, "peer");
@@ -107,7 +107,7 @@ const appReducer = (state = initialAppState, action) => {
           })
         );
         object.addMultipleOptionsToSelect(peers, "peer");
-      } else if (node.includes("action.p2p")) {
+      } else if (node.includes("action.call")) {
         const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
           (obj) => ({
             value: obj.id,
