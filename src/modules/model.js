@@ -8,6 +8,7 @@ export const NODES = {
   WAIT: "action.wait",
   EVENTS: "event.*",
   ACTIONS: "action.*",
+  READY: "event.ready",
 }
 
 export const KIND = {
@@ -24,6 +25,8 @@ export const KEYS = {
   PREFERENCE: "preference",
   MAX_BITRATE: "maxBitrate",
   TRACK: "track",
+  DELAY: "delay",
+  PEER: "peer",
 }
 
 export const KEY_TYPE = {

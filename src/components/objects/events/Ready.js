@@ -1,4 +1,5 @@
 import Main from "../Main";
+import {NODES, KEYS, KEY_TYPE} from "../../../modules/model";
 
 class Ready extends Main {
   static item = "Ready";
@@ -12,17 +13,17 @@ class Ready extends Main {
     this._inputs = 0;
     this._outputs = 1;
     this._info = [
-      { key: "node", value: "event.ready" },
+      { key: KEYS.NODE, value: NODES.READY },
       {
-        key: "info",
+        key: KEYS.INFO,
         value: "Triggers actions to execute when the playground is ready!",
       },
     ];
     this._properties = [
       {
-        prop: "delay",
+        prop: KEYS.DELAY,
         label: "Delay",
-        type: "enum",
+        type: KEY_TYPE.ENUM,
         enum: [
           { label: "No delay", value: "none" },
           { label: "1 second", value: "1000" },
@@ -37,15 +38,15 @@ class Ready extends Main {
         description: "Name of the Step",
       },
       {
-        prop: "peer",
+        prop: KEYS.PEER,
         label: "Peer",
-        type: "enum",
+        type: KEY_TYPE.ENUM,
         enum: [{ label: "None", value: "none" }],
         value: "none",
         description: "Choose the RTCPeerConnection to execute an action",
       },
     ];
-    this._acceptOutputs = ["action.*"];
+    this._acceptOutputs = [NODES.ACTIONS];
     this._acceptInputs = [];
   }
 
@@ -54,14 +55,14 @@ class Ready extends Main {
     const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
-      case "delay": {
+      case KEYS.DELAY: {
         const label = this.getLabelFromPropertySelect(property);
         if (property.value === "none") {
           return "No delay";
         }
         return `after ${label}`;
       }
-      case "peer": {
+      case KEYS.PEER: {
         if(property.value === "none") {
           return "No peer";
         }
@@ -84,12 +85,12 @@ class Ready extends Main {
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="peer-${
       this._uuid
-    }">${this.renderProp("peer")}</span>
+    }">${this.renderProp(KEYS.PEER)}</span>
           </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="delay-${
               this._uuid
-            }">${this.renderProp("delay")}</span>
+            }">${this.renderProp(KEYS.DELAY)}</span>
             </div>
             
              <div class="object-footer">
