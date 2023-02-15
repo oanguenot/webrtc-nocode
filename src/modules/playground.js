@@ -1,5 +1,6 @@
 import {getDimensionFromResolution, getNodeById, getPeers, getReady} from "./helper";
 import {NODES} from "./model";
+import {build, rehydrate} from "./builder";
 
 const frames = {};
 
@@ -150,5 +151,24 @@ export const execute = (nodes) => {
 
     console.log("[play] ended...");
     resolve();
+  });
+}
+
+export const rehydrateModel = (nodes) => {
+  const model = [];
+  nodes.forEach(node => {
+    const elt = rehydrate(node._info[0].value, node._posX, node._posY);
+    model.push(elt);
+  });
+  return model;
+}
+
+export const rehydrateDOM = (nodes) => {
+  // update DOM with current properties stored
+  nodes.forEach(node => {
+    const properties = node.properties;
+    properties.forEach(property => {
+      node.updateDisplayInObject(property.prop);
+    });
   });
 }

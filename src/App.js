@@ -22,7 +22,7 @@ import {
   CustomProductHome,
   PrimaryButton,
 } from "@atlaskit/atlassian-navigation";
-import {run} from "./actions/playgroundActions";
+import {load, run} from "./actions/playgroundActions";
 import {saveAs} from "file-saver";
 import {nanoid} from "nanoid";
 
@@ -319,9 +319,8 @@ function App() {
     }
 
     if(imported.objects) {
-
+      load(imported.objects, dispatch);
     }
-
   }
 
   const changeMode = (option) => {

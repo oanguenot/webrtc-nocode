@@ -1,4 +1,4 @@
-import {execute} from "../modules/playground";
+import {execute, rehydrateDOM, rehydrateModel} from "../modules/playground";
 
 export const PLAYGROUND_ACTIONS = {
   PLAYGROUND_RUN_IN_PROGRESS: "PLAYGROUND_RUN_IN_PROGRESS",
@@ -27,6 +27,10 @@ export const run = (nodes, dispatch) => {
 }
 
 export const load = (nodes, dispatch) => {
+  console.log("load nodes", nodes);
+  const model = rehydrateModel(nodes);
+  console.log("model", model);
+  rehydrateDOM(model);
   dispatch({
     type: PLAYGROUND_ACTIONS.PLAYGROUND_LOAD_SUCCESS,
     payload: {nodes},

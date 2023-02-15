@@ -28,16 +28,35 @@ const ObjectBuilder = {
   "End": End,
 };
 
-const getClassFromName = (name) => {
-  return ObjectBuilder[name];
-};
+const RehydrateBuilder = {
+  "event.ready": Ready,
+  "Waiting": Waiting,
+  "rtc.peer": PeerConnection,
+  "AudioTrack": AudioTrack,
+  "VideoTrack": VideoTrack,
+  "Turn": Turn,
+  "AudioEncodings": AudioEncodings,
+  "VideoEncodings": VideoEncodings,
+  "WebRTCMetrics": WebRTCMetrics,
+  "action.call": CallP2P,
+  "End": End,
+}
+
 export const build = (name, x, y) => {
-  let Class = getClassFromName(name);
+  let Class = ObjectBuilder[name];
   if (Class) {
     return new Class(x, y);
   }
   console.log(`[builder] can't create object with name ${name}`);
 };
+
+export const rehydrate = (name, x, y) => {
+  let Class = RehydrateBuilder[name];
+  if(Class) {
+    return new Class(x, y);
+  }
+  console.log(`[builder] can't rehydrate object with name ${name}`);
+}
 
 export const availableObjects = () => {
   return Object.keys(ObjectBuilder).map(

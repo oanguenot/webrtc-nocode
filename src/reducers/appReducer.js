@@ -228,6 +228,7 @@ const appReducer = (state = initialAppState, action) => {
       };
     }
     case PLAYGROUND_ACTIONS.PLAYGROUND_LOAD_SUCCESS: {
+
       return {
         ...initialAppState,
         objects: action.payload.objects,
