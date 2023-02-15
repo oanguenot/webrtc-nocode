@@ -50,7 +50,7 @@ export const build = (name, x, y) => {
   console.log(`[builder] can't create object with name ${name}`);
 };
 
-export const rehydrate = (name, x, y) => {
+export const rehydrateObject = (name, x, y) => {
   let Class = RehydrateBuilder[name];
   if(Class) {
     return new Class(x, y);

@@ -27,12 +27,10 @@ export const run = (nodes, dispatch) => {
 }
 
 export const load = (nodes, dispatch) => {
-  console.log("load nodes", nodes);
   const model = rehydrateModel(nodes);
-  console.log("model", model);
   rehydrateDOM(model);
   dispatch({
     type: PLAYGROUND_ACTIONS.PLAYGROUND_LOAD_SUCCESS,
-    payload: {nodes},
+    payload: {objects: model},
   });
 }

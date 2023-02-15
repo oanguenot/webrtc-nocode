@@ -206,6 +206,10 @@ class Main {
   render() {
     return "";
   }
+
+  rehydrate(fromNode) {
+    this._uuid = fromNode._uuid;
+  }
 }
 
 export default Main;
