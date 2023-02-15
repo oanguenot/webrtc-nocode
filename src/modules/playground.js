@@ -12,7 +12,8 @@ const createIFrame = (peerNode) => {
       resolve(iframe.contentWindow);
     });
     iframe.setAttribute("id", peerNode.id);
-    iframe.src = "./iframe.html";
+    console.log(">>>", window.location);
+    iframe.src = `${window.location.href}/iframe.html`;
     iframesElt.appendChild(iframe);
   });
 }
@@ -89,43 +90,64 @@ const createMedia = (peerNode, nodes) => {
   });
 }
 
-const call = async (callerNode, calleeNode, callNode) => {
-
-}
-
-const executeReadyStep = (readyNode, nodes) => {
-  return new Promise(async (resolve, reject) => {
-    let hasTerminated = false;
-    let currentNode = readyNode;
-    let fromPeer = getNodeById(currentNode.getPropertyValueFor("peer"), nodes);
-
-    if(!fromPeer) {
-      console.warn("[play] can't call - missing caller");
-      reject("no caller");
-    }
-
-    while(!hasTerminated) {
-      currentNode = getNodeById(readyNode.linksOutput[0], nodes);
-      if(!currentNode) {
-        hasTerminated = true;
-      }
-      switch (currentNode.node) {
-        case NODES.CALL:
-          const recipientPeer = getNodeById(currentNode.getPropertyValueFor("peer"), nodes);
-          if (recipientPeer && fromPeer) {
-            await call(fromPeer, recipientPeer, currentNode);
-          } else {
-            console.warn("[play] can't call - missing callee");
-          }
-          break;
-        default:
-          break;
-      }
-    }
+const call = (callerNode, calleeNode, callNode) => {
+  return new Promise((resolve, reject) => {
+    console.log("call from", callerNode);
+    console.log("recipient", calleeNode);
+    console.log("call", callNode);
     resolve();
   });
 }
 
+const executeReadyStep = (readyNode, nodes) => {
+  return new Promise( (resolve, reject) => {
+
+    const firstNode = getNodeById(readyNode.linksOutput[0], nodes);
+    if(!firstNode) {
+      resolve();
+      return;
+    }
+
+    executeANode(readyNode, firstNode, nodes).then(() => {
+      resolve();
+    })
+  });
+}
+
+const executeANode = (initialEvent, currentNode, nodes) => {
+  console.log("[play] execute node", currentNode.id);
+  return new Promise( (resolve, reject) => {
+    const promises = [];
+    switch (currentNode.node) {
+      case NODES.CALL:
+        console.log("[play] execute call node");
+        const fromPeer = getNodeById(initialEvent.getPropertyValueFor("peer"), nodes);
+        const recipientPeer = getNodeById(currentNode.getPropertyValueFor("peer"), nodes);
+        resolve();
+        if (recipientPeer && fromPeer) {
+          promises.push(call(fromPeer, recipientPeer, currentNode));
+        } else {
+          console.warn("[play] can't call - missing callee");
+          reject();
+        }
+        break;
+      default:
+        break;
+    }
+
+    Promise.all(promises).then(() => {
+      const nextNode = getNodeById(currentNode.linksOutput[0], nodes);
+      if(!nextNode) {
+        console.log("[play] no more step in ready");
+        resolve();
+        return;
+      } else {
+        console.log("[play] next step found", nextNode.id);
+      }
+      return executeANode(initialEvent, nextNode, nodes);
+    });
+  });
+}
 
 export const execute = (nodes) => {
   return new Promise(async (resolve, reject) => {
@@ -147,10 +169,10 @@ export const execute = (nodes) => {
     if(!ready) {
       reject("No ready event");
     }
-    await executeReadyStep(ready, nodes);
-
-    console.log("[play] ended...");
-    resolve();
+    executeReadyStep(ready, nodes).then(() => {
+      console.log("[play] ended...");
+      resolve();
+    });
   });
 }
 
