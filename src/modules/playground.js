@@ -1,5 +1,5 @@
-import {getDimensionFromResolution, getNodeById, getPeers, getReady} from "./helper";
-import {NODES} from "./model";
+import {getDimensionFromResolution, getNodeById, getNodeInfoValue, getPeers, getReady} from "./helper";
+import {KEYS, NODES} from "./model";
 import {rehydrateObject} from "./builder";
 
 const frames = {};
@@ -157,7 +157,9 @@ export const execute = (nodes) => {
 export const rehydrateModel = (nodes) => {
   const model = [];
   nodes.forEach(node => {
-    const object = rehydrateObject(node._info[0].value, node._posX, node._posY);
+    const name = getNodeInfoValue(KEYS.NODE, node);
+    const kind = getNodeInfoValue(KEYS.KIND, node);
+    const object = rehydrateObject(name, kind, node._posX, node._posY);
     object.rehydrate(node);
     model.push(object);
   });

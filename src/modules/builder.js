@@ -28,18 +28,20 @@ const ObjectBuilder = {
   "End": End,
 };
 
-const RehydrateBuilder = {
-  "event.ready": Ready,
-  "Waiting": Waiting,
-  "rtc.peer": PeerConnection,
-  "AudioTrack": AudioTrack,
-  "VideoTrack": VideoTrack,
-  "Turn": Turn,
-  "AudioEncodings": AudioEncodings,
-  "VideoEncodings": VideoEncodings,
-  "WebRTCMetrics": WebRTCMetrics,
-  "action.call": CallP2P,
-  "End": End,
+const convertNodeNameToClass = (name, kind) => {
+  const Nodes = {
+    "event.ready": Ready,
+    "action.wait": Waiting,
+    "rtc.peer": PeerConnection,
+    "rtc.track": kind === "audio" ? AudioTrack : VideoTrack,
+    "rtc.turn": Turn,
+    "action.encode": kind === "audio" ? AudioEncodings : VideoEncodings,
+    "action.analyze": WebRTCMetrics,
+    "action.call": CallP2P,
+    "action.end": End,
+  }
+
+  return Nodes[name];
 }
 
 export const build = (name, x, y) => {
@@ -50,8 +52,8 @@ export const build = (name, x, y) => {
   console.log(`[builder] can't create object with name ${name}`);
 };
 
-export const rehydrateObject = (name, x, y) => {
-  let Class = RehydrateBuilder[name];
+export const rehydrateObject = (name, kind, x, y) => {
+  let Class = convertNodeNameToClass(name, kind);
   if(Class) {
     return new Class(x, y);
   }

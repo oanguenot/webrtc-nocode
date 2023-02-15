@@ -1,3 +1,5 @@
+import {KEYS, NODES} from "./model";
+
 export const getDimensionFromResolution = (resolution)  =>{
   switch (resolution) {
     case "480p":
@@ -21,10 +23,20 @@ export const includes = (nodeName, list) => {
   return found;
 }
 
-export const getPeers = (nodes) => (nodes.filter(item => (item.node === "rtc.peer")));
+export const getPeers = (nodes) => (nodes.filter(item => (item.node === NODES.PEER)));
 
-export const getReady = (nodes) => (nodes.find(item => (item.node === "event.ready")));
+export const getReady = (nodes) => (nodes.find(item => (item.node === NODES.READY)));
 
 export const getNodeById = (id, nodes) => (nodes.find((node) => (node.id === id)));
 
 export const getNodeIndexById = (id, nodes) => (nodes.findIndex((object) => (object.id === id)));
+
+export const getNodeInfoValue = (infoKey, node) => {
+  const info = node._info;
+  if(!info) {
+    return null;
+  }
+
+  const infoName = info.find(item => item.key === infoKey);
+  return infoName ? infoName.value : null;
+}
