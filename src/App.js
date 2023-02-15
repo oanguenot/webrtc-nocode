@@ -23,8 +23,6 @@ import {
   PrimaryButton,
 } from "@atlaskit/atlassian-navigation";
 import {load, run} from "./actions/playgroundActions";
-import {saveAs} from "file-saver";
-import {nanoid} from "nanoid";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -291,7 +289,7 @@ function App() {
     editor.zoom_reset();
   };
 
-  const onExport = () => {
+  const onExport = async () => {
     // Export Nodes
     const JSON_exportedNodes = editor.export();
 
@@ -304,8 +302,18 @@ function App() {
       objects: JSON_exportedModel,
     }
 
+    const opts = {
+      types: [{
+        description: 'Playground WebRTC file',
+        accept: {'text/plain': ['.webrtc']},
+      }],
+    };
+
     const blob = new Blob([JSON.stringify(exported)], { type: "text/plain;charset=utf-8" });
-    saveAs(blob, `playground_${nanoid(6)}.txt`);
+    const fileHandle = await window.showSaveFilePicker(opts);
+    const writable = await fileHandle.createWritable();
+    await writable.write(blob);
+    await writable.close();
   }
 
   const onImport = async () => {
