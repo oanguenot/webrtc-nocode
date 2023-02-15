@@ -209,6 +209,9 @@ class Main {
 
   rehydrate(fromNode) {
     this._uuid = fromNode._uuid;
+    this._linksOutputs = fromNode._linksOutputs;
+    this._linksInputs = fromNode._linksInputs;
+    this._properties = fromNode._properties;
   }
 }
 
