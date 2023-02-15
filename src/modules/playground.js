@@ -12,7 +12,6 @@ const createIFrame = (peerNode) => {
       resolve(iframe.contentWindow);
     });
     iframe.setAttribute("id", peerNode.id);
-    console.log(">>>", window.location);
     iframe.src = `${window.location.href}/iframe.html`;
     iframesElt.appendChild(iframe);
   });
