@@ -1,4 +1,5 @@
 import Main from "../Main";
+import {KEY_TYPE, KEYS, NODES} from "../../../modules/model";
 
 class Waiting extends Main {
   static item = "Waiting";
@@ -11,14 +12,20 @@ class Waiting extends Main {
     super(x, y);
     this._inputs = 1;
     this._outputs = 1;
-    this._acceptInputs = ["*"];
-    this._acceptOutputs = ["*"];
-    this._info = [{ key: "node", value: "action.wait" }];
+    this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS];
+    this._acceptOutputs = [NODES.ACTIONS];
+    this._info = [{ key: KEYS.NODE, value: "action.wait" },
+      {
+        key: KEYS.INFO,
+        value:
+          "Wait a moment before executing the next node",
+      },
+    ];
     this._properties = [
       {
-        prop: "period",
-        label: "Period",
-        type: "enum",
+        prop: KEYS.DELAY,
+        label: "Delay",
+        type: KEY_TYPE.ENUM,
         enum: [
           { label: "1 second", value: "1000" },
           { label: "3 seconds", value: "3000" },
@@ -39,19 +46,28 @@ class Waiting extends Main {
     ];
   }
 
-  render() {
-    const period = this.getPropertyFor("period");
-    const label = this.getLabelFromPropertySelect(period);
+  renderProp(prop) {
+    const property = this.getPropertyFor(prop);
+    const label = this.getLabelFromPropertySelect(property);
 
+    switch (prop) {
+      case KEYS.DELAY:
+        return `Wait ${label}`;
+    }
+  }
+
+  render() {
     return `
       <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="period-${this._uuid}">${label}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="delay-${this._uuid}">${this.renderProp(KEYS.DELAY)}</span>
         </div>
         <div class="box">
-            <span class="object-full">Wait before executing the next node</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">${this.constructor.name}</span>    
+                <span class="object-node object-title-box">${
+      this._info[0].value
+    }.${this._uuid}
+                </span>      
             </div>
         </div>
       </div>
