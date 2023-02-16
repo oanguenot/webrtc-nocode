@@ -38,6 +38,15 @@ const updateLinkInObject = (objectId, fromId, objects) => {
   return updatedObjects;
 };
 
+const removeLinkInObject = (objectId, fromId, objects) => {
+  const recipientIndex = objects.findIndex((object) => object.id === objectId);
+  const initiatorIndex = objects.findIndex((object) => object.id === fromId);
+  const updatedObjects = [...objects];
+  updatedObjects[recipientIndex].removeInputLink(fromId);
+  updatedObjects[initiatorIndex].removeOutputLink(objectId);
+  return updatedObjects;
+}
+
 const appReducer = (state = initialAppState, action) => {
   if (!action) {
     console.error(`[reduc]:: no action}`);
@@ -125,7 +134,6 @@ const appReducer = (state = initialAppState, action) => {
       };
     }
     case OBJECT_ACTIONS.REMOVE_OBJECT_SUCCESS: {
-      console.log(">>>", state.selected);
       if(state.selected) {
         const newObjects = state.objects.filter(object => object.id !== state.selected.id);
         saveModelToStorage(newObjects);
@@ -229,6 +237,17 @@ const appReducer = (state = initialAppState, action) => {
       return {
         ...state,
         connection: null,
+        objects: newObjects
+      };
+    }
+    case OBJECT_ACTIONS.REMOVE_CONNECTION_SUCCESS: {
+      const fromNode = getNodeById(action.payload.fromId, state.objects);
+      const toObject = getNodeById(action.payload.toId, state.objects);
+
+      const newObjects = removeLinkInObject(toObject.id, fromNode.id, state.objects);
+      saveModelToStorage(newObjects);
+      return {
+        ...state,
         objects: newObjects
       };
     }

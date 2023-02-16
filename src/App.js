@@ -9,7 +9,7 @@ import {
   addObject,
   clearSelection,
   createConnection,
-  createConnectionRemoved, removeObject,
+  createConnectionRemoved, removeConnection, removeObject,
   select,
 } from "./actions/objectActions";
 import { getInitialPosition } from "./modules/editor";
@@ -180,10 +180,13 @@ function App() {
       console.log(connection);
     });
 
-    editor.on("connectionRemoved", function (connection) {
+    editor.on("connectionRemoved", async function (connection) {
       console.log("Connection removed");
+      const fromId = editor.getNodeFromId(connection.output_id).data.id;
+      const toId = editor.getNodeFromId(connection.input_id).data.id;
       console.log(connection);
       saveEditorToStorage(editor.export());
+      await removeConnection(fromId, toId, connection, dispatch);
     });
 
     editor.on("connectionSelected", function (connection) {
@@ -192,7 +195,6 @@ function App() {
     });
 
     editor.on("mouseMove", function (position) {
-      //console.log("Position mouse x:" + position.x + " y:" + position.y);
     });
 
     editor.on("nodeMoved", function (id) {

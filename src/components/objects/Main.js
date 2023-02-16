@@ -173,6 +173,14 @@ class Main {
     }
   }
 
+  removeInputLink(nodeId) {
+    this._linksInputs = this._linksInputs.filter(input => input !== nodeId);
+  }
+
+  removeOutputLink(nodeId) {
+    this._linksOutputs = this._linksOutputs.filter(input => input !== nodeId);
+  }
+
   addNewOptionToSelect(value, label, propertyName) {
     const prop = this._properties.find(
       (property) => property.prop === propertyName

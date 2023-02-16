@@ -6,6 +6,7 @@ export const OBJECT_ACTIONS = {
   UPDATE_OBJECT_SUCCESS: "UPDATE_OBJECT_SUCCESS",
   CREATE_CONNECTION_ATTEMPT: "CREATE_CONNECTION_ATTEMPT",
   CREATE_CONNECTION_REMOVED: "CREATE_CONNECTION_REMOVED",
+  REMOVE_CONNECTION_SUCCESS: "REMOVE_CONNECTION_SUCCESS",
 };
 
 export const addObject = async (object, dispatch) => {
@@ -67,6 +68,14 @@ export const createConnection = async (fromId, toId, connection, dispatch) => {
     payload: { fromId, toId, connection },
   });
 };
+
+export const removeConnection = async (fromId, toId, connection, dispatch) => {
+  console.log(`[action] :: remove connection from ${fromId} to ${toId}`);
+  dispatch({
+    type: OBJECT_ACTIONS.REMOVE_CONNECTION_SUCCESS,
+    payload: { fromId, toId, connection },
+  });
+}
 
 export const createConnectionRemoved = async (dispatch) => {
   dispatch({
