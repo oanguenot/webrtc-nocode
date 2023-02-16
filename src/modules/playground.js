@@ -35,9 +35,16 @@ const createPeerConnection = (peerNode, stream) => {
     const win = frames[peerNode.id];
 
     if(win) {
-      const pc = new win.RTCPeerConnection();
+      win.pc = new win.RTCPeerConnection();
+      win.pc.oniceconnectionstatechange = (event) => {
+        console.log(`[ice] state changed to ${win.pc.iceConnectionState}`)
+      }
+      win.pc.onicecandidate = (event) => {
+        console.log(`[ice] received`, event);
+      }
+
       stream.getTracks().forEach(track => {
-        pc.addTrack(track);
+        win.pc.addTrack(track);
       });
     }
     resolve();
@@ -90,10 +97,26 @@ const createMedia = (peerNode, nodes) => {
 }
 
 const call = (callerNode, calleeNode, callNode) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     console.log("call from", callerNode);
     console.log("recipient", calleeNode);
     console.log("call", callNode);
+
+    console.log("Frames", frames);
+    const callerWin = frames[callerNode.id];
+    const calleeWin = frames[calleeNode.id];
+    if(!callerWin || !calleeWin || !callerWin.pc || !calleeWin.pc) {
+      console.warn("Can't call - can't find frames or pc");
+      reject();
+    }
+
+    const offer = await callerWin.pc.createOffer();
+    await callerWin.pc.setLocalDescription(offer);
+    await calleeWin.pc.setRemoteDescription(offer);
+    const answer = await calleeWin.pc.createAnswer();
+    await calleeWin.pc.setLocalDescription(answer);
+    await callerWin.pc.setRemoteDescription(answer);
+
     resolve();
   });
 }
