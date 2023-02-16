@@ -25,18 +25,26 @@ const createIFrame = (peerNode) => {
   });
 }
 
-const addDefaultMediaInIFrame = (win, kind, id) => {
-  const localElt = win.document.querySelector("#local");
+const updateTitleInIFrame = (win, id) => {
+  const titleElt = win.document.querySelector("#frameTitle");
+  if (titleElt) {
+    titleElt.innerHTML = id;
+  }
+}
+
+const addDefaultMediaInIFrame = (win, kind, id, isLocal=true) => {
+  const localElt = win.document.querySelector(`${isLocal ? "#local" : "#remote"}`);
   const elt = win.document.createElement(kind);
-  elt.setAttribute("id", `local-${id}`);
+  elt.setAttribute("id", `${isLocal ? "local" : "remote"}-${id}`);
   elt.setAttribute("width", "64");
   elt.setAttribute("height", "64");
   elt.setAttribute("playsinline", null);
   elt.setAttribute("autoplay", null);
-  elt.setAttribute("muted", null);
+  if(isLocal) {
+    elt.setAttribute("muted", null);
+  }
   localElt.appendChild(elt);
 }
-
 
 const createPeerConnection = (peerNode, stream) => {
   return new Promise((resolve, reject) => {
@@ -53,6 +61,10 @@ const createPeerConnection = (peerNode, stream) => {
       }
       win.pc.ontrack = (event) => {
         console.log(`[track] ${peerNode.id} received`, event.track);
+        addDefaultMediaInIFrame(win, event.track.kind, event.track.id,false);
+        const captured = new win.MediaStream();
+        captured.addTrack(event.track);
+        win.document.querySelector(`#remote-${event.track.id}`).srcObject = captured;
       }
 
       stream.getTracks().forEach(track => {
@@ -95,7 +107,6 @@ const createMedia = (peerNode, nodes) => {
           }
           // Create media element in IFrame
           addDefaultMediaInIFrame(win, kind, deviceId);
-          console.log(">>>constraints", constraints);
           const captured = await win.navigator.mediaDevices.getUserMedia(constraints);
           win.document.querySelector(`#local-${deviceId}`).srcObject = captured;
           captured.getTracks().forEach(track => win.stream.addTrack(track));
@@ -211,6 +222,7 @@ export const execute = (nodes) => {
     // Initialize Peer Connections
     for(const peer of peers) {
       const win = await createIFrame(peer);
+      updateTitleInIFrame(win, peer.id);
       // Store iframe window context associated to a peer connection
       frames[peer.id] = win;
       const stream = await createMedia(peer, nodes);
