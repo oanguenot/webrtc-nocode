@@ -227,6 +227,12 @@ const appReducer = (state = initialAppState, action) => {
         state: STATE.READY,
       };
     }
+    case SUPERVISOR_ACTIONS.RESET_DEVICES_SUCCESS: {
+      return {
+        ...state,
+        devices: [],
+      };
+    }
     case PLAYGROUND_ACTIONS.PLAYGROUND_LOAD_SUCCESS: {
 
       return {

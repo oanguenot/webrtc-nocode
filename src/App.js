@@ -14,7 +14,7 @@ import {
 } from "./actions/objectActions";
 import { getInitialPosition } from "./modules/editor";
 import { availableObjects, build } from "./modules/builder";
-import { getListOfDevices } from "./actions/supervisonActions";
+import {getListOfDevices, resetDevices} from "./actions/supervisonActions";
 import MenuItems from "./components/Menu/MenuItems";
 import EmptyState from "@atlaskit/empty-state";
 import {
@@ -261,6 +261,8 @@ function App() {
 
   const onClear = () => {
     editor.clearModuleSelected();
+    resetDevices(dispatch);
+    getListOfDevices(dispatch);
   };
 
   const onRunPlayground = () => {
