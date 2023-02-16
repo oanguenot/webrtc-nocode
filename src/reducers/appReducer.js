@@ -1,7 +1,7 @@
 import { OBJECT_ACTIONS } from "../actions/objectActions";
 import { SUPERVISOR_ACTIONS } from "../actions/supervisonActions";
 import {getNodeById, getNodeIndexById} from "../modules/helper";
-import {PLAYGROUND_ACTIONS} from "../actions/playgroundActions";
+import {PLAYGROUND_ACTIONS, saveModelToStorage} from "../actions/playgroundActions";
 
 export const STATE = {
   NOT_INITIALIZED: "NOT_INITIALIZED",
@@ -115,10 +115,13 @@ const appReducer = (state = initialAppState, action) => {
         object.addMultipleOptionsToSelect(peers, "peer");
       }
 
+      const newObjects = [...state.objects, object];
+      saveModelToStorage(newObjects);
+
       return {
         ...state,
         lastAdded: object,
-        objects: [...state.objects, object],
+        objects: newObjects,
       };
     }
     case OBJECT_ACTIONS.SELECT_OBJECT_SUCCESS: {
@@ -171,6 +174,8 @@ const appReducer = (state = initialAppState, action) => {
         relatedP2P.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer"));
       }
 
+      saveModelToStorage(objects);
+
       return {
         ...state,
         lastAdded: null,
@@ -206,11 +211,14 @@ const appReducer = (state = initialAppState, action) => {
         };
       }
 
+      const newObjects = updateLinkInObject(toObject.id, fromNode.id, state.objects);
+      saveModelToStorage(newObjects);
+
       // Add link to recipient node
       return {
         ...state,
         connection: null,
-        objects: updateLinkInObject(toObject.id, fromNode.id, state.objects),
+        objects: newObjects
       };
     }
     case OBJECT_ACTIONS.CREATE_CONNECTION_REMOVED: {
@@ -234,7 +242,7 @@ const appReducer = (state = initialAppState, action) => {
       };
     }
     case PLAYGROUND_ACTIONS.PLAYGROUND_LOAD_SUCCESS: {
-
+      saveModelToStorage(action.payload.objects);
       return {
         ...state,
         objects: action.payload.objects,

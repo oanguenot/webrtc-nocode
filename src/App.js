@@ -22,7 +22,13 @@ import {
   CustomProductHome,
   PrimaryButton,
 } from "@atlaskit/atlassian-navigation";
-import {load, run} from "./actions/playgroundActions";
+import {
+  load,
+  loadPlaygroundFromStorage,
+  resetPlaygroundFromStorage,
+  run,
+  saveEditorToStorage
+} from "./actions/playgroundActions";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -58,6 +64,7 @@ function App() {
       const items = availableObjects();
       setMenuItems(items);
       getListOfDevices(dispatch);
+      loadFromStorage()
     }
   }, []);
 
@@ -81,6 +88,8 @@ function App() {
           appState.lastAdded.render(),
           false
         );
+
+        saveEditorToStorage(editor.export());
       }
     }
   }, [appState.lastAdded]);
@@ -95,6 +104,7 @@ function App() {
           appState.link.connection.input_class
         );
         createConnectionRemoved(dispatch);
+        saveEditorToStorage(editor.export());
       }
     }
   }, [appState.link]);
@@ -143,12 +153,14 @@ function App() {
           connection.output_class,
           connection.input_class
         );
+        saveEditorToStorage(editor.export());
         return;
       }
 
       const fromId = editor.getNodeFromId(connection.output_id).data.id;
       const toId = editor.getNodeFromId(connection.input_id).data.id;
 
+      saveEditorToStorage(editor.export());
       await createConnection(fromId, toId, connection, dispatch);
     });
 
@@ -170,6 +182,7 @@ function App() {
     editor.on("connectionRemoved", function (connection) {
       console.log("Connection removed");
       console.log(connection);
+      saveEditorToStorage(editor.export());
     });
 
     editor.on("connectionSelected", function (connection) {
@@ -183,6 +196,7 @@ function App() {
 
     editor.on("nodeMoved", function (id) {
       console.log("Node moved " + id);
+      saveEditorToStorage(editor.export());
     });
 
     editor.on("zoom", function (zoom) {
@@ -261,6 +275,7 @@ function App() {
 
   const onClear = () => {
     editor.clearModuleSelected();
+    resetPlaygroundFromStorage();
     resetDevices(dispatch);
     getListOfDevices(dispatch);
   };
@@ -330,6 +345,15 @@ function App() {
 
     if(imported.objects) {
       load(imported.objects, dispatch);
+    }
+  }
+
+  const loadFromStorage = () => {
+    console.log("[app] load playground from storage...");
+    const {nodes, objects} = loadPlaygroundFromStorage();
+    if(nodes && objects) {
+      editor.import(nodes);
+      load(objects, dispatch);
     }
   }
 
