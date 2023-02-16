@@ -9,7 +9,7 @@ import {
   addObject,
   clearSelection,
   createConnection,
-  createConnectionRemoved,
+  createConnectionRemoved, removeObject,
   select,
 } from "./actions/objectActions";
 import { getInitialPosition } from "./modules/editor";
@@ -115,7 +115,8 @@ function App() {
     });
 
     editor.on("nodeRemoved", function (id) {
-      console.log("Node removed " + id);
+      removeObject(id, dispatch);
+      saveEditorToStorage(editor.export());
     });
 
     editor.on("nodeSelected", async function (id) {

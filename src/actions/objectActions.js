@@ -1,5 +1,6 @@
 export const OBJECT_ACTIONS = {
   ADD_OBJECT_SUCCESS: "ADD_OBJECT_SUCCESS",
+  REMOVE_OBJECT_SUCCESS: "REMOVE_OBJECT_SUCCESS",
   SELECT_OBJECT_SUCCESS: "SELECT_OBJECT_SUCCESS",
   UNSELECT_OBJECT_SUCCESS: "UNSELECT_OBJECT_SUCCESS",
   UPDATE_OBJECT_SUCCESS: "UPDATE_OBJECT_SUCCESS",
@@ -15,6 +16,15 @@ export const addObject = async (object, dispatch) => {
     payload: { object },
   });
 };
+
+export const removeObject = async (objectId, dispatch) => {
+  console.log(`[action] :: remove object ${objectId}`);
+
+  dispatch({
+    type: OBJECT_ACTIONS.REMOVE_OBJECT_SUCCESS,
+    payload: { },
+  });
+}
 
 export const select = async (objectId, dispatch) => {
   console.log(`[action] :: select object ${objectId}`);

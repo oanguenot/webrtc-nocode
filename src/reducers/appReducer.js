@@ -124,6 +124,17 @@ const appReducer = (state = initialAppState, action) => {
         objects: newObjects,
       };
     }
+    case OBJECT_ACTIONS.REMOVE_OBJECT_SUCCESS: {
+      console.log(">>>", state.selected);
+      if(state.selected) {
+        const newObjects = state.objects.filter(object => object.id !== state.selected.id);
+        saveModelToStorage(newObjects);
+        return {
+          ...state,
+          objects: newObjects
+        };
+      }
+    }
     case OBJECT_ACTIONS.SELECT_OBJECT_SUCCESS: {
       const objectId = action.payload.objectId;
       const object = getNodeById(objectId, state.objects);
