@@ -4,6 +4,14 @@ import {rehydrateObject} from "./builder";
 
 const frames = {};
 
+const delayer = (duration) => {
+  return new Promise((resolve, __reject) => {
+    setTimeout(() => {
+      resolve();
+    }, duration);
+  });
+}
+
 const createIFrame = (peerNode) => {
   return new Promise((resolve, reject) => {
     const iframesElt = document.querySelector("#frames");
@@ -36,14 +44,19 @@ const createPeerConnection = (peerNode, stream) => {
 
     if(win) {
       win.pc = new win.RTCPeerConnection();
+      win.ices = [];
       win.pc.oniceconnectionstatechange = (event) => {
-        console.log(`[ice] state changed to ${win.pc.iceConnectionState}`)
+        console.log(`[ice] ${peerNode.id} state changed to ${win.pc.iceConnectionState}`)
       }
       win.pc.onicecandidate = (event) => {
-        console.log(`[ice] received`, event);
+        win.ices.push(event.candidate);
+      }
+      win.pc.ontrack = (event) => {
+        console.log(`[track] ${peerNode.id} received`, event.track);
       }
 
       stream.getTracks().forEach(track => {
+        console.log(`[track] ${peerNode.id} add`, track);
         win.pc.addTrack(track);
       });
     }
@@ -55,11 +68,10 @@ const createMedia = (peerNode, nodes) => {
   return new Promise(async (resolve, reject) => {
     try {
       const win = frames[peerNode.id];
-      let stream = new win.MediaStream();
-
-      const constraints = {audio: false, video: false};
+      win.stream = new win.MediaStream();
 
       for (const inputId of peerNode.linksInput) {
+        const constraints = {audio: false, video: false};
         let input = getNodeById(inputId, nodes);
         if (input) {
           const kind = input.getInfoValueFor('kind');
@@ -83,12 +95,13 @@ const createMedia = (peerNode, nodes) => {
           }
           // Create media element in IFrame
           addDefaultMediaInIFrame(win, kind, deviceId);
+          console.log(">>>constraints", constraints);
           const captured = await win.navigator.mediaDevices.getUserMedia(constraints);
           win.document.querySelector(`#local-${deviceId}`).srcObject = captured;
-          captured.getTracks().forEach(track => stream.addTrack(track));
+          captured.getTracks().forEach(track => win.stream.addTrack(track));
         }
       }
-      resolve(stream);
+      resolve(win.stream);
     } catch(err) {
       console.log(">>>Reject", err);
       reject(err);
@@ -112,11 +125,29 @@ const call = (callerNode, calleeNode, callNode) => {
 
     const offer = await callerWin.pc.createOffer();
     await callerWin.pc.setLocalDescription(offer);
+    await delayer(2000);
     await calleeWin.pc.setRemoteDescription(offer);
+
+    callerWin.ices.forEach(ice => calleeWin.pc.addIceCandidate(ice));
     const answer = await calleeWin.pc.createAnswer();
     await calleeWin.pc.setLocalDescription(answer);
+    await delayer(2000);
     await callerWin.pc.setRemoteDescription(answer);
+    calleeWin.ices.forEach(ice => callerWin.pc.addIceCandidate(ice));
 
+    await delayer(2000);
+    if(callerWin.pc) {
+      callerWin.pc.close();
+    }
+    if( calleeWin.pc) {
+      calleeWin.pc.close();
+    }
+    if(callerWin.stream) {
+      callerWin.stream.getTracks().forEach(track => track.stop());
+    }
+    if(calleeWin.stream) {
+      calleeWin.stream.getTracks().forEach(track => track.stop());
+    }
     resolve();
   });
 }
