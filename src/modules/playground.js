@@ -122,11 +122,6 @@ const createMedia = (peerNode, nodes) => {
 
 const call = (callerNode, calleeNode, callNode) => {
   return new Promise(async (resolve, reject) => {
-    console.log("call from", callerNode);
-    console.log("recipient", calleeNode);
-    console.log("call", callNode);
-
-    console.log("Frames", frames);
     const callerWin = frames[callerNode.id];
     const calleeWin = frames[calleeNode.id];
     if(!callerWin || !calleeWin || !callerWin.pc || !calleeWin.pc) {
@@ -184,10 +179,8 @@ const executeANode = (initialEvent, currentNode, nodes) => {
     const promises = [];
     switch (currentNode.node) {
       case NODES.CALL:
-        console.log("[play] execute call node");
         const fromPeer = getNodeById(initialEvent.getPropertyValueFor("peer"), nodes);
         const recipientPeer = getNodeById(currentNode.getPropertyValueFor("peer"), nodes);
-        resolve();
         if (recipientPeer && fromPeer) {
           promises.push(call(fromPeer, recipientPeer, currentNode));
         } else {
