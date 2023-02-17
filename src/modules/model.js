@@ -10,6 +10,7 @@ export const NODES = {
   ACTIONS: "action.*",
   READY: "event.ready",
   ICE: "event.ice",
+  END: "action.end",
 }
 
 export const KIND = {
