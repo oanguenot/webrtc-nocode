@@ -9,6 +9,7 @@ export const NODES = {
   EVENTS: "event.*",
   ACTIONS: "action.*",
   READY: "event.ready",
+  ICE: "event.ice",
 }
 
 export const KIND = {
@@ -27,6 +28,7 @@ export const KEYS = {
   TRACK: "track",
   DELAY: "delay",
   PEER: "peer",
+  ICESTATE: "iceState",
 }
 
 export const KEY_TYPE = {

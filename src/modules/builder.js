@@ -11,9 +11,11 @@ import Step from "../components/objects/events/Step";
 import Goto from "../components/objects/events/Goto";
 import AudioEncodings from "../components/objects/actions/AudioEncodings";
 import Waiting from "../components/objects/actions/Waiting";
+import ICEConnectionEvent from "../components/objects/events/ICEConnectionEvent";
 
 const ObjectBuilder = {
   "Ready": Ready,
+  "ICEConnectionEvent": ICEConnectionEvent,
   //"Step":Step,
   //"Goto": Goto,
   "Waiting": Waiting,
@@ -31,6 +33,7 @@ const ObjectBuilder = {
 const convertNodeNameToClass = (name, kind) => {
   const Nodes = {
     "event.ready": Ready,
+    "event.ice": ICEConnectionEvent,
     "action.wait": Waiting,
     "rtc.peer": PeerConnection,
     "rtc.track": kind === "audio" ? AudioTrack : VideoTrack,

@@ -1,9 +1,5 @@
 import { MenuGroup, Section } from "@atlaskit/menu";
 import {
-  Header,
-  NavigationHeader,
-  NestableNavigationContent,
-  NestingItem,
   SideNavigation,
 } from '@atlaskit/side-navigation';
 import MenuItem from "./MenuItem";

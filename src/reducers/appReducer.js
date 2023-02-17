@@ -106,6 +106,13 @@ const appReducer = (state = initialAppState, action) => {
           obj.addNewOptionToSelect(object.id, object.id, "peer");
         });
 
+        filterObjectsWithNode(
+          "event.ice",
+          state.objects
+        ).forEach((obj) => {
+          obj.addNewOptionToSelect(object.id, object.id, "peer");
+        });
+
       } else if (node.includes("event.ready")) {
         const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
           (obj) => ({
@@ -114,6 +121,15 @@ const appReducer = (state = initialAppState, action) => {
           })
         );
         object.addMultipleOptionsToSelect(peers, "peer");
+      }
+      else if (node.includes("event.ice")) {
+          const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
+            (obj) => ({
+              value: obj.id,
+              label: obj.getPropertyValueFor("name"),
+            })
+          );
+          object.addMultipleOptionsToSelect(peers, "peer");
       } else if (node.includes("action.call")) {
         const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
           (obj) => ({

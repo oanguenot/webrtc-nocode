@@ -11,7 +11,8 @@ class End extends Main {
     super(x, y);
     this._inputs = 1;
     this._outputs = 0;
-    this._info = [{ key: "node", value: "end" }];
+    this._info = [{ key: "node", value: "end" },
+    ];
     this._acceptInputs = ["*"];
     this._acceptOutputs = [];
     this._properties = [];
