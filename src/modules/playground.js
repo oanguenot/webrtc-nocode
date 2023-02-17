@@ -1,4 +1,4 @@
-import {getDimensionFromResolution, getNodeById, getNodeInfoValue, getPeers, getReady} from "./helper";
+import {getDimensionFromResolution, getIceChange, getNodeById, getNodeInfoValue, getPeers, getReady} from "./helper";
 import {KEYS, NODES} from "./model";
 import {rehydrateObject} from "./builder";
 
@@ -46,15 +46,16 @@ const addDefaultMediaInIFrame = (win, kind, id, isLocal=true) => {
   localElt.appendChild(elt);
 }
 
-const createPeerConnection = (peerNode, stream) => {
+const createPeerConnection = (peerNode, stream, iceEvents) => {
   return new Promise((resolve, reject) => {
     const win = frames[peerNode.id];
 
     if(win) {
       win.pc = new win.RTCPeerConnection();
       win.ices = [];
-      win.pc.oniceconnectionstatechange = (event) => {
+      win.pc.oniceconnectionstatechange = () => {
         console.log(`[ice] ${peerNode.id} state changed to ${win.pc.iceConnectionState}`)
+        // Check iceEvents node to initiate actions
       }
       win.pc.onicecandidate = (event) => {
         win.ices.push(event.candidate);
@@ -211,6 +212,7 @@ export const execute = (nodes) => {
     console.log("[play] started...");
     // found peer connections for creating iFrame
     const peers = getPeers(nodes);
+    const iceEvents = getIceChange(nodes);
 
     // Initialize Peer Connections
     for(const peer of peers) {
@@ -219,7 +221,8 @@ export const execute = (nodes) => {
       // Store iframe window context associated to a peer connection
       frames[peer.id] = win;
       const stream = await createMedia(peer, nodes);
-      await createPeerConnection(peer, stream);
+      await createPeerConnection(peer, stream, iceEvents);
+
     }
 
     // Check for the ready event and execute it

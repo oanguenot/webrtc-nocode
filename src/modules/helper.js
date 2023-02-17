@@ -27,6 +27,8 @@ export const getPeers = (nodes) => (nodes.filter(item => (item.node === NODES.PE
 
 export const getReady = (nodes) => (nodes.find(item => (item.node === NODES.READY)));
 
+export const getIceChange = (nodes) => (nodes.filter(item => (item.node === NODES.ICE)));
+
 export const getNodeById = (id, nodes) => (nodes.find((node) => (node.id === id)));
 
 export const getNodeIndexById = (id, nodes) => (nodes.findIndex((object) => (object.id === id)));
