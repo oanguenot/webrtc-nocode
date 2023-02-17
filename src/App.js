@@ -29,6 +29,8 @@ import {
   run,
   saveEditorToStorage
 } from "./actions/playgroundActions";
+import {Content, LeftSidebar, PageLayout, TopNavigation, Main, RightSidebar, RightPanel} from "@atlaskit/page-layout";
+import {SideNavigation} from "@atlaskit/side-navigation";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -376,22 +378,37 @@ function App() {
 
   return (
     <AppContext.Provider value={appState}>
-      <AtlassianNavigation
-        label="WebRTC Playground"
-        primaryItems={[
-          <PrimaryButton onClick={() => onZoomIn()}>+</PrimaryButton>,
-          <PrimaryButton onClick={() => onZoomOut()}>-</PrimaryButton>,
-          <PrimaryButton onClick={() => onZoomReset()}>100%</PrimaryButton>,
-          <PrimaryButton onClick={() => onImport()}>Import</PrimaryButton>,
-          <PrimaryButton onClick={() => onExport()}>Export</PrimaryButton>,
-          <PrimaryButton onClick={() => onClear()}>Reset</PrimaryButton>,
-          <PrimaryButton onClick={() => onRunPlayground()}>Run</PrimaryButton>,
-        ]}
-        renderProductHome={renderProductHome}
-      />
-      <div className="global">
-        <div className="wrapper">
-          <div className="col">
+      <PageLayout className="pageLayout">
+        <TopNavigation
+          testId="topNavigation"
+          id="product-navigation"
+          skipLinkTitle="Product Navigation"
+          height={55}
+          isFixed={true}
+        >
+          <AtlassianNavigation
+            label="WebRTC Playground"
+            primaryItems={[
+              <PrimaryButton onClick={() => onZoomIn()}>+</PrimaryButton>,
+              <PrimaryButton onClick={() => onZoomOut()}>-</PrimaryButton>,
+              <PrimaryButton onClick={() => onZoomReset()}>100%</PrimaryButton>,
+              <PrimaryButton onClick={() => onImport()}>Import</PrimaryButton>,
+              <PrimaryButton onClick={() => onExport()}>Export</PrimaryButton>,
+              <PrimaryButton onClick={() => onClear()}>Reset</PrimaryButton>,
+              <PrimaryButton isHighlighted onClick={() => onRunPlayground()}>Run</PrimaryButton>,
+            ]}
+            renderProductHome={renderProductHome}
+          />
+        </TopNavigation>
+        <Content testId="content" className="content">
+          <LeftSidebar
+            isFixed={false}
+            width={250}
+            id="project-navigation"
+            skipLinkTitle="Project Navigation"
+            testId="left-sidebar"
+            className="pageLayout"
+          >
             {appState.state === STATE.READY && (
               <MenuItems items={menuItems || []} onDrag={onDrag} />
             )}
@@ -401,24 +418,22 @@ function App() {
                 description="Please wait some seconds while retrieving the devices"
               />
             )}
-          </div>
-          <div className="col-right">
-            <div
-              id="drawflow"
-              ref={drawFlowElt}
-              onDrop={(event) => onDrop(event)}
-              onDragOver={(event) => allowDrop(event)}
-            ></div>
-          </div>
-          <div className="col-properties">
-            <div className="properties-editor">
-              <Properties dispatch={dispatch} />
-            </div>
-            <Supervisor dispatch={dispatch} />
+          </LeftSidebar>
+          <Main id="main-content" skipLinkTitle="Main Content">
+                  <div
+                    id="drawflow"
+                    ref={drawFlowElt}
+                    onDrop={(event) => onDrop(event)}
+                    onDragOver={(event) => allowDrop(event)}
+                  ></div>
+
+          </Main>
+          <RightSidebar id="right-sidebar" width={250} >
+            <Properties dispatch={dispatch} />
             <div id="frames"></div>
-          </div>
-        </div>
-      </div>
+          </RightSidebar>
+        </Content>
+      </PageLayout>
     </AppContext.Provider>
   );
 }

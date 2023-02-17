@@ -175,8 +175,8 @@ header a {
 }
 
 #drawflow {
-    position: relative;
-    width: calc(100vw - 542px);
+    /* position: relative;
+    width: calc(100vw - 542px); */
     height: 100%;
     background: var(--background-color);
     background-size: 25px 25px;
@@ -194,7 +194,7 @@ header a {
     }
 
     #drawflow {
-        width: calc(100vw - 51px);
+        /*width: calc(100vw - 51px); */
     }
 }
 
