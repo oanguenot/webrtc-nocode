@@ -212,6 +212,14 @@ const executeEventNode = (eventNode, nodes) => {
       return;
     }
 
+    addLog(
+      "play",
+      "log",
+      `execute event ${eventNode.node}|${eventNode.id}`,
+      null,
+      dispatcher
+    );
+
     executeANode(eventNode, firstNode, nodes).then(() => {
       resolve();
     });
