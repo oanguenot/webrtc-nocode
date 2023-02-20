@@ -1,7 +1,5 @@
 import { MenuGroup, Section } from "@atlaskit/menu";
-import {
-  SideNavigation,
-} from '@atlaskit/side-navigation';
+import { SideNavigation } from "@atlaskit/side-navigation";
 import MenuItem from "./MenuItem";
 import "./MenuItems.css";
 
@@ -14,9 +12,9 @@ function MenuItems({ items, onDrag }) {
     <SideNavigation label="Project navigation" testId="side-navigation">
       <MenuGroup>
         {[
-          { list: builtin, label: "Built-in Nodes" },
+          { list: builtin, label: "RTC" },
           { list: events, label: "Events" },
-          { list: actions, label: "Actions"},
+          { list: actions, label: "Actions" },
         ].map(({ list, label }, keySection) => (
           <Section key={keySection} title={label}>
             {list.length > 0 &&
