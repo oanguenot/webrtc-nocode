@@ -360,6 +360,7 @@ function App() {
 
     if (imported.nodes) {
       editor.import(imported.nodes);
+      saveEditorToStorage(editor.export());
     }
 
     if (imported.objects) {

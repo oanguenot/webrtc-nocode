@@ -271,7 +271,13 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         );
       }
       return executeANode(initialEvent, nextNode, nodes).then(() => {
-        addLog("play", "log", `ended!!!`, null, dispatcher);
+        addLog(
+          "play",
+          "log",
+          `node ${initialEvent.node}|${initialEvent.id} has terminated its flow`,
+          null,
+          dispatcher
+        );
       });
     });
   });
