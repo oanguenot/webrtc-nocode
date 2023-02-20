@@ -1,20 +1,21 @@
 import "./App.css";
 import "./resources/beautify.css";
-import { useEffect, useRef, useState, useReducer } from "react";
+import { useEffect, useRef, useState, useReducer, useCallback } from "react";
 import AppContext from "./contexts/appContext";
 import { appReducer, initialAppState, STATE } from "./reducers/appReducer";
-import Supervisor from "./components/logic/Supervisor";
 import Properties from "./components/properties/Properties";
 import {
   addObject,
   clearSelection,
   createConnection,
-  createConnectionRemoved, removeConnection, removeObject,
+  createConnectionRemoved,
+  removeConnection,
+  removeObject,
   select,
 } from "./actions/objectActions";
 import { getInitialPosition } from "./modules/editor";
 import { availableObjects, build } from "./modules/builder";
-import {getListOfDevices, resetDevices} from "./actions/supervisonActions";
+import { getListOfDevices, resetDevices } from "./actions/supervisonActions";
 import MenuItems from "./components/Menu/MenuItems";
 import EmptyState from "@atlaskit/empty-state";
 import {
@@ -27,10 +28,19 @@ import {
   loadPlaygroundFromStorage,
   resetPlaygroundFromStorage,
   run,
-  saveEditorToStorage
+  saveEditorToStorage,
 } from "./actions/playgroundActions";
-import {Content, LeftSidebar, PageLayout, TopNavigation, Main, RightSidebar, RightPanel} from "@atlaskit/page-layout";
-import {SideNavigation} from "@atlaskit/side-navigation";
+import {
+  Content,
+  LeftSidebar,
+  PageLayout,
+  TopNavigation,
+  Main,
+  RightSidebar,
+} from "@atlaskit/page-layout";
+import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs";
+import Button from "@atlaskit/button";
+import Debug from "./components/Debugger/Debug";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -43,6 +53,7 @@ function positionMobile(ev) {
 
 function App() {
   const [appState, dispatch] = useReducer(appReducer, initialAppState);
+  const [selected, setSelected] = useState(0);
   const drawFlowElt = useRef(null);
   const lock = useRef(null);
   const unlock = useRef(null);
@@ -66,7 +77,7 @@ function App() {
       const items = availableObjects();
       setMenuItems(items);
       getListOfDevices(dispatch);
-      loadFromStorage()
+      loadFromStorage();
     }
   }, []);
 
@@ -196,8 +207,7 @@ function App() {
       console.log(connection);
     });
 
-    editor.on("mouseMove", function (position) {
-    });
+    editor.on("mouseMove", function (position) {});
 
     editor.on("nodeMoved", function (id) {
       console.log("Node moved " + id);
@@ -287,7 +297,7 @@ function App() {
 
   const onRunPlayground = () => {
     run(appState.objects, dispatch);
-  }
+  };
 
   const onLock = () => {
     editor.editor_mode = "fixed";
@@ -322,21 +332,25 @@ function App() {
     const exported = {
       nodes: JSON_exportedNodes,
       objects: JSON_exportedModel,
-    }
-
-    const opts = {
-      types: [{
-        description: 'Playground WebRTC file',
-        accept: {'text/plain': ['.webrtc']},
-      }],
     };
 
-    const blob = new Blob([JSON.stringify(exported)], { type: "text/plain;charset=utf-8" });
+    const opts = {
+      types: [
+        {
+          description: "Playground WebRTC file",
+          accept: { "text/plain": [".webrtc"] },
+        },
+      ],
+    };
+
+    const blob = new Blob([JSON.stringify(exported)], {
+      type: "text/plain;charset=utf-8",
+    });
     const fileHandle = await window.showSaveFilePicker(opts);
     const writable = await fileHandle.createWritable();
     await writable.write(blob);
     await writable.close();
-  }
+  };
 
   const onImport = async () => {
     const [fileHandle] = await window.showOpenFilePicker();
@@ -344,23 +358,23 @@ function App() {
     const contents = await file.text();
     const imported = JSON.parse(contents);
 
-    if(imported.nodes) {
+    if (imported.nodes) {
       editor.import(imported.nodes);
     }
 
-    if(imported.objects) {
+    if (imported.objects) {
       load(imported.objects, dispatch);
     }
-  }
+  };
 
   const loadFromStorage = () => {
     console.log("[app] load playground from storage...");
-    const {nodes, objects} = loadPlaygroundFromStorage();
-    if(nodes && objects) {
+    const { nodes, objects } = loadPlaygroundFromStorage();
+    if (nodes && objects) {
       editor.import(nodes);
       load(objects, dispatch);
     }
-  }
+  };
 
   const changeMode = (option) => {
     if (option === "lock") {
@@ -374,6 +388,11 @@ function App() {
 
   const renderProductHome = () => (
     <CustomProductHome href="#" siteTitle="WebRTC Playground" />
+  );
+
+  const handleUpdate = useCallback(
+    (index) => setSelected(index),
+    [setSelected]
   );
 
   return (
@@ -395,43 +414,64 @@ function App() {
               <PrimaryButton onClick={() => onImport()}>Import</PrimaryButton>,
               <PrimaryButton onClick={() => onExport()}>Export</PrimaryButton>,
               <PrimaryButton onClick={() => onClear()}>Reset</PrimaryButton>,
-              <PrimaryButton isHighlighted onClick={() => onRunPlayground()}>Run</PrimaryButton>,
+              <PrimaryButton onClick={() => onRunPlayground()}>
+                Run
+              </PrimaryButton>,
+              <PrimaryButton
+                isHighlighted={selected === 0}
+                onClick={() => handleUpdate(0)}
+              >
+                Editor
+              </PrimaryButton>,
+              <PrimaryButton
+                isHighlighted={selected === 1}
+                appearance="warning"
+                onClick={() => handleUpdate(1)}
+              >
+                Debug
+              </PrimaryButton>,
             ]}
             renderProductHome={renderProductHome}
           />
         </TopNavigation>
         <Content testId="content" className="content">
-          <LeftSidebar
-            isFixed={false}
-            width={250}
-            id="project-navigation"
-            skipLinkTitle="Project Navigation"
-            testId="left-sidebar"
-            className="pageLayout"
-          >
-            {appState.state === STATE.READY && (
-              <MenuItems items={menuItems || []} onDrag={onDrag} />
-            )}
-            {appState.state !== STATE.READY && (
-              <EmptyState
-                header="Loading..."
-                description="Please wait some seconds while retrieving the devices"
-              />
-            )}
-          </LeftSidebar>
-          <Main id="main-content" skipLinkTitle="Main Content">
-                  <div
-                    id="drawflow"
-                    ref={drawFlowElt}
-                    onDrop={(event) => onDrop(event)}
-                    onDragOver={(event) => allowDrop(event)}
-                  ></div>
-
-          </Main>
-          <RightSidebar id="right-sidebar" width={250} >
-            <Properties dispatch={dispatch} />
-            <div id="frames"></div>
-          </RightSidebar>
+          <Tabs onChange={handleUpdate} selected={selected} id="controlled">
+            <TabList></TabList>
+            <TabPanel>
+              <LeftSidebar
+                isFixed={false}
+                width={250}
+                id="project-navigation"
+                skipLinkTitle="Project Navigation"
+                testId="left-sidebar"
+                className="pageLayout"
+              >
+                {appState.state === STATE.READY && (
+                  <MenuItems items={menuItems || []} onDrag={onDrag} />
+                )}
+                {appState.state !== STATE.READY && (
+                  <EmptyState
+                    header="Loading..."
+                    description="Please wait some seconds while retrieving the devices"
+                  />
+                )}
+              </LeftSidebar>
+              <Main id="main-content" skipLinkTitle="Main Content">
+                <div
+                  id="drawflow"
+                  ref={drawFlowElt}
+                  onDrop={(event) => onDrop(event)}
+                  onDragOver={(event) => allowDrop(event)}
+                ></div>
+              </Main>
+              <RightSidebar id="right-sidebar" width={250}>
+                <Properties dispatch={dispatch} />
+              </RightSidebar>
+            </TabPanel>
+            <TabPanel>
+              <Debug dispatch={dispatch} />
+            </TabPanel>
+          </Tabs>
         </Content>
       </PageLayout>
     </AppContext.Provider>

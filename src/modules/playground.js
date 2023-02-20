@@ -9,8 +9,10 @@ import {
 } from "./helper";
 import { KEYS, NODES } from "./model";
 import { rehydrateObject } from "./builder";
+import { addLog } from "../actions/DebugActions";
 
 const frames = {};
+let dispatcher = null;
 
 const delayer = (duration) => {
   return new Promise((resolve, __reject) => {
@@ -66,12 +68,17 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
       win.ices = [];
       win.pc.oniceconnectionstatechange = () => {
         const state = win.pc.iceConnectionState;
-        console.log(`[ice] ${peerNode.id} state changed to ${state}`);
+        addLog(
+          "peer",
+          "log",
+          `${peerNode.id} state changed to ${state}`,
+          null,
+          dispatcher
+        );
         // Check iceEvents node to initiate actions
         iceEvents.forEach((eventNode) => {
           const eventState = eventNode.getPropertyValueFor(KEYS.ICESTATE);
           if (eventState === state) {
-            console.log(`[ice] execute node ${eventNode.id}`);
             executeEventNode(eventNode, nodes);
           }
         });
@@ -80,7 +87,13 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
         win.ices.push(event.candidate);
       };
       win.pc.ontrack = (event) => {
-        console.log(`[track] ${peerNode.id} received`, event.track);
+        addLog(
+          "peer",
+          "log",
+          `${peerNode.id} track received changed ${event.track.kind}`,
+          null,
+          dispatcher
+        );
         addDefaultMediaInIFrame(win, event.track.kind, event.track.id, false);
         const captured = new win.MediaStream();
         captured.addTrack(event.track);
@@ -89,7 +102,13 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
       };
 
       stream.getTracks().forEach((track) => {
-        console.log(`[track] ${peerNode.id} add`, track);
+        addLog(
+          "peer",
+          "log",
+          `${peerNode.id} add track ${track.label} to ${peerNode.id}`,
+          null,
+          dispatcher
+        );
         win.pc.addTrack(track);
       });
     }
@@ -165,20 +184,22 @@ const call = (callerNode, calleeNode, callNode) => {
     await callerWin.pc.setRemoteDescription(answer);
     calleeWin.ices.forEach((ice) => callerWin.pc.addIceCandidate(ice));
 
-    console.log(`${new Date().toJSON()} >>> terminate call`);
-    await delayer(2000);
-    if (callerWin.pc) {
-      callerWin.pc.close();
-    }
-    if (calleeWin.pc) {
-      calleeWin.pc.close();
-    }
-    if (callerWin.stream) {
-      callerWin.stream.getTracks().forEach((track) => track.stop());
-    }
-    if (calleeWin.stream) {
-      calleeWin.stream.getTracks().forEach((track) => track.stop());
-    }
+    resolve();
+  });
+};
+
+const endPlayground = () => {
+  return new Promise((resolve, reject) => {
+    Object.keys(frames).forEach((key) => {
+      addLog("play", "log", `clean frame ${key}`, null, dispatcher);
+      const winFrame = frames[key];
+      if (winFrame.pc) {
+        winFrame.pc.close();
+      }
+      if (winFrame.stream) {
+        winFrame.stream.getTracks().forEach((track) => track.stop());
+      }
+    });
     resolve();
   });
 };
@@ -198,7 +219,13 @@ const executeEventNode = (eventNode, nodes) => {
 };
 
 const executeANode = (initialEvent, currentNode, nodes) => {
-  console.log("[play] execute node", currentNode.id);
+  addLog(
+    "play",
+    "log",
+    `execute node ${currentNode.node}|${currentNode.id}`,
+    null,
+    dispatcher
+  );
   return new Promise((resolve, reject) => {
     const promises = [];
     switch (currentNode.node) {
@@ -221,9 +248,10 @@ const executeANode = (initialEvent, currentNode, nodes) => {
       case NODES.WAIT:
         const delay = currentNode.getPropertyValueFor(KEYS.DELAY);
         promises.push(delayer(delay));
+        break;
       case NODES.END:
-        console.log("[play] end reached!!!");
-        promises.push(Promise.resolve());
+        promises.push(endPlayground());
+        break;
       default:
         break;
     }
@@ -231,20 +259,28 @@ const executeANode = (initialEvent, currentNode, nodes) => {
     Promise.all(promises).then(() => {
       const nextNode = getNodeById(currentNode.linksOutput[0], nodes);
       if (!nextNode) {
-        console.log("[play] no more step in ready");
         resolve();
         return;
       } else {
-        console.log("[play] next step found", nextNode.id);
+        addLog(
+          "play",
+          "log",
+          `go to next node ${nextNode.node}|${nextNode.id}`,
+          null,
+          dispatcher
+        );
       }
-      return executeANode(initialEvent, nextNode, nodes);
+      return executeANode(initialEvent, nextNode, nodes).then(() => {
+        addLog("play", "log", `ended!!!`, null, dispatcher);
+      });
     });
   });
 };
 
-export const execute = (nodes) => {
+export const execute = (nodes, dispatch) => {
   return new Promise(async (resolve, reject) => {
-    console.log("[play] started...");
+    dispatcher = dispatch;
+    addLog("play", "log", "started...", null, dispatcher);
     // found peer connections for creating iFrame
     const peers = getPeers(nodes);
     const iceEvents = getIceChange(nodes);
@@ -263,10 +299,16 @@ export const execute = (nodes) => {
     // Check for the ready event and execute it
     const ready = getReady(nodes);
     if (!ready) {
+      addLog(
+        "play",
+        "warning",
+        "Ready node is missing from the playground",
+        null,
+        dispatcher
+      );
       reject("No ready event");
     }
     executeEventNode(ready, nodes).then(() => {
-      console.log("[play] ended...");
       resolve();
     });
   });

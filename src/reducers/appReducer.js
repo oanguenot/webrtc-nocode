@@ -1,7 +1,11 @@
 import { OBJECT_ACTIONS } from "../actions/objectActions";
 import { SUPERVISOR_ACTIONS } from "../actions/supervisonActions";
-import {getNodeById, getNodeIndexById} from "../modules/helper";
-import {PLAYGROUND_ACTIONS, saveModelToStorage} from "../actions/playgroundActions";
+import { getNodeById, getNodeIndexById } from "../modules/helper";
+import {
+  PLAYGROUND_ACTIONS,
+  saveModelToStorage,
+} from "../actions/playgroundActions";
+import { DEBUG_ACTIONS } from "../actions/DebugActions";
 
 export const STATE = {
   NOT_INITIALIZED: "NOT_INITIALIZED",
@@ -15,6 +19,7 @@ const initialAppState = {
   link: null,
   devices: [],
   state: STATE.NOT_INITIALIZED,
+  debug: [],
 };
 
 const updateValueInObject = (objectId, name, value, label, objects) => {
@@ -45,7 +50,7 @@ const removeLinkInObject = (objectId, fromId, objects) => {
   updatedObjects[recipientIndex].removeInputLink(fromId);
   updatedObjects[initiatorIndex].removeOutputLink(objectId);
   return updatedObjects;
-}
+};
 
 const appReducer = (state = initialAppState, action) => {
   if (!action) {
@@ -59,10 +64,7 @@ const appReducer = (state = initialAppState, action) => {
       const node = object.getInfoValueFor("node");
       if (node.includes("rtc.track")) {
         object.addDevices(state.devices);
-        filterObjectsWithNode(
-          "action.encode",
-          state.objects
-        ).forEach((obj) => {
+        filterObjectsWithNode("action.encode", state.objects).forEach((obj) => {
           obj.addNewOptionToSelect(object.id, object.id, "track");
         });
       } else if (node.includes("step")) {
@@ -91,28 +93,18 @@ const appReducer = (state = initialAppState, action) => {
         object.addMultipleOptionsToSelect(tracks, "track");
       } else if (node.includes("rtc.peer")) {
         // Add peer to all ready
-        filterObjectsWithNode(
-          "event.ready",
-          state.objects
-        ).forEach((obj) => {
+        filterObjectsWithNode("event.ready", state.objects).forEach((obj) => {
           obj.addNewOptionToSelect(object.id, object.id, "peer");
         });
 
         // Add peer to all call
-        filterObjectsWithNode(
-          "action.call",
-          state.objects
-        ).forEach((obj) => {
+        filterObjectsWithNode("action.call", state.objects).forEach((obj) => {
           obj.addNewOptionToSelect(object.id, object.id, "peer");
         });
 
-        filterObjectsWithNode(
-          "event.ice",
-          state.objects
-        ).forEach((obj) => {
+        filterObjectsWithNode("event.ice", state.objects).forEach((obj) => {
           obj.addNewOptionToSelect(object.id, object.id, "peer");
         });
-
       } else if (node.includes("event.ready")) {
         const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
           (obj) => ({
@@ -121,15 +113,14 @@ const appReducer = (state = initialAppState, action) => {
           })
         );
         object.addMultipleOptionsToSelect(peers, "peer");
-      }
-      else if (node.includes("event.ice")) {
-          const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
-            (obj) => ({
-              value: obj.id,
-              label: obj.getPropertyValueFor("name"),
-            })
-          );
-          object.addMultipleOptionsToSelect(peers, "peer");
+      } else if (node.includes("event.ice")) {
+        const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
+          (obj) => ({
+            value: obj.id,
+            label: obj.getPropertyValueFor("name"),
+          })
+        );
+        object.addMultipleOptionsToSelect(peers, "peer");
       } else if (node.includes("action.call")) {
         const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
           (obj) => ({
@@ -150,12 +141,14 @@ const appReducer = (state = initialAppState, action) => {
       };
     }
     case OBJECT_ACTIONS.REMOVE_OBJECT_SUCCESS: {
-      if(state.selected) {
-        const newObjects = state.objects.filter(object => object.id !== state.selected.id);
+      if (state.selected) {
+        const newObjects = state.objects.filter(
+          (object) => object.id !== state.selected.id
+        );
         saveModelToStorage(newObjects);
         return {
           ...state,
-          objects: newObjects
+          objects: newObjects,
         };
       }
     }
@@ -202,11 +195,15 @@ const appReducer = (state = initialAppState, action) => {
       if (object.getInfoValueFor("node") === "rtc.peer") {
         // Update all ready nodes when peer name changed
         const relatedReady = filterObjectsWithNode("event.ready", objects);
-        relatedReady.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer"));
+        relatedReady.forEach((obj) =>
+          obj.updateLabelInSelect(object.id, value, "peer")
+        );
 
         // Update all callP2P nodes when peer name changed
         const relatedP2P = filterObjectsWithNode("action.p2p", objects);
-        relatedP2P.forEach((obj) => obj.updateLabelInSelect(object.id, value, "peer"));
+        relatedP2P.forEach((obj) =>
+          obj.updateLabelInSelect(object.id, value, "peer")
+        );
       }
 
       saveModelToStorage(objects);
@@ -246,25 +243,33 @@ const appReducer = (state = initialAppState, action) => {
         };
       }
 
-      const newObjects = updateLinkInObject(toObject.id, fromNode.id, state.objects);
+      const newObjects = updateLinkInObject(
+        toObject.id,
+        fromNode.id,
+        state.objects
+      );
       saveModelToStorage(newObjects);
 
       // Add link to recipient node
       return {
         ...state,
         connection: null,
-        objects: newObjects
+        objects: newObjects,
       };
     }
     case OBJECT_ACTIONS.REMOVE_CONNECTION_SUCCESS: {
       const fromNode = getNodeById(action.payload.fromId, state.objects);
       const toObject = getNodeById(action.payload.toId, state.objects);
 
-      const newObjects = removeLinkInObject(toObject.id, fromNode.id, state.objects);
+      const newObjects = removeLinkInObject(
+        toObject.id,
+        fromNode.id,
+        state.objects
+      );
       saveModelToStorage(newObjects);
       return {
         ...state,
-        objects: newObjects
+        objects: newObjects,
       };
     }
     case OBJECT_ACTIONS.CREATE_CONNECTION_REMOVED: {
@@ -295,7 +300,14 @@ const appReducer = (state = initialAppState, action) => {
         lastAdded: null,
         selected: null,
         link: null,
-      }
+      };
+    }
+    case DEBUG_ACTIONS.ADD_TRACE: {
+      const log = action.payload;
+      return {
+        ...state,
+        debug: [...state.debug, log],
+      };
     }
     default:
       return state;
