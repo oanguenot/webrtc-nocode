@@ -24,11 +24,14 @@ import {
   PrimaryButton,
 } from "@atlaskit/atlassian-navigation";
 import {
+  exportToFile,
+  importFromFile,
   load,
   loadPlaygroundFromStorage,
   resetPlaygroundFromStorage,
   run,
   saveEditorToStorage,
+  saveToExistingFile,
 } from "./actions/playgroundActions";
 import {
   Content,
@@ -321,7 +324,7 @@ function App() {
     editor.zoom_reset();
   };
 
-  const onExport = async () => {
+  const onExport = async (forceSave = false) => {
     // Export Nodes
     const JSON_exportedNodes = editor.export();
 
@@ -334,29 +337,18 @@ function App() {
       objects: JSON_exportedModel,
     };
 
-    const opts = {
-      types: [
-        {
-          description: "Playground WebRTC file",
-          accept: { "text/plain": [".webrtc"] },
-        },
-      ],
-    };
+    let hasSucceededToSave = false;
+    if (forceSave) {
+      hasSucceededToSave = await saveToExistingFile(exported);
+    }
 
-    const blob = new Blob([JSON.stringify(exported)], {
-      type: "text/plain;charset=utf-8",
-    });
-    const fileHandle = await window.showSaveFilePicker(opts);
-    const writable = await fileHandle.createWritable();
-    await writable.write(blob);
-    await writable.close();
+    if (!hasSucceededToSave) {
+      await exportToFile(exported);
+    }
   };
 
   const onImport = async () => {
-    const [fileHandle] = await window.showOpenFilePicker();
-    const file = await fileHandle.getFile();
-    const contents = await file.text();
-    const imported = JSON.parse(contents);
+    const imported = await importFromFile();
 
     if (imported.nodes) {
       editor.import(imported.nodes);
@@ -413,7 +405,12 @@ function App() {
               <PrimaryButton onClick={() => onZoomOut()}>-</PrimaryButton>,
               <PrimaryButton onClick={() => onZoomReset()}>100%</PrimaryButton>,
               <PrimaryButton onClick={() => onImport()}>Import</PrimaryButton>,
-              <PrimaryButton onClick={() => onExport()}>Export</PrimaryButton>,
+              <PrimaryButton onClick={() => onExport(false)}>
+                Export
+              </PrimaryButton>,
+              <PrimaryButton onClick={() => onExport(true)}>
+                Save
+              </PrimaryButton>,
               <PrimaryButton onClick={() => onClear()}>Reset</PrimaryButton>,
               <PrimaryButton onClick={() => onRunPlayground()}>
                 Run
