@@ -143,6 +143,25 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
+"@atlaskit/flag@^15.0.6":
+  version "15.0.6"
+  resolved "https://registry.yarnpkg.com/@atlaskit/flag/-/flag-15.0.6.tgz#c229047d0993af0ecc3f45b80628691b5ddb8e25"
+  integrity sha512-l693L4OK86hQ4cDxd3RGxePR7USRZ51N95SS+7dD/xHgAlpwfIk9bWXmdAchJvxhLb8cn1cKkyLuqqHvkNCIYQ==
+  dependencies:
+    "@atlaskit/analytics-next" "^8.0.0"
+    "@atlaskit/button" "^16.5.0"
+    "@atlaskit/ds-explorations" "^2.0.0"
+    "@atlaskit/ds-lib" "^2.1.0"
+    "@atlaskit/focus-ring" "^1.2.0"
+    "@atlaskit/icon" "^21.11.0"
+    "@atlaskit/motion" "^1.3.0"
+    "@atlaskit/portal" "^4.0.0"
+    "@atlaskit/theme" "^12.2.0"
+    "@atlaskit/tokens" "^1.0.0"
+    "@atlaskit/visually-hidden" "^1.1.0"
+    "@babel/runtime" "^7.0.0"
+    "@emotion/react" "^11.7.1"
+
 "@atlaskit/focus-ring@^1.2.0":
   version "1.2.3"
   resolved "https://registry.yarnpkg.com/@atlaskit/focus-ring/-/focus-ring-1.2.3.tgz#6bdd2e46a53a1360498acfc53e5558d6cb0d161c"
@@ -175,6 +194,16 @@
   dependencies:
     "@atlaskit/theme" "^12.2.0"
     "@atlaskit/tokens" "^0.13.0"
+    "@babel/runtime" "^7.0.0"
+    "@emotion/react" "^11.7.1"
+
+"@atlaskit/icon@^21.11.5":
+  version "21.11.5"
+  resolved "https://registry.yarnpkg.com/@atlaskit/icon/-/icon-21.11.5.tgz#c2a52238bad5eb3cc9483aaff498372aed9043e0"
+  integrity sha512-84wTZvu7JepRQlCBvyxGSwAw7r0Sn5s4BxIfHgVvgDOnHZ2xnrHfGgK4DnDnMmQkRhaYbAEBFG/kCx9ZTqb+mg==
+  dependencies:
+    "@atlaskit/theme" "^12.2.0"
+    "@atlaskit/tokens" "^1.0.0"
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 

@@ -42,8 +42,11 @@ import {
   RightSidebar,
 } from "@atlaskit/page-layout";
 import Tabs, { Tab, TabList, TabPanel } from "@atlaskit/tabs";
-import Button from "@atlaskit/button";
 import Debug from "./components/Debugger/Debug";
+import { AutoDismissFlag, FlagGroup } from "@atlaskit/flag";
+import SuccessIcon from "@atlaskit/icon/glyph/check-circle";
+import { token } from "@atlaskit/tokens";
+import { G300 } from "@atlaskit/theme/colors";
 
 let editor = null;
 const Drawflow = window.Drawflow;
@@ -57,6 +60,7 @@ function positionMobile(ev) {
 function App() {
   const [appState, dispatch] = useReducer(appReducer, initialAppState);
   const [selected, setSelected] = useState(0);
+  const [flags, setFlags] = useState([]);
   const drawFlowElt = useRef(null);
   const lock = useRef(null);
   const unlock = useRef(null);
@@ -124,6 +128,18 @@ function App() {
       }
     }
   }, [appState.link]);
+
+  const addFlag = (fileName) => {
+    const newFlagId = flags.length + 1;
+    const newFlags = flags.slice();
+    newFlags.splice(0, 0, { newFlagId, fileName });
+
+    setFlags(newFlags);
+  };
+
+  const handleDismiss = () => {
+    setFlags(flags.slice(1));
+  };
 
   const addFlowEvents = () => {
     editor.on("nodeCreated", function (id) {
@@ -338,13 +354,17 @@ function App() {
     };
 
     let hasSucceededToSave = false;
+    let fileHandleName = "";
     if (forceSave) {
-      hasSucceededToSave = await saveToExistingFile(exported);
+      fileHandleName = await saveToExistingFile(exported);
+      hasSucceededToSave = !!fileHandleName;
     }
 
     if (!hasSucceededToSave) {
-      await exportToFile(exported);
+      fileHandleName = await exportToFile(exported);
     }
+
+    addFlag(fileHandleName);
   };
 
   const onImport = async () => {
@@ -471,6 +491,26 @@ function App() {
             </TabPanel>
           </Tabs>
         </Content>
+        <FlagGroup onDismissed={handleDismiss}>
+          {flags.map(({ flagId, fileName }, key) => {
+            return (
+              <div key={key}>
+                <AutoDismissFlag
+                  id={flagId}
+                  icon={
+                    <SuccessIcon
+                      primaryColor={token("color.icon.success", G300)}
+                      label="Success"
+                      size="medium"
+                    />
+                  }
+                  key={flagId}
+                  title={`Saved to ${fileName}`}
+                />
+              </div>
+            );
+          })}
+        </FlagGroup>
       </PageLayout>
     </AppContext.Provider>
   );
