@@ -23,16 +23,9 @@ export const includes = (nodeName, list) => {
   return found;
 };
 
-export const getPeers = (nodes) =>
-  nodes.filter((item) => item.node === NODES.PEER);
-
-export const getReady = (nodes) =>
-  nodes.find((item) => item.node === NODES.READY);
-
-export const getIceChange = (nodes) =>
-  nodes.filter((item) => item.node === NODES.ICE);
-
 export const getNodeById = (id, nodes) => nodes.find((node) => node.id === id);
+
+export const getNodesFromIds = (ids, nodes) => ( ids.map(id => getNodeById(id, nodes)));
 
 export const getNodeIndexById = (id, nodes) =>
   nodes.findIndex((object) => object.id === id);
@@ -47,9 +40,18 @@ export const getNodeInfoValue = (infoKey, node) => {
   return infoName ? infoName.value : null;
 };
 
-export const filterICENodeForPeer = (ICENodes, peerNodeId) => {
-  return ICENodes.filter((node) => {
-    const peerId = node.getPropertyValueFor(KEYS.PEER);
-    return peerId === peerNodeId;
+export const filterSimilarNodesById = (id, nodes, key) => {
+  return nodes.filter((node) => {
+    const peerId = node.getPropertyValueFor(key);
+    return peerId === id;
   });
 };
+
+export const filterNodesByName = (node, nodes) => {
+  return nodes.filter((item) => item.node === node);
+}
+
+export const findNodeByName = (node, nodes) => {
+  return nodes.find((item) => item.node === node);
+}
+

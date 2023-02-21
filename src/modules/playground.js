@@ -1,11 +1,9 @@
 import {
-  filterICENodeForPeer,
+  filterSimilarNodesById, filterNodesByName, findNodeByName,
   getDimensionFromResolution,
-  getIceChange,
   getNodeById,
   getNodeInfoValue,
-  getPeers,
-  getReady,
+  getNodesFromIds,
 } from "./helper";
 import { KEYS, NODES } from "./model";
 import { rehydrateObject } from "./builder";
@@ -62,7 +60,7 @@ const createMediaElementInIFrame = (win, kind, id, isLocal = true) => {
 const addMediaToElementInIFrame = (media) => {};
 
 const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const win = frames[peerNode.id];
 
     if (win) {
@@ -169,6 +167,30 @@ const createMedia = (peerNode, nodes) => {
   });
 };
 
+const createWatchRTC = (peerNode, nodes) => {
+  return new Promise( (resolve, reject) => {
+    try {
+      const win = frames[peerNode.id];
+      const outputNodes = getNodesFromIds(peerNode.linksOutput, nodes);
+      const watchNode = findNodeByName(NODES.WATCH, outputNodes);
+
+      if(!watchNode) {
+        resolve();
+        return;
+      }
+
+      const rtcApiKey = watchNode.getPropertyValueFor("apiKey");
+      const rtcRoomId = watchNode.getPropertyValueFor("roomId");
+      const rtcPeerId = watchNode.getPropertyValueFor("peerId");
+      win.watchRTC.init({rtcApiKey, rtcRoomId, rtcPeerId});
+      resolve();
+    } catch (err) {
+      console.log(">>>Reject", err);
+      reject(err);
+    }
+  });
+}
+
 const call = (callerNode, calleeNode, callNode) => {
   return new Promise(async (resolve, reject) => {
     const callerWin = frames[callerNode.id];
@@ -178,7 +200,6 @@ const call = (callerNode, calleeNode, callNode) => {
       reject();
     }
 
-    console.log(`${new Date().toJSON()} >>>execute call`);
     const offer = await callerWin.pc.createOffer();
     await callerWin.pc.setLocalDescription(offer);
     await delayer(2000);
@@ -190,7 +211,6 @@ const call = (callerNode, calleeNode, callNode) => {
     await delayer(2000);
     await callerWin.pc.setRemoteDescription(answer);
     calleeWin.ices.forEach((ice) => callerWin.pc.addIceCandidate(ice));
-
     resolve();
   });
 };
@@ -303,8 +323,8 @@ export const execute = (nodes, dispatch) => {
     dispatcher = dispatch;
     addLog("play", "log", "started...", null, dispatcher);
     // found peer connections for creating iFrame
-    const peers = getPeers(nodes);
-    const iceEvents = getIceChange(nodes);
+    const peers = filterNodesByName(NODES.PEER, nodes);
+    const iceEvents = filterNodesByName(NODES.ICE, nodes);
 
     // Initialize Peer Connections
     for (const peer of peers) {
@@ -312,13 +332,14 @@ export const execute = (nodes, dispatch) => {
       updateTitleInIFrame(win, peer.id);
       // Store iframe window context associated to a peer connection
       frames[peer.id] = win;
+      await createWatchRTC(peer, nodes);
       const stream = await createMedia(peer, nodes);
-      const iceEventsForPeer = filterICENodeForPeer(iceEvents, peer.id);
+      const iceEventsForPeer = filterSimilarNodesById(peer.id, iceEvents, KEYS.PEER);
       await createPeerConnection(peer, stream, iceEventsForPeer, nodes);
     }
 
     // Check for the ready event and execute it
-    const ready = getReady(nodes);
+    const ready = findNodeByName(NODES.READY, nodes);
     if (!ready) {
       addLog(
         "play",
@@ -342,10 +363,11 @@ export const rehydrateModel = (nodes) => {
     const kind = getNodeInfoValue(KEYS.KIND, node);
     const object = rehydrateObject(name, kind, node._posX, node._posY);
     if(!object) {
-      console.warn("can't reydrate", name, kind);
+      console.warn("can't rehydrate", name, kind);
+    } else {
+      object.rehydrate(node);
+      model.push(object);
     }
-    object.rehydrate(node);
-    model.push(object);
   });
   return model;
 };
