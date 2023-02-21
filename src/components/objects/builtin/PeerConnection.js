@@ -1,6 +1,7 @@
 import Main from "../Main";
 
 import "../Main.css";
+import {KEY_TYPE, KEYS, NODES} from "../../../modules/model";
 
 class PeerConnection extends Main {
   static item = "Peer Connection";
@@ -12,28 +13,28 @@ class PeerConnection extends Main {
   constructor(x, y) {
     super(x, y);
     this._inputs = 2;
-    this._outputs = 3;
-    this._acceptInputs = ["rtc.track"];
-    this._acceptOutputs = ["action.encode", "rtc.watch"];
+    this._outputs = 1;
+    this._acceptInputs = [NODES.TRACK];
+    this._acceptOutputs = [NODES.WATCH];
     this._info = [
-      { key: "node", value: "rtc.peer" },
+      { key: KEYS.NODE, value: NODES.PEER },
       {
-        key: "info",
+        key: KEYS.INFO,
         value: "Create a new RTCPeerConnection instance for a user",
       },
     ];
     this._properties = [
       {
-        prop: "name",
+        prop: KEYS.NAME,
         label: "Name",
-        type: "text",
+        type: KEY_TYPE.TEXT,
         value: `PC-${this._uuid}`,
         description: "Name of the Peer Connection",
       },
       {
-        prop: "network",
+        prop: KEYS.NETWORK,
         label: "Connection type",
-        type: "enum",
+        type: KEY_TYPE.ENUM,
         enum: [
           { label: "Any", value: "any" },
           { label: "Relay only", value: "relay" },
@@ -49,9 +50,9 @@ class PeerConnection extends Main {
     const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
-      case "network":
+      case KEYS.NETWORK:
         return property.value === "any" ? "Unforced network" : label;
-      case "name":
+      case KEYS.NAME:
         return property.value;
       default:
         return "";
@@ -64,12 +65,12 @@ class PeerConnection extends Main {
         <div class="title-box">
            <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
       this._uuid
-    }">${this.renderProp("name")}</span>
+    }">${this.renderProp(KEYS.NAME)}</span>
         </div>
         <div class="box">
             <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="network-${
               this._uuid
-            }">${this.renderProp("network")}</span>
+            }">${this.renderProp(KEYS.NETWORK)}</span>
              <div class="object-footer">
                 <span class="object-node object-title-box">${
                   this._info[0].value

@@ -19,7 +19,7 @@ class CallP2P extends Main {
         value: "Initiate a P2P call to a recipient by sending an offer",
       },
     ];
-    this._acceptInputs = [NODES.EVENTS];
+    this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS];
     this._acceptOutputs = [NODES.ACTIONS];
     this._properties = [
       {

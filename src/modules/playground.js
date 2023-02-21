@@ -215,6 +215,38 @@ const call = (callerNode, calleeNode, callNode) => {
   });
 };
 
+const encode = (peerNode, encodeNode, nodes) => {
+  return new Promise((resolve, reject) => {
+    const trackNodeId = encodeNode.getPropertyValueFor(KEYS.TRACK);
+    const codec = encodeNode.getPropertyValueFor(KEYS.PREFERENCE);
+    const maxBitrate = encodeNode.getPropertyValueFor(KEYS.MAX_BITRATE);
+    const active = encodeNode.getPropertyValueFor(KEYS.ACTIVE);
+
+    const trackNode = getNodeById(trackNodeId, nodes);
+    const trackKind = trackNode.getInfoValueFor(KEYS.KIND);
+    const trackDeviceId = trackNode.getPropertyValueFor(KEYS.FROM);
+
+    console.log(">>> encode parameters", trackDeviceId, codec, maxBitrate, active);
+
+    const win = frames[peerNode.id];
+    if(!win.pc) {
+      console.log("Can't encode - no peer connection");
+      resolve();
+    }
+
+    const senders = win.pc.getSenders();
+    senders.forEach(sender => {
+      const track = sender.track;
+      const constraints = track.getConstraints();
+      if(track.kind === trackKind && constraints.deviceId === trackDeviceId) {
+        console.log(">>>Encode track", track);
+      }
+    });
+
+    resolve();
+  });
+}
+
 const endPlayground = () => {
   return new Promise((resolve, reject) => {
     Object.keys(frames).forEach((key) => {
@@ -264,7 +296,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
   return new Promise((resolve, reject) => {
     const promises = [];
     switch (currentNode.node) {
-      case NODES.CALL:
+      case NODES.CALL: {
         const fromPeer = getNodeById(
           initialEvent.getPropertyValueFor("peer"),
           nodes
@@ -280,13 +312,21 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           reject();
         }
         break;
-      case NODES.WAIT:
+      }
+      case NODES.WAIT: {
         const delay = currentNode.getPropertyValueFor(KEYS.DELAY);
         promises.push(delayer(delay));
         break;
-      case NODES.END:
+      }
+      case NODES.ENCODE: {
+        const fromPeer = getNodeById(initialEvent.getPropertyValueFor("peer"), nodes);
+        promises.push(encode(fromPeer, currentNode, nodes));
+        break;
+      }
+      case NODES.END: {
         promises.push(endPlayground());
         break;
+      }
       default:
         break;
     }
