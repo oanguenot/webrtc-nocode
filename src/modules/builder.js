@@ -4,7 +4,7 @@ import PeerConnection from "../components/objects/builtin/PeerConnection";
 import Turn from "../components/objects/builtin/Turn";
 import VideoEncodings from "../components/objects/actions/VideoEncodings";
 import CallP2P from "../components/objects/actions/CallP2P";
-import WebRTCMetrics from "../components/objects/actions/WebRTCMetrics";
+import WebRTCMetrics from "../components/objects/external/WebRTCMetrics";
 import Ready from "../components/objects/events/Ready";
 import End from "../components/objects/events/End";
 import Step from "../components/objects/events/Step";
@@ -12,6 +12,7 @@ import Goto from "../components/objects/events/Goto";
 import AudioEncodings from "../components/objects/actions/AudioEncodings";
 import Waiting from "../components/objects/actions/Waiting";
 import ICEConnectionEvent from "../components/objects/events/ICEConnectionEvent";
+import WatchRTC from "../components/objects/external/WatchRTC";
 
 const ObjectBuilder = {
   "Ready": Ready,
@@ -26,6 +27,7 @@ const ObjectBuilder = {
   "AudioEncodings": AudioEncodings,
   "VideoEncodings": VideoEncodings,
   "WebRTCMetrics": WebRTCMetrics,
+  "WatchRTC": WatchRTC,
   "CallP2P": CallP2P,
   "End": End,
 };
