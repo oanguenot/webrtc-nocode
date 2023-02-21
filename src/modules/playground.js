@@ -1,5 +1,7 @@
 import {
-  filterSimilarNodesById, filterNodesByName, findNodeByName,
+  filterSimilarNodesById,
+  filterNodesByName,
+  findNodeByName,
   getDimensionFromResolution,
   getNodeById,
   getNodeInfoValue,
@@ -168,13 +170,13 @@ const createMedia = (peerNode, nodes) => {
 };
 
 const createWatchRTC = (peerNode, nodes) => {
-  return new Promise( (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     try {
       const win = frames[peerNode.id];
       const outputNodes = getNodesFromIds(peerNode.linksOutput, nodes);
       const watchNode = findNodeByName(NODES.WATCH, outputNodes);
 
-      if(!watchNode) {
+      if (!watchNode) {
         resolve();
         return;
       }
@@ -182,14 +184,14 @@ const createWatchRTC = (peerNode, nodes) => {
       const rtcApiKey = watchNode.getPropertyValueFor("apiKey");
       const rtcRoomId = watchNode.getPropertyValueFor("roomId");
       const rtcPeerId = watchNode.getPropertyValueFor("peerId");
-      win.watchRTC.init({rtcApiKey, rtcRoomId, rtcPeerId});
+      win.watchRTC.init({ rtcApiKey, rtcRoomId, rtcPeerId });
       resolve();
     } catch (err) {
       console.log(">>>Reject", err);
       reject(err);
     }
   });
-}
+};
 
 const call = (callerNode, calleeNode, callNode) => {
   return new Promise(async (resolve, reject) => {
@@ -218,7 +220,7 @@ const call = (callerNode, calleeNode, callNode) => {
 const encode = (peerNode, encodeNode, nodes) => {
   return new Promise((resolve, reject) => {
     const trackNodeId = encodeNode.getPropertyValueFor(KEYS.TRACK);
-    const codec = encodeNode.getPropertyValueFor(KEYS.PREFERENCE);
+    const codecMimeType = encodeNode.getPropertyValueFor(KEYS.PREFERENCE);
     const maxBitrate = encodeNode.getPropertyValueFor(KEYS.MAX_BITRATE);
     const active = encodeNode.getPropertyValueFor(KEYS.ACTIVE);
 
@@ -226,26 +228,72 @@ const encode = (peerNode, encodeNode, nodes) => {
     const trackKind = trackNode.getInfoValueFor(KEYS.KIND);
     const trackDeviceId = trackNode.getPropertyValueFor(KEYS.FROM);
 
-    console.log(">>> encode parameters", trackDeviceId, codec, maxBitrate, active);
-
     const win = frames[peerNode.id];
-    if(!win.pc) {
+    if (!win.pc) {
       console.log("Can't encode - no peer connection");
       resolve();
+      return;
     }
 
-    const senders = win.pc.getSenders();
-    senders.forEach(sender => {
-      const track = sender.track;
-      const constraints = track.getConstraints();
-      if(track.kind === trackKind && constraints.deviceId === trackDeviceId) {
-        console.log(">>>Encode track", track);
+    // Get transceiver and sender used
+    const transceivers = win.pc.getTransceivers();
+    const transceiver = transceivers.find((transceiver) => {
+      const sender = transceiver.sender;
+      if (!sender) {
+        return false;
       }
+
+      const track = sender.track;
+      if (!track) {
+        return false;
+      }
+      const constraints = track.getConstraints();
+      return track.kind === trackKind && constraints.deviceId === trackDeviceId;
     });
 
+    if (!transceiver) {
+      resolve();
+      return;
+    }
+
+    const sender = transceiver.sender;
+    const track = sender.track;
+
+    // Update codec
+    //const constraints = track.getConstraints();
+    const { codecs } = RTCRtpSender.getCapabilities("video");
+
+    const preferredCodecs = codecs.filter((codec) =>
+      codec.mimeType.toLowerCase().includes(codecMimeType.toLowerCase())
+    );
+    const firstCodecIndex = codecs.findIndex((codec) =>
+      codec.mimeType.toLowerCase().includes(codecMimeType.toLowerCase())
+    );
+
+    codecs.splice(firstCodecIndex, preferredCodecs.length);
+    codecs.unshift(...preferredCodecs);
+    console.log(">>>updated codecs", codecs);
+    transceiver.setCodecPreferences(codecs);
+
+    // Change active flags
+    const parameters = sender.getParameters();
+    console.log(">>>current Parameters", parameters);
+
+    // const newParameters = { ...parameters };
+    // const encodings = newParameters.encodings[0];
+    // encodings.active = active === "true";
+    // sender
+    //   .setParameters(newParameters)
+    //   .then(() => {
+    //     resolve();
+    //   })
+    //   .catch((err) => {
+    //     console.warn("[encode] error", err);
+    //     resolve();
+    //   });
     resolve();
   });
-}
+};
 
 const endPlayground = () => {
   return new Promise((resolve, reject) => {
@@ -319,7 +367,10 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         break;
       }
       case NODES.ENCODE: {
-        const fromPeer = getNodeById(initialEvent.getPropertyValueFor("peer"), nodes);
+        const fromPeer = getNodeById(
+          initialEvent.getPropertyValueFor("peer"),
+          nodes
+        );
         promises.push(encode(fromPeer, currentNode, nodes));
         break;
       }
@@ -374,7 +425,11 @@ export const execute = (nodes, dispatch) => {
       frames[peer.id] = win;
       await createWatchRTC(peer, nodes);
       const stream = await createMedia(peer, nodes);
-      const iceEventsForPeer = filterSimilarNodesById(peer.id, iceEvents, KEYS.PEER);
+      const iceEventsForPeer = filterSimilarNodesById(
+        peer.id,
+        iceEvents,
+        KEYS.PEER
+      );
       await createPeerConnection(peer, stream, iceEventsForPeer, nodes);
     }
 
@@ -402,7 +457,7 @@ export const rehydrateModel = (nodes) => {
     const name = getNodeInfoValue(KEYS.NODE, node);
     const kind = getNodeInfoValue(KEYS.KIND, node);
     const object = rehydrateObject(name, kind, node._posX, node._posY);
-    if(!object) {
+    if (!object) {
       console.warn("can't rehydrate", name, kind);
     } else {
       object.rehydrate(node);
