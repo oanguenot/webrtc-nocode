@@ -43,7 +43,7 @@ const updateTitleInIFrame = (win, id) => {
   }
 };
 
-const addDefaultMediaInIFrame = (win, kind, id, isLocal = true) => {
+const createMediaElementInIFrame = (win, kind, id, isLocal = true) => {
   const localElt = win.document.querySelector(
     `${isLocal ? "#local" : "#remote"}`
   );
@@ -58,6 +58,8 @@ const addDefaultMediaInIFrame = (win, kind, id, isLocal = true) => {
   }
   localElt.appendChild(elt);
 };
+
+const addMediaToElementInIFrame = (media) => {};
 
 const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
   return new Promise((resolve, reject) => {
@@ -90,11 +92,16 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
         addLog(
           "peer",
           "log",
-          `${peerNode.id} track received changed ${event.track.kind}`,
+          `${peerNode.id} ontrack received ${event.track.kind}`,
           null,
           dispatcher
         );
-        addDefaultMediaInIFrame(win, event.track.kind, event.track.id, false);
+        createMediaElementInIFrame(
+          win,
+          event.track.kind,
+          event.track.id,
+          false
+        );
         const captured = new win.MediaStream();
         captured.addTrack(event.track);
         win.document.querySelector(`#remote-${event.track.id}`).srcObject =
@@ -146,7 +153,7 @@ const createMedia = (peerNode, nodes) => {
             };
           }
           // Create media element in IFrame
-          addDefaultMediaInIFrame(win, kind, deviceId);
+          createMediaElementInIFrame(win, kind, deviceId);
           const captured = await win.navigator.mediaDevices.getUserMedia(
             constraints
           );
