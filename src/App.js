@@ -239,6 +239,7 @@ function App() {
 
     editor.on("translate", function (position) {
       console.log("Translate x:" + position.x + " y:" + position.y);
+      saveEditorToStorage(editor.export());
     });
 
     editor.on("addReroute", function (id) {

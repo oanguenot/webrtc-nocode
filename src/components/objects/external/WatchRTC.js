@@ -4,7 +4,7 @@ class WatchRTC extends Main {
   static item = "WatchRTC";
   static description = "Analyze calls on testRTC platform";
   static icon = "ruler";
-  static section = "actions";
+  static section = "builtin";
   static name = "WatchRTC";
 
   constructor(x, y) {
@@ -12,7 +12,7 @@ class WatchRTC extends Main {
     this._inputs = 1;
     this._outputs = 0;
     this._info = [
-      { key: "node", value: "action.analyze" },
+      { key: "node", value: "rtc.watchrtc" },
       {
         key: "info",
         value:
@@ -59,11 +59,11 @@ class WatchRTC extends Main {
       case "name":
         return property.value;
       case "apiKey":
-        return `key: ${property.value.substring(0, 10)}...`;
+        return `key: ${property.value ? property.value.substring(0, 10) + "..." : "none"}`;
       case "roomId":
-        return `room ${property.value}`;
+        return property.value ? `$room ${property.value}` : "no ID for room";
       case "peerId":
-        return `user ${property.value}`;
+        return property.value ? `user ${property.value}` : "no ID for peer";
     }
   }
 

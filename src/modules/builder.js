@@ -38,6 +38,7 @@ const convertNodeNameToClass = (name, kind) => {
     "event.ice": ICEConnectionEvent,
     "action.wait": Waiting,
     "rtc.peer": PeerConnection,
+    "rtc.watchrtc": WatchRTC,
     "rtc.track": kind === "audio" ? AudioTrack : VideoTrack,
     "rtc.turn": Turn,
     "action.encode": kind === "audio" ? AudioEncodings : VideoEncodings,

@@ -341,6 +341,9 @@ export const rehydrateModel = (nodes) => {
     const name = getNodeInfoValue(KEYS.NODE, node);
     const kind = getNodeInfoValue(KEYS.KIND, node);
     const object = rehydrateObject(name, kind, node._posX, node._posY);
+    if(!object) {
+      console.warn("can't reydrate", name, kind);
+    }
     object.rehydrate(node);
     model.push(object);
   });
