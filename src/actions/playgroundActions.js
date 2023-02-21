@@ -15,6 +15,8 @@ export const PLAYGROUND_ACTIONS = {
 export const PLAYGROUND_STORAGE_KEYS = {
   NODES: "nodes",
   OBJECTS: "objects",
+  POS_X: "pos_x",
+  POS_Y: "pos_y",
 };
 
 export const run = (nodes, dispatch) => {
@@ -49,6 +51,12 @@ export const load = (nodes, dispatch) => {
 
 export const saveEditorToStorage = (nodes) => {
   saveData(PLAYGROUND_STORAGE_KEYS.NODES, nodes);
+};
+
+export const savePosition = (x, y) => {
+  console.log("x, y", x, y);
+  saveData(PLAYGROUND_STORAGE_KEYS.POS_X, x);
+  saveData(PLAYGROUND_STORAGE_KEYS.POS_Y, y);
 };
 
 export const saveModelToStorage = (objects) => {
@@ -108,8 +116,10 @@ export const exportToFile = async (exported) => {
 export const loadPlaygroundFromStorage = () => {
   const nodes = loadData(PLAYGROUND_STORAGE_KEYS.NODES);
   const objects = loadData(PLAYGROUND_STORAGE_KEYS.OBJECTS);
+  const x = loadData(PLAYGROUND_STORAGE_KEYS.POS_X || 0);
+  const y = loadData(PLAYGROUND_STORAGE_KEYS.POS_Y || 0);
 
-  return { nodes, objects };
+  return { nodes, objects, x, y };
 };
 
 export const resetPlaygroundFromStorage = () => {

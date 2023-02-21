@@ -31,6 +31,7 @@ import {
   resetPlaygroundFromStorage,
   run,
   saveEditorToStorage,
+  savePosition,
   saveToExistingFile,
 } from "./actions/playgroundActions";
 import {
@@ -226,7 +227,10 @@ function App() {
       console.log(connection);
     });
 
-    editor.on("mouseMove", function (position) {});
+    editor.on("mouseUp", function (position) {
+      console.log(">>>", editor.canvas_x, editor.canvas_y, editor);
+      savePosition(editor.canvas_x, editor.canvas_y);
+    });
 
     editor.on("nodeMoved", function (id) {
       console.log("Node moved " + id);
@@ -238,8 +242,8 @@ function App() {
     });
 
     editor.on("translate", function (position) {
-      console.log("Translate x:" + position.x + " y:" + position.y);
-      saveEditorToStorage(editor.export());
+      //console.log("Translate x:" + position.x + " y:" + position.y);
+      //saveEditorToStorage(editor.export());
     });
 
     editor.on("addReroute", function (id) {
@@ -383,9 +387,20 @@ function App() {
 
   const loadFromStorage = () => {
     console.log("[app] load playground from storage...");
-    const { nodes, objects } = loadPlaygroundFromStorage();
+    const { nodes, objects, x, y } = loadPlaygroundFromStorage();
     if (nodes && objects) {
       editor.import(nodes);
+      editor.canvas_x = x || 0;
+      editor.canvas_y = y || 0;
+      editor.precanvas.style.transform =
+        "translate(" +
+        (x || 0) +
+        "px, " +
+        (y || 0) +
+        "px) scale(" +
+        editor.zoom +
+        ")";
+
       load(objects, dispatch);
     }
   };
