@@ -32,7 +32,9 @@ const createIFrame = (peerNode) => {
     });
     iframe.setAttribute("id", peerNode.id);
     iframe.src = `${window.location.href}/iframe.html`;
-    iframesElt.appendChild(iframe);
+    if (iframesElt) {
+      iframesElt.appendChild(iframe);
+    }
   });
 };
 

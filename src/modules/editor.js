@@ -1,3 +1,17 @@
+const Drawflow = window.Drawflow;
+let editor = null;
+
+export const createAndStartNewEditor = (element) => {
+  editor = new Drawflow(element);
+  editor.reroute = true;
+  editor.start();
+  return editor;
+};
+
+export const getEditor = () => {
+  return editor;
+};
+
 export const getInitialPosition = (editor, posX, posY) => {
   const x =
     posX *
