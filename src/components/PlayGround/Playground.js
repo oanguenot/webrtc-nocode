@@ -27,6 +27,8 @@ import {
 } from "../../modules/editor";
 import { availableObjects, build } from "../../modules/builder";
 
+import "./Playground.css";
+
 let mobile_item_selec = "";
 let mobile_last_move = null;
 

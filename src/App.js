@@ -1,6 +1,7 @@
 import "./App.css";
 import "./resources/beautify.css";
 import { useEffect, useRef, useState, useReducer, useCallback } from "react";
+import { useStateWithCallbackLazy } from "use-state-with-callback";
 import AppContext from "./contexts/appContext";
 import { appReducer, initialAppState } from "./reducers/appReducer";
 import { getEditor } from "./modules/editor";
@@ -31,7 +32,7 @@ import Playground from "./components/PlayGround/Playground";
 
 function App() {
   const [appState, dispatch] = useReducer(appReducer, initialAppState);
-  const [selected, setSelected] = useState(0);
+  const [selected, setSelected] = useStateWithCallbackLazy(0);
   const [flags, setFlags] = useState([]);
 
   useEffect(() => {
@@ -57,7 +58,9 @@ function App() {
   };
 
   const onRunPlayground = () => {
-    run(appState.objects, dispatch);
+    setSelected(1, () => {
+      run(appState.objects, dispatch);
+    });
   };
 
   const onExport = async (forceSave = false) => {
