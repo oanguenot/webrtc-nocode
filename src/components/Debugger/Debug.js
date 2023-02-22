@@ -15,6 +15,7 @@ import PageHeader from "@atlaskit/page-header";
 import ProgressBar from "@atlaskit/progress-bar";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { run } from "../../actions/playgroundActions";
+import { useStateWithCallbackLazy } from "use-state-with-callback";
 
 const getColorFromTag = (tag) => {
   switch (tag) {
@@ -30,14 +31,21 @@ const getColorFromTag = (tag) => {
 function Debug({ dispatch }) {
   const appState = useContext(AppContext);
   const [progress, setProgress] = useState(0);
+  const [isStarted, setIsStarted] = useStateWithCallbackLazy(false);
 
   const onStart = () => {
-    run(appState.objects, dispatch);
+    setIsStarted(true, () => {
+      run(appState.objects, dispatch);
+    });
+  };
+
+  const onReset = () => {
+    setIsStarted(false);
   };
 
   const actionsContent = (
     <ButtonGroup>
-      <Button>Reset</Button>
+      <Button onClick={() => onReset()}>Reset</Button>
       <Button appearance="subtle">Stop</Button>
       <Button appearance="primary" onClick={() => onStart()}>
         Run
@@ -50,42 +58,47 @@ function Debug({ dispatch }) {
       <Main id="debug-main-content" skipLinkTitle="Debug Content">
         <div className="debug-main">
           <PageHeader actions={actionsContent}></PageHeader>
-          <span>Progress</span>
-          <ProgressBar value={progress} />
-          <div className="debug-area">
-            {!appState.debug.length && (
-              <EmptyState
-                header="No Debug!"
-                description="Run the playground to have results"
-              />
+          <div className="debug-main-area">
+            {!isStarted && (
+              <div className="debug-area">
+                <EmptyState
+                  header="No Debug!"
+                  description="Run the playground to have results"
+                />
+              </div>
             )}
-            {!!appState.debug.length && (
+            {isStarted && (
               <>
-                <ul>
-                  {appState.debug.map((log, key) => (
-                    <li key={key}>
-                      <Tag text={log.timestamp}></Tag>{" "}
-                      <Tag
-                        text={log.tag}
-                        color={getColorFromTag(log.tag)}
-                      ></Tag>{" "}
-                      {log.message}
-                    </li>
-                  ))}
-                </ul>
+                <div className="debug-progress">
+                  <p className="debug-progress-title">Progress</p>
+                  <ProgressBar value={progress} />
+                </div>
+                <div className="debug-layout">
+                  <div className="debug-double-columns">
+                    <p className="debug-iframes-title">Details</p>
+                    <ul className="debug-actions">
+                      {appState.debug.map((log, key) => (
+                        <li key={key}>
+                          <Tag text={log.timestamp}></Tag>{" "}
+                          <Tag
+                            text={log.tag}
+                            color={getColorFromTag(log.tag)}
+                          ></Tag>{" "}
+                          {log.message}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div className="debug-columns">
+                    <p className="debug-iframes-title">IFrames</p>
+                    <div id="frames" className="iframes-sidebar"></div>
+                  </div>
+                </div>
               </>
             )}
           </div>
         </div>
       </Main>
-      <RightSidebar
-        isFixed={false}
-        width={400}
-        id="right-sidebar"
-        skipLinkTitle="Project Navigation"
-      >
-        <div id="frames" className="iframes-sidebar"></div>
-      </RightSidebar>
     </>
   );
 }

@@ -1,7 +1,65 @@
+.debug-area {
+    height: calc(100% - 150px);
+    margin-top: 25%;
+}
+
 .debug-title {
     font-size: 20px !important;
 }
 
-.debug-main, .iframes-sidebar {
+.debug-main {
     padding: 8px;
+    height: calc(100% - 60px);
+}
+
+.debug-layout {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 56px;
+    height: calc(100% - 56px);
+}
+
+.debug-columns {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 1;
+}
+
+.iframes-sidebar {
+    text-align: center;
+}
+
+.debug-double-columns {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 3;
+    border-right: 2px dashed #efefef;
+    overflow-y: scroll;
+}
+
+.debug-progress-title {
+    margin-bottom: 6px;
+
+}
+
+.debug-progress {
+    padding: 0 6px;
+}
+
+.debug-iframes-title {
+    margin-top: 0;
+    margin-left: 6px;
+}
+
+.debug-actions {
+    height: 100%;
+    margin-left: 6px;
+}
+
+.debug-main-area {
+    height: calc(100% - 80px);
 }

@@ -28,6 +28,7 @@ import SuccessIcon from "@atlaskit/icon/glyph/check-circle";
 import { token } from "@atlaskit/tokens";
 import { G300 } from "@atlaskit/theme/colors";
 import Playground from "./components/PlayGround/Playground";
+import Button, { ButtonGroup } from "@atlaskit/button";
 
 function App() {
   const [appState, dispatch] = useReducer(appReducer, initialAppState);
@@ -98,6 +99,24 @@ function App() {
     <CustomProductHome href="#" siteTitle="WebRTC Playground" />
   );
 
+  const renderProfile = () => (
+    <ButtonGroup>
+      <PrimaryButton
+        isHighlighted={selected === 0}
+        onClick={() => handleUpdate(0)}
+      >
+        Editor
+      </PrimaryButton>
+      <PrimaryButton
+        isHighlighted={selected === 1}
+        appearance="warning"
+        onClick={() => handleUpdate(1)}
+      >
+        Play
+      </PrimaryButton>
+    </ButtonGroup>
+  );
+
   const handleUpdate = useCallback(
     (index) => setSelected(index),
     [setSelected]
@@ -139,21 +158,9 @@ function App() {
                 Save
               </PrimaryButton>,
               <PrimaryButton onClick={() => onClear()}>Reset</PrimaryButton>,
-              <PrimaryButton
-                isHighlighted={selected === 0}
-                onClick={() => handleUpdate(0)}
-              >
-                Editor
-              </PrimaryButton>,
-              <PrimaryButton
-                isHighlighted={selected === 1}
-                appearance="warning"
-                onClick={() => handleUpdate(1)}
-              >
-                Debug
-              </PrimaryButton>,
             ]}
             renderProductHome={renderProductHome}
+            renderProfile={renderProfile}
           />
         </TopNavigation>
         <Content testId="content" className="content">
