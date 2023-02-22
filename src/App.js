@@ -25,6 +25,7 @@ import {
 } from "@atlaskit/atlassian-navigation";
 import {
   exportToFile,
+  getFileHandle,
   importFromFile,
   load,
   loadPlaygroundFromStorage,
@@ -228,7 +229,6 @@ function App() {
     });
 
     editor.on("mouseUp", function (position) {
-      console.log(">>>", editor.canvas_x, editor.canvas_y, editor);
       savePosition(editor.canvas_x, editor.canvas_y);
     });
 
@@ -241,10 +241,7 @@ function App() {
       console.log("Zoom level " + zoom);
     });
 
-    editor.on("translate", function (position) {
-      //console.log("Translate x:" + position.x + " y:" + position.y);
-      //saveEditorToStorage(editor.export());
-    });
+    editor.on("translate", function (position) {});
 
     editor.on("addReroute", function (id) {
       console.log("Reroute added " + id);
@@ -359,17 +356,15 @@ function App() {
     };
 
     let hasSucceededToSave = false;
-    let fileHandleName = "";
     if (forceSave) {
-      fileHandleName = await saveToExistingFile(exported);
-      hasSucceededToSave = !!fileHandleName;
+      hasSucceededToSave = await saveToExistingFile(exported);
     }
 
     if (!hasSucceededToSave) {
-      fileHandleName = await exportToFile(exported);
+      await exportToFile(exported);
     }
 
-    addFlag(fileHandleName);
+    addFlag(getFileHandle().name);
   };
 
   const onImport = async () => {

@@ -65,7 +65,7 @@ export const saveModelToStorage = (objects) => {
 
 export const saveToExistingFile = async (exported) => {
   if (!ref_fileHandle) {
-    return null;
+    return false;
   }
 
   try {
@@ -76,10 +76,10 @@ export const saveToExistingFile = async (exported) => {
     const writable = await ref_fileHandle.createWritable();
     await writable.write(blob);
     await writable.close();
-    return ref_fileHandle.name;
+    return true;
   } catch (err) {
     console.warn(`[play] can't store to file ${ref_fileHandle.name}`);
-    return null;
+    return false;
   }
 };
 
@@ -111,6 +111,10 @@ export const exportToFile = async (exported) => {
   await writable.close();
   ref_fileHandle = fileHandle;
   return ref_fileHandle.name;
+};
+
+export const getFileHandle = () => {
+  return ref_fileHandle;
 };
 
 export const loadPlaygroundFromStorage = () => {
