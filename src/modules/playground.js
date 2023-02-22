@@ -409,13 +409,41 @@ const executeANode = (initialEvent, currentNode, nodes) => {
   });
 };
 
+const estimateTasks = (peers, iceEvents, readyEvent, nodes) => {
+  let nbTasks = peers.length;
+
+  // Count nodes for the ready Nodes
+  let currentNode = readyEvent;
+  while (currentNode) {
+    nbTasks += 1;
+    currentNode = currentNode.getNextNode(nodes);
+  }
+
+  // Count nodes for the ice Events Nodes
+  iceEvents.forEach((iceEvent) => {
+    let currentNode = iceEvent;
+    while (currentNode) {
+      nbTasks += 1;
+      currentNode = currentNode.getNextNode(nodes);
+    }
+  });
+
+  return nbTasks;
+};
+
 export const execute = (nodes, dispatch) => {
   return new Promise(async (resolve, reject) => {
     dispatcher = dispatch;
+
     addLog("play", "log", "started...", null, dispatcher);
     // found peer connections for creating iFrame
     const peers = filterNodesByName(NODES.PEER, nodes);
     const iceEvents = filterNodesByName(NODES.ICE, nodes);
+    const readyEvent = findNodeByName(NODES.READY, nodes);
+
+    // Estimate the number of task to do
+    const numberOfTasks = estimateTasks(peers, iceEvents, readyEvent, nodes);
+    console.log(">>>", numberOfTasks);
 
     // Initialize Peer Connections
     for (const peer of peers) {
@@ -434,8 +462,7 @@ export const execute = (nodes, dispatch) => {
     }
 
     // Check for the ready event and execute it
-    const ready = findNodeByName(NODES.READY, nodes);
-    if (!ready) {
+    if (!readyEvent) {
       addLog(
         "play",
         "warning",
@@ -445,7 +472,7 @@ export const execute = (nodes, dispatch) => {
       );
       reject("No ready event");
     }
-    executeEventNode(ready, nodes).then(() => {
+    executeEventNode(readyEvent, nodes).then(() => {
       resolve();
     });
   });

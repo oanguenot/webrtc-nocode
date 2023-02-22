@@ -1,5 +1,5 @@
 import { customAlphabet } from "nanoid";
-import {includes} from "../../modules/helper";
+import { getNodeById, includes } from "../../modules/helper";
 
 const CUSTOM_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 6);
@@ -138,7 +138,9 @@ class Main {
       return true;
     }
 
-    const accepts = this._acceptInputs.map(acceptName => acceptName.replace(/.\*$/, ''));
+    const accepts = this._acceptInputs.map((acceptName) =>
+      acceptName.replace(/.\*$/, "")
+    );
     return includes(nodeName, accepts);
   }
 
@@ -149,7 +151,9 @@ class Main {
     if (this._acceptOutputs.includes("*")) {
       return true;
     }
-    const accepts = this._acceptOutputs.map(acceptName => acceptName.replace(/.\*$/, ''));
+    const accepts = this._acceptOutputs.map((acceptName) =>
+      acceptName.replace(/.\*$/, "")
+    );
     return includes(nodeName, accepts);
   }
 
@@ -174,11 +178,11 @@ class Main {
   }
 
   removeInputLink(nodeId) {
-    this._linksInputs = this._linksInputs.filter(input => input !== nodeId);
+    this._linksInputs = this._linksInputs.filter((input) => input !== nodeId);
   }
 
   removeOutputLink(nodeId) {
-    this._linksOutputs = this._linksOutputs.filter(input => input !== nodeId);
+    this._linksOutputs = this._linksOutputs.filter((input) => input !== nodeId);
   }
 
   addNewOptionToSelect(value, label, propertyName) {
@@ -199,7 +203,9 @@ class Main {
   }
 
   updateLabelInSelect(value, label, propertyName) {
-    const prop = this._properties.find((property) => property.prop === propertyName);
+    const prop = this._properties.find(
+      (property) => property.prop === propertyName
+    );
     const existingSteps = prop.enum;
     existingSteps.forEach((step) => {
       if (step.value === value) {
@@ -220,6 +226,15 @@ class Main {
     this._linksOutputs = fromNode._linksOutputs;
     this._linksInputs = fromNode._linksInputs;
     this._properties = fromNode._properties;
+  }
+
+  getNextNode(nodes, index = 0) {
+    if (this._linksOutputs.length === 0) {
+      return null;
+    }
+
+    const id = this._linksOutputs[index];
+    return getNodeById(id, nodes);
   }
 }
 

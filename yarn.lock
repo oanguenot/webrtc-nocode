@@ -299,6 +299,15 @@
     "@emotion/react" "^11.7.1"
     bind-event-listener "^2.1.1"
 
+"@atlaskit/page-header@^10.3.2":
+  version "10.3.2"
+  resolved "https://registry.yarnpkg.com/@atlaskit/page-header/-/page-header-10.3.2.tgz#38db750844b50b1a2b12a37d51606a43fce6bed3"
+  integrity sha512-erawMvTILGJQiEegpWQ+HB0ykcDblRz3xvlKAbz+gevcPnw9Ls+Ii7ZQCQPHBZT87LPxxwi+Y6CKRsE3ItFWSQ==
+  dependencies:
+    "@atlaskit/theme" "^12.2.0"
+    "@babel/runtime" "^7.0.0"
+    "@emotion/react" "^11.7.1"
+
 "@atlaskit/page-layout@1.3.9":
   version "1.3.9"
   resolved "https://registry.yarnpkg.com/@atlaskit/page-layout/-/page-layout-1.3.9.tgz#bab0d1e421353074d427e156d96cb239491e9211"
@@ -354,6 +363,17 @@
   dependencies:
     "@atlaskit/theme" "^12.2.0"
     "@babel/runtime" "^7.0.0"
+
+"@atlaskit/progress-bar@^0.5.16":
+  version "0.5.16"
+  resolved "https://registry.yarnpkg.com/@atlaskit/progress-bar/-/progress-bar-0.5.16.tgz#367688912a18492122502dbaa5903f635c54f8b4"
+  integrity sha512-AN8mA8Tv7v3RY8CJ/9hr//xKLhD8Ctg/6qGAFhQw1i/XbAge4M0FXDiS/x0JsweLjNRmigJW9Qcxgs1vMZwARw==
+  dependencies:
+    "@atlaskit/ds-lib" "^2.1.0"
+    "@atlaskit/theme" "^12.2.0"
+    "@atlaskit/tokens" "^1.0.0"
+    "@babel/runtime" "^7.0.0"
+    "@emotion/react" "^11.7.1"
 
 "@atlaskit/select@16.1.3":
   version "16.1.3"

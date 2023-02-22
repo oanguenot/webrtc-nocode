@@ -1,7 +1,6 @@
 import "./App.css";
 import "./resources/beautify.css";
-import { useEffect, useRef, useState, useReducer, useCallback } from "react";
-import { useStateWithCallbackLazy } from "use-state-with-callback";
+import { useEffect, useState, useReducer, useCallback } from "react";
 import AppContext from "./contexts/appContext";
 import { appReducer, initialAppState } from "./reducers/appReducer";
 import { getEditor } from "./modules/editor";
@@ -32,7 +31,7 @@ import Playground from "./components/PlayGround/Playground";
 
 function App() {
   const [appState, dispatch] = useReducer(appReducer, initialAppState);
-  const [selected, setSelected] = useStateWithCallbackLazy(0);
+  const [selected, setSelected] = useState(0);
   const [flags, setFlags] = useState([]);
 
   useEffect(() => {
@@ -55,12 +54,6 @@ function App() {
     resetPlaygroundFromStorage();
     resetDevices(dispatch);
     getListOfDevices(dispatch);
-  };
-
-  const onRunPlayground = () => {
-    setSelected(1, () => {
-      run(appState.objects, dispatch);
-    });
   };
 
   const onExport = async (forceSave = false) => {
@@ -146,9 +139,6 @@ function App() {
                 Save
               </PrimaryButton>,
               <PrimaryButton onClick={() => onClear()}>Reset</PrimaryButton>,
-              <PrimaryButton onClick={() => onRunPlayground()}>
-                Run
-              </PrimaryButton>,
               <PrimaryButton
                 isHighlighted={selected === 0}
                 onClick={() => handleUpdate(0)}
