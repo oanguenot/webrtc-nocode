@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AppContext from "../../contexts/appContext";
 import EmptyState from "@atlaskit/empty-state";
 import { SimpleTag as Tag } from "@atlaskit/tag";
@@ -33,6 +33,12 @@ function Debug({ dispatch }) {
   const [progress, setProgress] = useState(0);
   const [isStarted, setIsStarted] = useStateWithCallbackLazy(false);
 
+  useEffect(() => {
+    if (appState.nbTasks > 0) {
+      setProgress((1 * appState.tasksDone) / appState.nbTasks);
+    }
+  }, [appState.nbTasks, appState.tasksDone]);
+
   const onStart = () => {
     setIsStarted(true, () => {
       run(appState.objects, dispatch);
@@ -53,6 +59,16 @@ function Debug({ dispatch }) {
     </ButtonGroup>
   );
 
+  const getProgressStatus = () => {
+    if (progress === 0) {
+      return "Not started";
+    } else if (progress === 1) {
+      return "Finished!";
+    } else {
+      return "Running...";
+    }
+  };
+
   return (
     <>
       <Main id="debug-main-content" skipLinkTitle="Debug Content">
@@ -70,8 +86,13 @@ function Debug({ dispatch }) {
             {isStarted && (
               <>
                 <div className="debug-progress">
-                  <p className="debug-progress-title">Progress</p>
-                  <ProgressBar value={progress} />
+                  <p className="debug-progress-title">
+                    Progress: {getProgressStatus()}
+                  </p>
+                  <ProgressBar
+                    value={progress}
+                    appearance={progress === 1 ? "success" : "default"}
+                  />
                 </div>
                 <div className="debug-layout">
                   <div className="debug-double-columns">

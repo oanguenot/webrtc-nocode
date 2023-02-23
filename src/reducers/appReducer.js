@@ -20,6 +20,8 @@ const initialAppState = {
   devices: [],
   state: STATE.NOT_INITIALIZED,
   debug: [],
+  nbTasks: 0,
+  tasksDone: 0,
 };
 
 const updateValueInObject = (objectId, name, value, label, objects) => {
@@ -307,6 +309,19 @@ const appReducer = (state = initialAppState, action) => {
       return {
         ...state,
         debug: [...state.debug, log],
+      };
+    }
+    case DEBUG_ACTIONS.SET_TASK_NUMBER: {
+      return {
+        ...state,
+        nbTasks: action.payload.number,
+        tasksDone: 0,
+      };
+    }
+    case DEBUG_ACTIONS.INCREMENT_TASK_DONE: {
+      return {
+        ...state,
+        tasksDone: state.tasksDone + 1,
       };
     }
     default:

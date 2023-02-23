@@ -9,7 +9,11 @@ import {
 } from "./helper";
 import { KEYS, NODES } from "./model";
 import { rehydrateObject } from "./builder";
-import { addLog } from "../actions/DebugActions";
+import {
+  addLog,
+  incrementTaskDone,
+  setTaskNumber,
+} from "../actions/DebugActions";
 
 const frames = {};
 let dispatcher = null;
@@ -383,6 +387,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
     }
 
     Promise.all(promises).then(() => {
+      incrementTaskDone(dispatcher);
       const nextNode = getNodeById(currentNode.linksOutput[0], nodes);
       if (!nextNode) {
         resolve();
@@ -413,15 +418,17 @@ const estimateTasks = (peers, iceEvents, readyEvent, nodes) => {
   let nbTasks = peers.length;
 
   // Count nodes for the ready Nodes
-  let currentNode = readyEvent;
-  while (currentNode) {
-    nbTasks += 1;
-    currentNode = currentNode.getNextNode(nodes);
+  if (readyEvent) {
+    let currentNode = readyEvent.getNextNode(nodes);
+    while (currentNode) {
+      nbTasks += 1;
+      currentNode = currentNode.getNextNode(nodes);
+    }
   }
 
   // Count nodes for the ice Events Nodes
   iceEvents.forEach((iceEvent) => {
-    let currentNode = iceEvent;
+    let currentNode = iceEvent.getNextNode(nodes);
     while (currentNode) {
       nbTasks += 1;
       currentNode = currentNode.getNextNode(nodes);
@@ -443,7 +450,7 @@ export const execute = (nodes, dispatch) => {
 
     // Estimate the number of task to do
     const numberOfTasks = estimateTasks(peers, iceEvents, readyEvent, nodes);
-    console.log(">>>", numberOfTasks);
+    setTaskNumber(numberOfTasks, dispatch);
 
     // Initialize Peer Connections
     for (const peer of peers) {
@@ -459,6 +466,7 @@ export const execute = (nodes, dispatch) => {
         KEYS.PEER
       );
       await createPeerConnection(peer, stream, iceEventsForPeer, nodes);
+      incrementTaskDone(dispatch);
     }
 
     // Check for the ready event and execute it
