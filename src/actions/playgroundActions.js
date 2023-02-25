@@ -156,6 +156,7 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
     if (!exist) {
       fromProperty.value = "fake";
       fromProperty.enum = fromEnum.filter((item) => item.value !== fromValue);
+      track.updateDisplayInObject(KEYS.FROM);
     }
 
     // Check that remaining enum exists
