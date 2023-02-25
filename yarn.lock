@@ -385,10 +385,10 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/select@16.1.4":
-  version "16.1.4"
-  resolved "https://registry.yarnpkg.com/@atlaskit/select/-/select-16.1.4.tgz#934601d9c90d83fc80f73a4cea3e663769a5759b"
-  integrity sha512-mSO91F66k0wI2Gv8Rz3o+DN85MVngEGCISNSmI2t3zXHnOnHHQTNCf8Vy3ahfdLOZaiF4XvWykO42eB9iR1ikg==
+"@atlaskit/select@16.1.5":
+  version "16.1.5"
+  resolved "https://registry.yarnpkg.com/@atlaskit/select/-/select-16.1.5.tgz#8b0dda5952c68358a34b11135bcc7a42a5bc4ac1"
+  integrity sha512-nI86ytnPSe4Oid0i7mcyZdseemhg9snF+MvFu9WhjCOycbTBLE3DPQiMYswubVWreDN/PikGV6xDh984uRQDAw==
   dependencies:
     "@atlaskit/analytics-next" "^9.0.0"
     "@atlaskit/icon" "^21.11.0"
@@ -508,14 +508,14 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/theme@12.2.8":
-  version "12.2.8"
-  resolved "https://registry.yarnpkg.com/@atlaskit/theme/-/theme-12.2.8.tgz#2e4986e1f9ff676c574f9e16b330d83eeb09a181"
-  integrity sha512-Y+ugqribyjqUdIPHOWjj4jqWXIt8ruZADaxz0qqvwmGz0MbOJ7Vi9VO9TCtMGOldJm38IbualFLh95HAqSmzOg==
+"@atlaskit/theme@12.2.9":
+  version "12.2.9"
+  resolved "https://registry.yarnpkg.com/@atlaskit/theme/-/theme-12.2.9.tgz#4cef7b850ce1945e2233ea82a4e36fbc6589a02e"
+  integrity sha512-EooPOJDLrcZHDE2SmgGCJnVg+PKbhzked31aZ+BIg25uqhfi+AZhIVentoXiDGVQekz32YYTU5EtDES9XyV5vQ==
   dependencies:
     "@atlaskit/codemod-utils" "^4.1.0"
     "@atlaskit/ds-lib" "^2.1.0"
-    "@atlaskit/tokens" "^1.1.0"
+    "@atlaskit/tokens" "^1.2.0"
     "@babel/runtime" "^7.0.0"
 
 "@atlaskit/theme@^12.2.0":
@@ -528,10 +528,10 @@
     "@atlaskit/tokens" "^0.13.0"
     "@babel/runtime" "^7.0.0"
 
-"@atlaskit/tokens@1.2.0", "@atlaskit/tokens@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-1.2.0.tgz#7272c9f299a2ce7e6f380d2cc38e1b47d74d0785"
-  integrity sha512-ECCBw4Pj51I0G3gBXV511gUdEKkS8hCH4xoAagQn7YQCA94rB3n2vBmfA5lL+N2OZuIGSxFNGt2SAbacjP6rug==
+"@atlaskit/tokens@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-1.2.1.tgz#2f3900b781c3715b2bd240ed5edc9c72a26110b7"
+  integrity sha512-E9bF8OLXVIr69QxELGgbS2rSM3uCAbjU6SlimE2Spu+CVWA3GU+lUeLBggBhz1eP1LzpuOzLCdm1ECMJBNBreg==
   dependencies:
     "@atlaskit/ds-lib" "^2.1.0"
     "@babel/runtime" "^7.0.0"
@@ -553,6 +553,17 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-1.1.0.tgz#abe9287ceb864d39d9f8020dade1b8d47022a4cb"
   integrity sha512-EOxcNV1VNr1o90eEIOTUfBzcsxiaWB2JDf8ytdFiI20BoeKbWkfJqeP6V3CkcmN9IwQ5M5fjK5PBq1FlAxDRXg==
+  dependencies:
+    "@atlaskit/ds-lib" "^2.1.0"
+    "@babel/runtime" "^7.0.0"
+    "@babel/traverse" "^7.15.0"
+    "@babel/types" "^7.15.0"
+    bind-event-listener "^2.1.1"
+
+"@atlaskit/tokens@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-1.2.0.tgz#7272c9f299a2ce7e6f380d2cc38e1b47d74d0785"
+  integrity sha512-ECCBw4Pj51I0G3gBXV511gUdEKkS8hCH4xoAagQn7YQCA94rB3n2vBmfA5lL+N2OZuIGSxFNGt2SAbacjP6rug==
   dependencies:
     "@atlaskit/ds-lib" "^2.1.0"
     "@babel/runtime" "^7.0.0"
@@ -2465,10 +2476,10 @@
     "@svgr/plugin-svgo" "^5.5.0"
     loader-utils "^2.0.0"
 
-"@testing-library/dom@^8.5.0":
-  version "8.20.0"
-  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-8.20.0.tgz#914aa862cef0f5e89b98cc48e3445c4c921010f6"
-  integrity sha512-d9ULIT+a4EXLX3UU8FBjauG9NnsZHkHztXoIcTsOKoOw030fyjheN9svkTULjJxtYag9DZz5Jz5qkWZDPxTFwA==
+"@testing-library/dom@^9.0.0":
+  version "9.0.0"
+  resolved "https://registry.yarnpkg.com/@testing-library/dom/-/dom-9.0.0.tgz#cc50e8df2a7dccff95555102beebbae60e95e95e"
+  integrity sha512-+/TLgKNFsYUshOY/zXsQOk+PlFQK+eyJ9T13IDVNJEi+M+Un7xlJK+FZKkbGSnf0+7E1G6PlDhkSYQ/GFiruBQ==
   dependencies:
     "@babel/code-frame" "^7.10.4"
     "@babel/runtime" "^7.12.5"
@@ -2494,13 +2505,13 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
-"@testing-library/react@^13.4.0":
-  version "13.4.0"
-  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-13.4.0.tgz#6a31e3bf5951615593ad984e96b9e5e2d9380966"
-  integrity sha512-sXOGON+WNTh3MLE9rve97ftaZukN3oNf2KjDy7YTx6hcTO2uuLHuCGynMDhFwGw/jYf4OJ2Qk0i4i79qMNNkyw==
+"@testing-library/react@14.0.0":
+  version "14.0.0"
+  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-14.0.0.tgz#59030392a6792450b9ab8e67aea5f3cc18d6347c"
+  integrity sha512-S04gSNJbYE30TlIMLTzv6QCTzt9AqIF5y6s6SzVFILNcNvbV/jU96GeiTPillGQo+Ny64M/5PV7klNYYgv5Dfg==
   dependencies:
     "@babel/runtime" "^7.12.5"
-    "@testing-library/dom" "^8.5.0"
+    "@testing-library/dom" "^9.0.0"
     "@types/react-dom" "^18.0.0"
 
 "@testing-library/user-event@14.4.3":
@@ -2508,10 +2519,10 @@
   resolved "https://registry.yarnpkg.com/@testing-library/user-event/-/user-event-14.4.3.tgz#af975e367743fa91989cd666666aec31a8f50591"
   integrity sha512-kCUc5MEwaEMakkO5x7aoD+DLi02ehmEM2QCGWvNqAS1dV/fAvORWEjnjsEIvml59M7Y5kCkWN6fCCyPOe8OL6Q==
 
-"@testrtc/watchrtc-sdk@1.36.1":
-  version "1.36.1"
-  resolved "https://registry.yarnpkg.com/@testrtc/watchrtc-sdk/-/watchrtc-sdk-1.36.1.tgz#447cddd3aaffb117b099232710f4eb377abd93e8"
-  integrity sha512-6pc9PyBPjS81vofhQzhHBp7OH0fEPGWYqRGVe+LR1uR0Or1eG+V02abpiOfU82NEx3+pG6Qm/C1+uHskghkxlA==
+"@testrtc/watchrtc-sdk@1.36.2":
+  version "1.36.2"
+  resolved "https://registry.yarnpkg.com/@testrtc/watchrtc-sdk/-/watchrtc-sdk-1.36.2.tgz#d0bd2b2285f40ba58b9fdbf304bed1aa14ef42ba"
+  integrity sha512-KjSpQd6929mf35QreuXieLt3QOEtkqzGJBaFmxk6kYnfVAAgWf4yGLqR7fwmgHFsZZcctDQ3dM2MCvG10X+4hQ==
 
 "@tootallnate/once@1":
   version "1.1.2"

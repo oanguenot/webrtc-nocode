@@ -47,6 +47,7 @@ function Debug({ dispatch }) {
 
   const onReset = () => {
     setIsStarted(false);
+    setProgress(0);
   };
 
   const actionsContent = (
