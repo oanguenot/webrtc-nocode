@@ -1,5 +1,10 @@
 import { execute, rehydrateDOM, rehydrateModel } from "../modules/playground";
 import { clearData, loadData, saveData } from "../modules/storage";
+import {
+  filterNodesByName,
+  getNodeEnumLabelFromValue,
+} from "../modules/helper";
+import { KEYS, NODES } from "../modules/model";
 
 let ref_fileHandle = null;
 
@@ -129,4 +134,58 @@ export const loadPlaygroundFromStorage = () => {
 export const resetPlaygroundFromStorage = () => {
   clearData(PLAYGROUND_STORAGE_KEYS.NODES);
   clearData(PLAYGROUND_STORAGE_KEYS.OBJECTS);
+};
+
+export const checkDevicesInNodes = (devices, nodes, dispatch) => {
+  console.log("[check] start...", devices, nodes);
+
+  // Get all tracks
+  const tracks = filterNodesByName(NODES.TRACK, nodes);
+
+  tracks.forEach((track) => {
+    const fromProperty = track.getPropertyFor(KEYS.FROM);
+    const fromEnum = fromProperty.enum;
+    const fromValue = fromProperty.value;
+    const fromLabel = track.getLabelFromPropertySelect(KEYS.FROM);
+    const kind = track.getInfoValueFor(KEYS.KIND);
+
+    // Check that selected value and label exist
+    const exist = devices.some(
+      (device) => device.deviceId === fromValue && device.label === fromLabel
+    );
+    if (!exist) {
+      fromProperty.value = "fake";
+      fromProperty.enum = fromEnum.filter((item) => item.value !== fromValue);
+    }
+
+    // Check that remaining enum exists
+    const toKeep = [{ label: "Fake", value: "fake" }];
+    fromEnum.forEach((item) => {
+      const exist = devices.some(
+        (device) =>
+          device.deviceId === item.value && device.label === item.label
+      );
+      if (exist) {
+        toKeep.push(item);
+      }
+    });
+
+    // Add devices that is not already present
+    const toAdd = [];
+    devices
+      .filter((device) => device.kind === `${kind}input`)
+      .forEach((device) => {
+        const exist = toKeep.some(
+          (item) =>
+            device.deviceId === item.value && device.label === item.label
+        );
+        if (!exist) {
+          toAdd.push({ label: device.label, value: device.deviceId });
+        }
+      });
+
+    const newEnum = [...toKeep, ...toAdd];
+    fromProperty.enum = newEnum;
+  });
+  console.log("[check] ended!");
 };

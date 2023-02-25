@@ -11,6 +11,7 @@ import {
   PrimaryButton,
 } from "@atlaskit/atlassian-navigation";
 import {
+  checkDevicesInNodes,
   exportToFile,
   getFileHandle,
   importFromFile,
@@ -38,6 +39,12 @@ function App() {
   useEffect(() => {
     getListOfDevices(dispatch);
   }, []);
+
+  useEffect(() => {
+    if (appState.loadedCheckDevices) {
+      checkDevicesInNodes(appState.devices, appState.objects, dispatch);
+    }
+  }, [appState.loadedCheckDevices]);
 
   const addFlag = (fileName) => {
     const newFlagId = flags.length + 1;

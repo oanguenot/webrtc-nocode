@@ -22,6 +22,7 @@ const initialAppState = {
   debug: [],
   nbTasks: 0,
   tasksDone: 0,
+  loadedCheckDevices: false,
 };
 
 const updateValueInObject = (objectId, name, value, label, objects) => {
@@ -299,6 +300,7 @@ const appReducer = (state = initialAppState, action) => {
       return {
         ...state,
         objects: action.payload.objects,
+        loadedCheckDevices: true,
         lastAdded: null,
         selected: null,
         link: null,

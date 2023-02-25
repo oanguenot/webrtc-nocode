@@ -25,7 +25,8 @@ export const includes = (nodeName, list) => {
 
 export const getNodeById = (id, nodes) => nodes.find((node) => node.id === id);
 
-export const getNodesFromIds = (ids, nodes) => ( ids.map(id => getNodeById(id, nodes)));
+export const getNodesFromIds = (ids, nodes) =>
+  ids.map((id) => getNodeById(id, nodes));
 
 export const getNodeIndexById = (id, nodes) =>
   nodes.findIndex((object) => object.id === id);
@@ -40,6 +41,10 @@ export const getNodeInfoValue = (infoKey, node) => {
   return infoName ? infoName.value : null;
 };
 
+export const getNodeEnumLabelFromValue = (enumList, value) => {
+  return enumList.find((item) => item.value === value);
+};
+
 export const filterSimilarNodesById = (id, nodes, key) => {
   return nodes.filter((node) => {
     const peerId = node.getPropertyValueFor(key);
@@ -49,9 +54,8 @@ export const filterSimilarNodesById = (id, nodes, key) => {
 
 export const filterNodesByName = (node, nodes) => {
   return nodes.filter((item) => item.node === node);
-}
+};
 
 export const findNodeByName = (node, nodes) => {
   return nodes.find((item) => item.node === node);
-}
-
+};
