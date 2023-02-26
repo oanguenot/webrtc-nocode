@@ -4,13 +4,7 @@ import EmptyState from "@atlaskit/empty-state";
 import { SimpleTag as Tag } from "@atlaskit/tag";
 
 import "./Debug.css";
-import {
-  Content,
-  LeftSidebar,
-  Main,
-  PageLayout,
-  RightSidebar,
-} from "@atlaskit/page-layout";
+import { Main } from "@atlaskit/page-layout";
 import PageHeader from "@atlaskit/page-header";
 import ProgressBar from "@atlaskit/progress-bar";
 import Button, { ButtonGroup } from "@atlaskit/button";

@@ -1,4 +1,28 @@
 .problems-area {
     border-top: 2px solid #dadada;
     padding: 0 8px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.problem-node {
+    color: #999;
+    margin-left: 6px;
+}
+
+.problem-label {
+    color: #e5af00;
+}
+
+.problems-list {
+    overflow-y: scroll;
+    margin-left: 8px;
+}
+
+.problem-title {
+    margin: 4px 0;
+    font-size: 15px;
+    font-family: Arial;
+    font-weight: 600;
+    color: #5C6A80;
 }
