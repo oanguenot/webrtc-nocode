@@ -336,9 +336,9 @@ function Playground({ dispatch }) {
           ref={drawFlowElt}
           onDrop={(event) => onDrop(event)}
           onDragOver={(event) => allowDrop(event)}
-          style={{ height: "85%" }}
+          style={{ height: "calc(100% - 150px)" }}
         ></div>
-        <Problems style={{ height: "15%" }} />
+        <Problems style={{ height: "150px" }} />
       </Main>
       <RightSidebar id="right-sidebar" width={250}>
         <Properties dispatch={dispatch} />
