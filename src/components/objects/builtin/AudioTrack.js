@@ -26,8 +26,11 @@ class AudioTrack extends Main {
         prop: "from",
         label: "From",
         type: "enum",
-        enum: [{ label: "Fake", value: "fake" }],
-        value: "fake",
+        enum: [
+          { label: "None", value: "none" },
+          { label: "Fake", value: "fake" },
+        ],
+        value: "none",
         description: "Choose the preferred microphone",
       },
       {
