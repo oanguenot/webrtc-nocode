@@ -17,6 +17,7 @@ export const PLAYGROUND_ACTIONS = {
   PLAYGROUND_DEVICES_CHECKED_FAILED: "PLAYGROUND_DEVICES_CHECKED_FAILED",
   PLAYGROUND_WRITE_SUCCESS: "PLAYGROUND_WRITE_SUCCESS",
   PLAYGROUND_READ_SUCCESS: "PLAYGROUND_READ_SUCCESS",
+  PLAYGROUND_RESET_SUCCESS: "PLAYGROUND_RESET_SUCCESS",
 };
 
 export const PLAYGROUND_STORAGE_KEYS = {
@@ -138,6 +139,13 @@ export const resetPlaygroundFromStorage = () => {
   clearData(PLAYGROUND_STORAGE_KEYS.OBJECTS);
 };
 
+export const resetPlayground = (dispatch) => {
+  dispatch({
+    type: PLAYGROUND_ACTIONS.PLAYGROUND_RESET_SUCCESS,
+    payload: {},
+  });
+};
+
 export const checkDevicesInNodes = (devices, nodes, dispatch) => {
   let hasChanged = false;
 
@@ -198,7 +206,6 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
     const newEnum = [...toKeep, ...toAdd];
     fromProperty.enum = newEnum;
   });
-  console.log("[check] ended!");
 
   dispatch({
     type: hasChanged

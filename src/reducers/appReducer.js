@@ -304,14 +304,17 @@ const appReducer = (state = initialAppState, action) => {
       };
     }
     case PLAYGROUND_ACTIONS.PLAYGROUND_LOAD_SUCCESS: {
-      saveModelToStorage(action.payload.objects);
+      const objects = action.payload.objects;
+      saveModelToStorage(objects);
+      const problems = checkNodesProblems(objects);
       return {
         ...state,
-        objects: action.payload.objects,
+        objects: objects,
         loadedCheckDevices: true,
         lastAdded: null,
         selected: null,
         link: null,
+        problems,
       };
     }
     case PLAYGROUND_ACTIONS.PLAYGROUND_DEVICES_CHECKED_SUCCESS:
@@ -323,6 +326,18 @@ const appReducer = (state = initialAppState, action) => {
       return {
         ...state,
         loadedCheckDevices: false,
+      };
+    case PLAYGROUND_ACTIONS.PLAYGROUND_RESET_SUCCESS:
+      return {
+        ...state,
+        objects: [],
+        lastAdded: null,
+        selected: null,
+        link: null,
+        debug: [],
+        nbTasks: 0,
+        tasksDone: 0,
+        problems: [],
       };
     case DEBUG_ACTIONS.ADD_TRACE: {
       const log = action.payload;

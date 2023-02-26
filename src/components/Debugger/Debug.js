@@ -55,7 +55,7 @@ function Debug({ dispatch }) {
   );
 
   const getProgressStatus = () => {
-    if (progress === 0) {
+    if (progress === 0 && !isStarted) {
       return "Not started";
     } else if (progress === 1) {
       return "Finished!";
@@ -73,7 +73,7 @@ function Debug({ dispatch }) {
             {!isStarted && (
               <div className="debug-area">
                 <EmptyState
-                  header="No Debug!"
+                  header="No Results"
                   description="Run the playground to have results"
                 />
               </div>

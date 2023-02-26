@@ -16,6 +16,7 @@ import {
   getFileHandle,
   importFromFile,
   load,
+  resetPlayground,
   resetPlaygroundFromStorage,
   run,
   saveEditorToStorage,
@@ -60,8 +61,7 @@ function App() {
   const onClear = () => {
     getEditor().clearModuleSelected();
     resetPlaygroundFromStorage();
-    resetDevices(dispatch);
-    getListOfDevices(dispatch);
+    resetPlayground(dispatch);
   };
 
   const onExport = async (forceSave = false) => {
