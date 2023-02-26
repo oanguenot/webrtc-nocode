@@ -148,13 +148,14 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
     const fromProperty = track.getPropertyFor(KEYS.FROM);
     const fromEnum = fromProperty.enum;
     const fromValue = fromProperty.value;
-    const fromLabel = track.getLabelFromPropertySelect(KEYS.FROM);
+    const fromLabel = track.getLabelFromPropertySelect(fromProperty);
     const kind = track.getInfoValueFor(KEYS.KIND);
 
     // Check that selected value and label exist
     const exist = devices.some(
       (device) => device.deviceId === fromValue && device.label === fromLabel
     );
+
     if (!exist) {
       hasChanged = true;
       fromProperty.value = "none";
