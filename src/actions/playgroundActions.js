@@ -13,6 +13,8 @@ export const PLAYGROUND_ACTIONS = {
   PLAYGROUND_RUN_SUCCESS: "PLAYGROUND_RUN_SUCCESS",
   PLAYGROUND_RUN_FAILED: "PLAYGROUND_RUN_FAILED",
   PLAYGROUND_LOAD_SUCCESS: "PLAYGROUND_LOAD_SUCCESS",
+  PLAYGROUND_DEVICES_CHECKED_SUCCESS: "PLAYGROUND_DEVICES_CHECKED_SUCCESS",
+  PLAYGROUND_DEVICES_CHECKED_FAILED: "PLAYGROUND_DEVICES_CHECKED_FAILED",
   PLAYGROUND_WRITE_SUCCESS: "PLAYGROUND_WRITE_SUCCESS",
   PLAYGROUND_READ_SUCCESS: "PLAYGROUND_READ_SUCCESS",
 };
@@ -137,7 +139,7 @@ export const resetPlaygroundFromStorage = () => {
 };
 
 export const checkDevicesInNodes = (devices, nodes, dispatch) => {
-  console.log("[check] start...", devices, nodes);
+  let hasChanged = false;
 
   // Get all tracks
   const tracks = filterNodesByName(NODES.TRACK, nodes);
@@ -154,13 +156,17 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
       (device) => device.deviceId === fromValue && device.label === fromLabel
     );
     if (!exist) {
-      fromProperty.value = "fake";
+      hasChanged = true;
+      fromProperty.value = "none";
       fromProperty.enum = fromEnum.filter((item) => item.value !== fromValue);
       track.updateDisplayInObject(KEYS.FROM);
     }
 
     // Check that remaining enum exists
-    const toKeep = [{ label: "Fake", value: "fake" }];
+    const toKeep = [
+      { label: "None", value: "none" },
+      { label: "Fake", value: "fake" },
+    ];
     fromEnum.forEach((item) => {
       const exist = devices.some(
         (device) =>
@@ -168,6 +174,8 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
       );
       if (exist) {
         toKeep.push(item);
+      } else {
+        hasChanged = true;
       }
     });
 
@@ -182,6 +190,7 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
         );
         if (!exist) {
           toAdd.push({ label: device.label, value: device.deviceId });
+          hasChanged = true;
         }
       });
 
@@ -189,4 +198,11 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
     fromProperty.enum = newEnum;
   });
   console.log("[check] ended!");
+
+  dispatch({
+    type: hasChanged
+      ? PLAYGROUND_ACTIONS.PLAYGROUND_DEVICES_CHECKED_FAILED
+      : PLAYGROUND_ACTIONS.PLAYGROUND_DEVICES_CHECKED_SUCCESS,
+    payload: {},
+  });
 };

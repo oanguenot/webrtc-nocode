@@ -28,6 +28,7 @@ import {
 import { availableObjects, build } from "../../modules/builder";
 
 import "./Playground.css";
+import Problems from "../Problems/Problems";
 
 let mobile_item_selec = "";
 let mobile_last_move = null;
@@ -335,7 +336,9 @@ function Playground({ dispatch }) {
           ref={drawFlowElt}
           onDrop={(event) => onDrop(event)}
           onDragOver={(event) => allowDrop(event)}
+          style={{ height: "85%" }}
         ></div>
+        <Problems style={{ height: "15%" }} />
       </Main>
       <RightSidebar id="right-sidebar" width={250}>
         <Properties dispatch={dispatch} />

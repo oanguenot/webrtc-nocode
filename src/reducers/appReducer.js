@@ -6,6 +6,7 @@ import {
   saveModelToStorage,
 } from "../actions/playgroundActions";
 import { DEBUG_ACTIONS } from "../actions/DebugActions";
+import { checkNodesProblems, PROBLEMS } from "../modules/problems";
 
 export const STATE = {
   NOT_INITIALIZED: "NOT_INITIALIZED",
@@ -23,6 +24,7 @@ const initialAppState = {
   nbTasks: 0,
   tasksDone: 0,
   loadedCheckDevices: false,
+  problems: [],
 };
 
 const updateValueInObject = (objectId, name, value, label, objects) => {
@@ -136,11 +138,13 @@ const appReducer = (state = initialAppState, action) => {
 
       const newObjects = [...state.objects, object];
       saveModelToStorage(newObjects);
+      const problems = checkNodesProblems(newObjects);
 
       return {
         ...state,
         lastAdded: object,
         objects: newObjects,
+        problems,
       };
     }
     case OBJECT_ACTIONS.REMOVE_OBJECT_SUCCESS: {
@@ -149,9 +153,11 @@ const appReducer = (state = initialAppState, action) => {
           (object) => object.id !== state.selected.id
         );
         saveModelToStorage(newObjects);
+        const problems = checkNodesProblems(newObjects);
         return {
           ...state,
           objects: newObjects,
+          problems,
         };
       }
     }
@@ -210,11 +216,13 @@ const appReducer = (state = initialAppState, action) => {
       }
 
       saveModelToStorage(objects);
+      const problems = checkNodesProblems(objects);
 
       return {
         ...state,
         lastAdded: null,
         objects,
+        problems,
       };
     }
     case OBJECT_ACTIONS.CREATE_CONNECTION_ATTEMPT: {
@@ -306,6 +314,16 @@ const appReducer = (state = initialAppState, action) => {
         link: null,
       };
     }
+    case PLAYGROUND_ACTIONS.PLAYGROUND_DEVICES_CHECKED_SUCCESS:
+      return {
+        ...state,
+        loadedCheckDevices: false,
+      };
+    case PLAYGROUND_ACTIONS.PLAYGROUND_DEVICES_CHECKED_FAILED:
+      return {
+        ...state,
+        loadedCheckDevices: false,
+      };
     case DEBUG_ACTIONS.ADD_TRACE: {
       const log = action.payload;
       return {

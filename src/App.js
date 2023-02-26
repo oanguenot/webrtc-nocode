@@ -29,7 +29,7 @@ import SuccessIcon from "@atlaskit/icon/glyph/check-circle";
 import { token } from "@atlaskit/tokens";
 import { G300 } from "@atlaskit/theme/colors";
 import Playground from "./components/PlayGround/Playground";
-import Button, { ButtonGroup } from "@atlaskit/button";
+import { ButtonGroup } from "@atlaskit/button";
 
 function App() {
   const [appState, dispatch] = useReducer(appReducer, initialAppState);
@@ -181,6 +181,7 @@ function App() {
             </TabPanel>
           </Tabs>
         </Content>
+
         <FlagGroup onDismissed={handleDismiss}>
           {flags.map(({ flagId, fileName }, key) => {
             return (

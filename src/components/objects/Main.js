@@ -104,7 +104,8 @@ class Main {
       if (!property.enum) {
         return "";
       }
-      return property.enum.find((item) => item.value === value).label;
+      const enumItem = property.enum.find((item) => item.value === value);
+      return enumItem ? enumItem.label : "???";
     }
     return "???";
   }
