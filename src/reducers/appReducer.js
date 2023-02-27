@@ -67,16 +67,16 @@ const appReducer = (state = initialAppState, action) => {
   switch (action.type) {
     case OBJECT_ACTIONS.ADD_OBJECT_SUCCESS: {
       const object = action.payload.object;
-      const node = object.getInfoValueFor(KEYS.NODE);
-      if (node.node === NODES.TRACK) {
+      const nodeInfo = object.getInfoValueFor(KEYS.NODE);
+      if (nodeInfo === NODES.TRACK) {
         object.addDevices(state.devices);
-        filterNodesByName(NODES.ENCODE, state.objects, node.kind).forEach(
+        filterNodesByName(NODES.ENCODE, state.objects, object.kind).forEach(
           (obj) => {
             // only add track to encoding of the same kind
             obj.addNewOptionToSelect(object.id, object.id, KEYS.TRACK);
           }
         );
-        filterNodesByName(NODES.ADJUST, state.objects, node.kind).forEach(
+        filterNodesByName(NODES.ADJUST, state.objects, object.kind).forEach(
           (obj) => {
             // only add track to adjustment of the same kind
             obj.addNewOptionToSelect(object.id, object.id, KEYS.TRACK);
@@ -98,29 +98,29 @@ const appReducer = (state = initialAppState, action) => {
         //     })
         //   );
         //   object.addMultipleOptionsToSelect(steps, "next");
-      } else if (node.node === NODES.ENCODE) {
+      } else if (nodeInfo === NODES.ENCODE) {
         console.log(">>>added a encode");
         const tracks = filterNodesByName(
           NODES.TRACK,
           state.objects,
-          node.getInfoValueFor(KEYS.KIND)
+          object.getInfoValueFor(KEYS.KIND)
         ).map((obj) => ({
           value: obj.id,
           label: obj.id,
         }));
         console.log(">>> existing tracks");
         object.addMultipleOptionsToSelect(tracks, KEYS.TRACK);
-      } else if (node.node === NODES.ADJUST) {
+      } else if (nodeInfo === NODES.ADJUST) {
         const tracks = filterNodesByName(
           NODES.TRACK,
           state.objects,
-          node.getInfoValueFor(KEYS.KIND)
+          object.getInfoValueFor(KEYS.KIND)
         ).map((obj) => ({
           value: obj.id,
           label: obj.id,
         }));
         object.addMultipleOptionsToSelect(tracks, KEYS.TRACK);
-      } else if (node.node === NODES.PEER) {
+      } else if (nodeInfo === NODES.PEER) {
         // Add peer to all ready
         filterNodesByName(NODES.READY, state.objects).forEach((obj) => {
           obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
@@ -134,7 +134,7 @@ const appReducer = (state = initialAppState, action) => {
         filterNodesByName(NODES.ICE, state.objects).forEach((obj) => {
           obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
         });
-      } else if (node.node === NODES.READY) {
+      } else if (nodeInfo === NODES.READY) {
         const peers = filterNodesByName(NODES.PEER, state.objects).map(
           (obj) => ({
             value: obj.id,
@@ -142,7 +142,7 @@ const appReducer = (state = initialAppState, action) => {
           })
         );
         object.addMultipleOptionsToSelect(peers, KEYS.PEER);
-      } else if (node.node === NODES.ICE) {
+      } else if (nodeInfo === NODES.ICE) {
         const peers = filterNodesByName(NODES.PEER, state.objects).map(
           (obj) => ({
             value: obj.id,
@@ -150,7 +150,7 @@ const appReducer = (state = initialAppState, action) => {
           })
         );
         object.addMultipleOptionsToSelect(peers, KEYS.PEER);
-      } else if (node.node === NODES.CALL) {
+      } else if (nodeInfo === NODES.CALL) {
         const peers = filterNodesByName(NODES.PEER, state.objects).map(
           (obj) => ({
             value: obj.id,

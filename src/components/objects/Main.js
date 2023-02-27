@@ -1,5 +1,6 @@
 import { customAlphabet } from "nanoid";
 import { getNodeById, includes } from "../../modules/helper";
+import { KEYS } from "../../modules/model";
 
 const CUSTOM_ALPHABET = "0123456789abcdefghijklmnopqrstuvwxyz";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 6);
@@ -78,8 +79,13 @@ class Main {
   }
 
   get node() {
-    const infoNode = this._info.find((info) => info.key === "node");
+    const infoNode = this._info.find((info) => info.key === KEYS.NODE);
     return infoNode ? infoNode.value : "Unknown";
+  }
+
+  get kind() {
+    const infoNode = this._info.find((info) => info.key === KEYS.KIND);
+    return infoNode ? infoNode.value : null;
   }
 
   getInfoValueFor(name) {
