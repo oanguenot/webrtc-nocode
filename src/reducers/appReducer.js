@@ -1,12 +1,17 @@
 import { OBJECT_ACTIONS } from "../actions/objectActions";
 import { SUPERVISOR_ACTIONS } from "../actions/supervisonActions";
-import { getNodeById, getNodeIndexById } from "../modules/helper";
+import {
+  filterNodesByName,
+  getNodeById,
+  getNodeIndexById,
+} from "../modules/helper";
 import {
   PLAYGROUND_ACTIONS,
   saveModelToStorage,
 } from "../actions/playgroundActions";
 import { DEBUG_ACTIONS } from "../actions/DebugActions";
 import { checkNodesProblems, PROBLEMS } from "../modules/problems";
+import { KEYS, NODES } from "../modules/model";
 
 export const STATE = {
   NOT_INITIALIZED: "NOT_INITIALIZED",
@@ -32,10 +37,6 @@ const updateValueInObject = (objectId, name, value, label, objects) => {
   const updatedObjects = [...objects];
   updatedObjects[index].updateValueFor(name, value, label);
   return updatedObjects;
-};
-
-const filterObjectsWithNode = (value, objects) => {
-  return objects.filter((obj) => obj.getInfoValueFor("node") === value);
 };
 
 const updateLinkInObject = (objectId, fromId, objects) => {
@@ -66,74 +67,95 @@ const appReducer = (state = initialAppState, action) => {
   switch (action.type) {
     case OBJECT_ACTIONS.ADD_OBJECT_SUCCESS: {
       const object = action.payload.object;
-      const node = object.getInfoValueFor("node");
-      if (node.includes("rtc.track")) {
+      const node = object.getInfoValueFor(KEYS.NODE);
+      if (node.node === NODES.TRACK) {
         object.addDevices(state.devices);
-        filterObjectsWithNode("action.encode", state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(object.id, object.id, "track");
-        });
-      } else if (node.includes("step")) {
-        filterObjectsWithNode("goto", state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(
-            object.id,
-            object.getPropertyValueFor("name"),
-            "next"
-          );
-        });
-      } else if (node.includes("goto")) {
-        const steps = filterObjectsWithNode("step", state.objects).map(
-          (obj) => ({
-            value: obj.id,
-            label: obj.getPropertyValueFor("name"),
-          })
+        filterNodesByName(NODES.ENCODE, state.objects, node.kind).forEach(
+          (obj) => {
+            // only add track to encoding of the same kind
+            obj.addNewOptionToSelect(object.id, object.id, KEYS.TRACK);
+          }
         );
-        object.addMultipleOptionsToSelect(steps, "next");
-      } else if (node.includes("action.encode")) {
-        const tracks = filterObjectsWithNode("rtc.track", state.objects).map(
-          (obj) => ({
-            value: obj.id,
-            label: obj.id,
-          })
+        filterNodesByName(NODES.ADJUST, state.objects, node.kind).forEach(
+          (obj) => {
+            // only add track to adjustment of the same kind
+            obj.addNewOptionToSelect(object.id, object.id, KEYS.TRACK);
+          }
         );
-        object.addMultipleOptionsToSelect(tracks, "track");
-      } else if (node.includes("rtc.peer")) {
+        // } else if (node.includes("step")) {
+        //   filterObjectsWithNode("goto", state.objects).forEach((obj) => {
+        //     obj.addNewOptionToSelect(
+        //       object.id,
+        //       object.getPropertyValueFor("name"),
+        //       "next"
+        //     );
+        //   });
+        // } else if (node.includes("goto")) {
+        //   const steps = filterObjectsWithNode("step", state.objects).map(
+        //     (obj) => ({
+        //       value: obj.id,
+        //       label: obj.getPropertyValueFor("name"),
+        //     })
+        //   );
+        //   object.addMultipleOptionsToSelect(steps, "next");
+      } else if (node.node === NODES.ENCODE) {
+        const tracks = filterNodesByName(
+          NODES.TRACK,
+          state.objects,
+          node.getInfoValueFor(KEYS.KIND)
+        ).map((obj) => ({
+          value: obj.id,
+          label: obj.id,
+        }));
+        object.addMultipleOptionsToSelect(tracks, KEYS.TRACK);
+      } else if (node.node === NODES.ADJUST) {
+        const tracks = filterNodesByName(
+          NODES.TRACK,
+          state.objects,
+          node.getInfoValueFor(KEYS.KIND)
+        ).map((obj) => ({
+          value: obj.id,
+          label: obj.id,
+        }));
+        object.addMultipleOptionsToSelect(tracks, KEYS.TRACK);
+      } else if (node.node === NODES.PEER) {
         // Add peer to all ready
-        filterObjectsWithNode("event.ready", state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(object.id, object.id, "peer");
+        filterNodesByName(NODES.READY, state.objects).forEach((obj) => {
+          obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
         });
 
         // Add peer to all call
-        filterObjectsWithNode("action.call", state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(object.id, object.id, "peer");
+        filterNodesByName(NODES.CALL, state.objects).forEach((obj) => {
+          obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
         });
 
-        filterObjectsWithNode("event.ice", state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(object.id, object.id, "peer");
+        filterNodesByName(NODES.ICE, state.objects).forEach((obj) => {
+          obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
         });
-      } else if (node.includes("event.ready")) {
-        const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
+      } else if (node.node === NODES.READY) {
+        const peers = filterNodesByName(NODES.PEER, state.objects).map(
           (obj) => ({
             value: obj.id,
-            label: obj.getPropertyValueFor("name"),
+            label: obj.getPropertyValueFor(KEYS.NAME),
           })
         );
-        object.addMultipleOptionsToSelect(peers, "peer");
-      } else if (node.includes("event.ice")) {
-        const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
+        object.addMultipleOptionsToSelect(peers, KEYS.PEER);
+      } else if (node.node === NODES.ICE) {
+        const peers = filterNodesByName(NODES.PEER, state.objects).map(
           (obj) => ({
             value: obj.id,
-            label: obj.getPropertyValueFor("name"),
+            label: obj.getPropertyValueFor(KEYS.NAME),
           })
         );
-        object.addMultipleOptionsToSelect(peers, "peer");
-      } else if (node.includes("action.call")) {
-        const peers = filterObjectsWithNode("rtc.peer", state.objects).map(
+        object.addMultipleOptionsToSelect(peers, KEYS.PEER);
+      } else if (node.node === NODES.CALL) {
+        const peers = filterNodesByName(NODES.PEER, state.objects).map(
           (obj) => ({
             value: obj.id,
-            label: obj.getPropertyValueFor("name"),
+            label: obj.getPropertyValueFor(KEYS.NAME),
           })
         );
-        object.addMultipleOptionsToSelect(peers, "peer");
+        object.addMultipleOptionsToSelect(peers, KEYS.PEER);
       }
 
       const newObjects = [...state.objects, object];
@@ -192,26 +214,26 @@ const appReducer = (state = initialAppState, action) => {
         state.objects
       );
 
-      // Update all goto nodes when step name changed
       const object = getNodeById(objectId, objects);
-      if (object.getInfoValueFor("node") === "step") {
-        const relatedGoto = filterObjectsWithNode("goto", objects);
-        relatedGoto.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, "step")
-        );
-      }
+      // Update all goto nodes when step name changed
+      // if (object.getInfoValueFor("node") === "step") {
+      //   const relatedGoto = filterObjectsWithNode("goto", objects);
+      //   relatedGoto.forEach((obj) =>
+      //     obj.updateLabelInSelect(object.id, value, "step")
+      //   );
+      // }
 
-      if (object.getInfoValueFor("node") === "rtc.peer") {
+      if (object.getInfoValueFor(KEYS.NODE) === NODES.PEER) {
         // Update all ready nodes when peer name changed
-        const relatedReady = filterObjectsWithNode("event.ready", objects);
+        const relatedReady = filterNodesByName(NODES.READY, objects);
         relatedReady.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, "peer")
+          obj.updateLabelInSelect(object.id, value, KEYS.PEER)
         );
 
         // Update all callP2P nodes when peer name changed
-        const relatedP2P = filterObjectsWithNode("action.p2p", objects);
+        const relatedP2P = filterNodesByName(NODES.CALL, objects);
         relatedP2P.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, "peer")
+          obj.updateLabelInSelect(object.id, value, KEYS.PEER)
         );
       }
 
