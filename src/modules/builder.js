@@ -30,7 +30,7 @@ const ObjectBuilder = {
   VideoEncodings: VideoEncodings,
   AudioAdjust: AudioAdjust,
   VideoAdjust: VideoAdjust,
-  WebRTCMetrics: WebRTCMetrics,
+  //WebRTCMetrics: WebRTCMetrics,
   WatchRTC: WatchRTC,
   CallP2P: CallP2P,
   End: End,
