@@ -30,6 +30,7 @@ export const KEYS = {
   ACTIVE: "active",
   PREFERENCE: "preference",
   MAX_BITRATE: "maxBitrate",
+  MAX_FRAMERATE: "maxFramerate",
   TRACK: "track",
   DELAY: "delay",
   PEER: "peer",

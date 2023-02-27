@@ -241,6 +241,7 @@ const encode = (peerNode, encodeNode, nodes) => {
 
     // Get transceiver and sender used
     const transceivers = win.pc.getTransceivers();
+    console.log(">>>SENDERS", win.pc.getSenders());
     const transceiver = transceivers.find((transceiver) => {
       const sender = transceiver.sender;
       if (!sender) {
@@ -263,6 +264,8 @@ const encode = (peerNode, encodeNode, nodes) => {
     const sender = transceiver.sender;
     const track = sender.track;
 
+    console.log(">>>get tracks", track);
+
     // Update codec
     //const constraints = track.getConstraints();
     const { codecs } = RTCRtpSender.getCapabilities("video");
@@ -277,25 +280,34 @@ const encode = (peerNode, encodeNode, nodes) => {
     codecs.splice(firstCodecIndex, preferredCodecs.length);
     codecs.unshift(...preferredCodecs);
     console.log(">>>updated codecs", codecs);
-    transceiver.setCodecPreferences(codecs);
+    // transceiver.setCodecPreferences(codecs);
 
     // Change active flags
     const parameters = sender.getParameters();
     console.log(">>>current Parameters", parameters);
 
-    // const newParameters = { ...parameters };
-    // const encodings = newParameters.encodings[0];
-    // encodings.active = active === "true";
-    // sender
-    //   .setParameters(newParameters)
-    //   .then(() => {
-    //     resolve();
-    //   })
-    //   .catch((err) => {
-    //     console.warn("[encode] error", err);
-    //     resolve();
-    //   });
-    resolve();
+    const newParameters = { ...parameters };
+    const encodings = newParameters.encodings[0];
+    if (!encodings) {
+      console.warn("[encode] no encodings found");
+      resolve();
+      return;
+    }
+    encodings.active = active === "true";
+    encodings.maxBitrate = 100000;
+    encodings.maxFramerate = 8;
+    console.log(">>>new Parameters", newParameters);
+    sender
+      .setParameters(newParameters)
+      .then(() => {
+        console.log(">>> encodings ends");
+        resolve();
+      })
+      .catch((err) => {
+        console.warn("[encode] error", err);
+        resolve();
+      });
+    //resolve();
   });
 };
 

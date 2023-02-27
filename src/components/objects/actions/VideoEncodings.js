@@ -1,9 +1,9 @@
 import Main from "../Main";
-import {KEY_TYPE, KEYS, NODES} from "../../../modules/model";
+import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
 
 class VideoEncodings extends Main {
-  static item = "Video Encodings";
-  static description = "Select the encodings parameters";
+  static item = "Set Video Codec";
+  static description = "Encode the track with a preferred video codec";
   static icon = "shapes";
   static section = "actions";
   static name = "VideoEncodings";
@@ -14,21 +14,21 @@ class VideoEncodings extends Main {
     this._outputs = 1;
     this._info = [
       { key: KEYS.NODE, value: NODES.ENCODE },
-      { key: KEYS.KIND, value: "video" },
+      { key: KEYS.KIND, value: KIND.VIDEO },
       {
         key: KEYS.INFO,
         value:
-          "Change the track's encoding associated to the RTCRtpSender. Equivalent to setParameters",
+          "Select the codec to use when encoding the track associated. Equivalent to setCodecPreferences",
       },
     ];
-    this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS];
+    this._acceptInputs = [NODES.PEER, NODES.EVENTS, NODES.ACTIONS];
     this._acceptOutputs = [NODES.ACTIONS];
     this._properties = [
       {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Video Encode",
+        value: "Change Video Codec",
         description: "Name of the Encodings",
       },
       {
@@ -36,40 +36,14 @@ class VideoEncodings extends Main {
         label: "Codec Preferences",
         type: KEY_TYPE.ENUM,
         enum: [
+          { label: "Unchanged", value: "unchanged" },
           { label: "VP8", value: "vp8" },
           { label: "VP9", value: "vp9" },
           { label: "H264", value: "h264" },
           { label: "AV1", value: "AV1" },
         ],
-        value: "vp8",
+        value: "unchanged",
         description: "Choose the preferred codec to use",
-      },
-      {
-        prop: KEYS.ACTIVE,
-        label: "Active",
-        type: KEY_TYPE.ENUM,
-        enum: [
-          { label: "Yes", value: "yes" },
-          { label: "No", value: "no" },
-        ],
-        value: "yes",
-        description: "Choose if the stream is active",
-      },
-      {
-        prop: KEYS.MAX_BITRATE,
-        label: "Max Bitrate",
-        type: KEY_TYPE.ENUM,
-        enum: [
-          { label: "Unlimited", value: "unlimited" },
-          { label: "2 Mbps", value: 2000000 },
-          { label: "1,5 Mbps", value: 1500000 },
-          { label: "1 Mbps", value: 1000000 },
-          { label: "500 Kbps", value: 500000 },
-          { label: "250 Kbps", value: 250000 },
-          { label: "100 Kbps", value: 100000 },
-        ],
-        value: "unlimited",
-        description: "Choose the maximum bitrate to use",
       },
       {
         prop: KEYS.TRACK,
@@ -90,13 +64,7 @@ class VideoEncodings extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.PREFERENCE:
-        return `use ${label}`;
-      case KEYS.ACTIVE:
-        return property.value === "yes" ? "active" : "inactive";
-      case KEYS.MAX_BITRATE:
-        return property.value === "unlimited"
-          ? "no rate limit"
-          : `limited to ${label}`;
+        return property.value === "unchanged" ? label : `use ${label}`;
       case KEYS.TRACK:
         return property.value === "none" ? "no track" : `encode ${label}`;
     }
@@ -120,16 +88,6 @@ class VideoEncodings extends Main {
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="preference-${
               this._uuid
             }">${this.renderProp(KEYS.PREFERENCE)}</span>
-            </div>
-            <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="active-${
-              this._uuid
-            }">${this.renderProp(KEYS.ACTIVE)}</span>
-            </div>
-            <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="maxBitrate-${
-              this._uuid
-            }">${this.renderProp(KEYS.MAX_BITRATE)}</span>
             </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${
