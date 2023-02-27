@@ -52,7 +52,10 @@ export const filterSimilarNodesById = (id, nodes, key) => {
   });
 };
 
-export const filterNodesByName = (node, nodes) => {
+export const filterNodesByName = (node, nodes, kind) => {
+  if (kind) {
+    return nodes.filter((item) => item.node === node && item.kind === kind);
+  }
   return nodes.filter((item) => item.node === node);
 };
 

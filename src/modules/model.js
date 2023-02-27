@@ -3,8 +3,9 @@ export const NODES = {
   TRACK: "rtc.track",
   TURN: "rtc.turn",
   ENCODE: "action.encode",
+  ADJUST: "action.adjust",
   CALL: "action.call",
-  ANALYZE: "action.analyze",  // for WebRTCMetrics
+  ANALYZE: "action.analyze", // for WebRTCMetrics
   WATCH: "rtc.watchrtc", // for WatchRTC
   WAIT: "action.wait",
   EVENTS: "event.*",
@@ -12,12 +13,12 @@ export const NODES = {
   READY: "event.ready",
   ICE: "event.ice",
   END: "action.end",
-}
+};
 
 export const KIND = {
   AUDIO: "audio",
   VIDEO: "video",
-}
+};
 
 export const KEYS = {
   NODE: "node",
@@ -33,9 +34,9 @@ export const KEYS = {
   DELAY: "delay",
   PEER: "peer",
   ICESTATE: "iceState",
-}
+};
 
 export const KEY_TYPE = {
   TEXT: "text",
   ENUM: "enum",
-}
+};
