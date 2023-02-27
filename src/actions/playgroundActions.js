@@ -168,7 +168,6 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
       hasChanged = true;
       fromProperty.value = "none";
       fromProperty.enum = fromEnum.filter((item) => item.value !== fromValue);
-      track.updateDisplayInObject(KEYS.FROM);
     }
 
     // Check that remaining enum exists
@@ -205,6 +204,8 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
 
     const newEnum = [...toKeep, ...toAdd];
     fromProperty.enum = newEnum;
+
+    track.updateDisplayInObject(KEYS.FROM);
   });
 
   dispatch({

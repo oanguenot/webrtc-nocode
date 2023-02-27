@@ -99,6 +99,7 @@ const appReducer = (state = initialAppState, action) => {
         //   );
         //   object.addMultipleOptionsToSelect(steps, "next");
       } else if (node.node === NODES.ENCODE) {
+        console.log(">>>added a encode");
         const tracks = filterNodesByName(
           NODES.TRACK,
           state.objects,
@@ -107,6 +108,7 @@ const appReducer = (state = initialAppState, action) => {
           value: obj.id,
           label: obj.id,
         }));
+        console.log(">>> existing tracks");
         object.addMultipleOptionsToSelect(tracks, KEYS.TRACK);
       } else if (node.node === NODES.ADJUST) {
         const tracks = filterNodesByName(
