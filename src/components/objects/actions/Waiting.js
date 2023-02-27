@@ -1,8 +1,8 @@
 import Main from "../Main";
-import {KEY_TYPE, KEYS, NODES} from "../../../modules/model";
+import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 
 class Waiting extends Main {
-  static item = "Waiting";
+  static item = "Wait";
   static description = "Wait a period before executing the next node";
   static icon = "stopwatch";
   static section = "actions";
@@ -14,11 +14,11 @@ class Waiting extends Main {
     this._outputs = 1;
     this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS];
     this._acceptOutputs = [NODES.ACTIONS];
-    this._info = [{ key: KEYS.NODE, value: "action.wait" },
+    this._info = [
+      { key: KEYS.NODE, value: "action.wait" },
       {
         key: KEYS.INFO,
-        value:
-          "Wait a moment before executing the next node",
+        value: "Wait a moment before executing the next node",
       },
     ];
     this._properties = [
@@ -60,13 +60,15 @@ class Waiting extends Main {
     return `
       <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="delay-${this._uuid}">${this.renderProp(KEYS.DELAY)}</span>
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="delay-${
+      this._uuid
+    }">${this.renderProp(KEYS.DELAY)}</span>
         </div>
         <div class="box">
              <div class="object-footer">
                 <span class="object-node object-title-box">${
-      this._info[0].value
-    }.${this._uuid}
+                  this._info[0].value
+                }.${this._uuid}
                 </span>      
             </div>
         </div>
