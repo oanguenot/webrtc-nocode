@@ -17,6 +17,8 @@ const getColorFromTag = (tag) => {
       return "blue";
     case "peer":
       return "yellow";
+    case "action":
+      return "tealLight";
     default:
       return "standard";
   }

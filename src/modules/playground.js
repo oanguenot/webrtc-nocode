@@ -18,7 +18,7 @@ import {
 const frames = {};
 let dispatcher = null;
 
-const getTransceiver = (transceivers, trackKind, trackDeviceId ) => {
+const getTransceiver = (transceivers, trackKind, trackDeviceId) => {
   //const transceivers = win.pc.getTransceivers();
   const transceiver = transceivers.find((transceiver) => {
     const sender = transceiver.sender;
@@ -35,7 +35,7 @@ const getTransceiver = (transceivers, trackKind, trackDeviceId ) => {
   });
 
   return transceiver;
-}
+};
 
 const delayer = (duration) => {
   return new Promise((resolve, __reject) => {
@@ -246,6 +246,8 @@ const encode = (peerNode, encodeNode, nodes) => {
     const codecMimeType = encodeNode.getPropertyValueFor(KEYS.PREFERENCE);
 
     const trackNode = getNodeById(trackNodeId, nodes);
+    const fromProperty = trackNode.getPropertyFor(KEYS.FROM);
+    const trackLabel = trackNode.getLabelFromPropertySelect(fromProperty);
     const trackKind = trackNode.getInfoValueFor(KEYS.KIND);
     const trackDeviceId = trackNode.getPropertyValueFor(KEYS.FROM);
 
@@ -277,6 +279,13 @@ const encode = (peerNode, encodeNode, nodes) => {
     codecs.splice(firstCodecIndex, preferredCodecs.length);
     codecs.unshift(...preferredCodecs);
     transceiver.setCodecPreferences(codecs);
+    addLog(
+      "action",
+      "log",
+      `${encodeNode.id} encode track ${trackLabel} using ${codecMimeType}`,
+      null,
+      dispatcher
+    );
     resolve();
   });
 };
@@ -285,9 +294,12 @@ const adjust = (peerNode, encodeNode, nodes) => {
   return new Promise((resolve, reject) => {
     const trackNodeId = encodeNode.getPropertyValueFor(KEYS.TRACK);
     const maxBitrate = encodeNode.getPropertyValueFor(KEYS.MAX_BITRATE);
+    const maxFramerate = encodeNode.getPropertyValueFor(KEYS.MAX_FRAMERATE);
     const active = encodeNode.getPropertyValueFor(KEYS.ACTIVE);
 
     const trackNode = getNodeById(trackNodeId, nodes);
+    const fromProperty = trackNode.getPropertyFor(KEYS.FROM);
+    const trackLabel = trackNode.getLabelFromPropertySelect(fromProperty);
     const trackKind = trackNode.getInfoValueFor(KEYS.KIND);
     const trackDeviceId = trackNode.getPropertyValueFor(KEYS.FROM);
 
@@ -308,12 +320,11 @@ const adjust = (peerNode, encodeNode, nodes) => {
 
     // Change active flags
     const sender = transceiver.sender;
-    if(!sender) {
+    if (!sender) {
       resolve();
       return;
     }
     const parameters = sender.getParameters();
-    console.log(">>>current Parameters", parameters);
 
     const newParameters = { ...parameters };
     const encodings = newParameters.encodings[0];
@@ -322,26 +333,39 @@ const adjust = (peerNode, encodeNode, nodes) => {
       resolve();
       return;
     }
-    encodings.active = active === "true";
-    if(maxBitrate > -1) {
+
+    let parameter = ``;
+    if (active !== "unchanged") {
+      encodings.active = active === "yes";
+      parameter += `encoding=${active}`;
+    }
+    if (maxBitrate > -1) {
       encodings.maxBitrate = maxBitrate;
+      parameter += `,maxbitrate=${maxBitrate}`;
+    }
+    if (maxFramerate > -1) {
+      encodings.maxFramerate = maxFramerate;
+      parameter += `,maxframerate=${maxFramerate}`;
     }
 
-    encodings.maxFramerate = 8;
-    console.log(">>>new Parameters", newParameters);
     sender
       .setParameters(newParameters)
       .then(() => {
-        console.log(">>> encodings ends");
+        addLog(
+          "action",
+          "log",
+          `${encodeNode.id} parameterize track with ${parameter}`,
+          null,
+          dispatcher
+        );
         resolve();
       })
       .catch((err) => {
         console.warn("[encode] error", err);
         resolve();
       });
-    //resolve();
   });
-}
+};
 
 const endPlayground = () => {
   return new Promise((resolve, reject) => {
