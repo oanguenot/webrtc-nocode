@@ -154,9 +154,9 @@ function App() {
           <AtlassianNavigation
             label="WebRTC Playground"
             primaryItems={[
-              <PrimaryButton onClick={() => onZoomIn()}>+</PrimaryButton>,
+              /*<PrimaryButton onClick={() => onZoomIn()}>+</PrimaryButton>,
               <PrimaryButton onClick={() => onZoomOut()}>-</PrimaryButton>,
-              <PrimaryButton onClick={() => onZoomReset()}>100%</PrimaryButton>,
+              <PrimaryButton onClick={() => onZoomReset()}>100%</PrimaryButton>,*/
               <PrimaryButton onClick={() => onImport()}>Import</PrimaryButton>,
               <PrimaryButton onClick={() => onExport(false)}>
                 Export
