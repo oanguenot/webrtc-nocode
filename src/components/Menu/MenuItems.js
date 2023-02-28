@@ -10,7 +10,7 @@ function MenuItems({ items, onDrag }) {
 
   return (
     <SideNavigation label="Project navigation" testId="side-navigation">
-      <MenuGroup>
+      <MenuGroup maxHeight={window.innerHeight - 56}>
         {[
           { list: builtin, label: "RTC" },
           { list: events, label: "Events" },
