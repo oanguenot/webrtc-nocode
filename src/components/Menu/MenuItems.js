@@ -2,15 +2,19 @@ import { MenuGroup, Section } from "@atlaskit/menu";
 import { SideNavigation } from "@atlaskit/side-navigation";
 import MenuItem from "./MenuItem";
 import "./MenuItems.css";
+import {useWindowSize} from "../../modules/hooks";
 
 function MenuItems({ items, onDrag }) {
+  const size = useWindowSize();
+
+
   const builtin = items.filter((item) => item.section === "builtin");
   const events = items.filter((item) => item.section === "events");
   const actions = items.filter((item) => item.section === "actions");
 
   return (
     <SideNavigation label="Project navigation" testId="side-navigation">
-      <MenuGroup maxHeight={window.innerHeight - 56}>
+      <MenuGroup maxHeight={size ? size.height - 56 : window.innerHeight - 56}>
         {[
           { list: builtin, label: "RTC" },
           { list: events, label: "Events" },
