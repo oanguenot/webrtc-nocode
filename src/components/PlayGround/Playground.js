@@ -29,7 +29,7 @@ import { availableObjects, build } from "../../modules/builder";
 
 import "./Playground.css";
 import Problems from "../Problems/Problems";
-import {useWindowSize} from "../../modules/hooks";
+import { useWindowSize } from "../../modules/hooks";
 
 let mobile_item_selec = "";
 let mobile_last_move = null;
@@ -333,9 +333,12 @@ function Playground({ dispatch }) {
         )}
       </LeftSidebar>
       <Main id="main-content" skipLinkTitle="Main Content">
-        <div className="drawflow-screen" style={{
-          height: size ? size.height - 56 : window.innerHeight - 56
-        }}>
+        <div
+          className="drawflow-screen"
+          style={{
+            height: size.height ? size.height - 56 : window.innerHeight - 56,
+          }}
+        >
           <div
             id="drawflow"
             ref={drawFlowElt}
@@ -344,7 +347,6 @@ function Playground({ dispatch }) {
             style={{
               width: "6000px",
               height: "4000px",
-              //height: appState.problems.length > 0 ? "calc(100% - 150px)" : "100%",
             }}
           ></div>
         </div>
@@ -353,10 +355,10 @@ function Playground({ dispatch }) {
         )}
       </Main>
       {appState.selected && (
-          <RightSidebar id="right-sidebar" width={250}>
-            <Properties dispatch={dispatch} />
-          </RightSidebar>
-        )}
+        <RightSidebar id="right-sidebar" width={250}>
+          <Properties dispatch={dispatch} />
+        </RightSidebar>
+      )}
     </>
   );
 }
