@@ -18,6 +18,25 @@ import {
 const frames = {};
 let dispatcher = null;
 
+const getTransceiver = (transceivers, trackKind, trackDeviceId ) => {
+  //const transceivers = win.pc.getTransceivers();
+  const transceiver = transceivers.find((transceiver) => {
+    const sender = transceiver.sender;
+    if (!sender) {
+      return false;
+    }
+
+    const track = sender.track;
+    if (!track) {
+      return false;
+    }
+    const constraints = track.getConstraints();
+    return track.kind === trackKind && constraints.deviceId === trackDeviceId;
+  });
+
+  return transceiver;
+}
+
 const delayer = (duration) => {
   return new Promise((resolve, __reject) => {
     console.log(`${new Date().toJSON()} [play] execute delay of ${duration}ms`);
@@ -225,6 +244,46 @@ const encode = (peerNode, encodeNode, nodes) => {
   return new Promise((resolve, reject) => {
     const trackNodeId = encodeNode.getPropertyValueFor(KEYS.TRACK);
     const codecMimeType = encodeNode.getPropertyValueFor(KEYS.PREFERENCE);
+
+    const trackNode = getNodeById(trackNodeId, nodes);
+    const trackKind = trackNode.getInfoValueFor(KEYS.KIND);
+    const trackDeviceId = trackNode.getPropertyValueFor(KEYS.FROM);
+
+    const win = frames[peerNode.id];
+    if (!win.pc) {
+      console.log("Can't encode - no peer connection");
+      resolve();
+      return;
+    }
+
+    // Get transceiver and sender used
+    const transceivers = win.pc.getTransceivers();
+    const transceiver = getTransceiver(transceivers, trackKind, trackDeviceId);
+
+    if (!transceiver) {
+      resolve();
+      return;
+    }
+
+    // Update codecs
+    const { codecs } = RTCRtpSender.getCapabilities("video");
+    const preferredCodecs = codecs.filter((codec) =>
+      codec.mimeType.toLowerCase().includes(codecMimeType.toLowerCase())
+    );
+    const firstCodecIndex = codecs.findIndex((codec) =>
+      codec.mimeType.toLowerCase().includes(codecMimeType.toLowerCase())
+    );
+
+    codecs.splice(firstCodecIndex, preferredCodecs.length);
+    codecs.unshift(...preferredCodecs);
+    transceiver.setCodecPreferences(codecs);
+    resolve();
+  });
+};
+
+const adjust = (peerNode, encodeNode, nodes) => {
+  return new Promise((resolve, reject) => {
+    const trackNodeId = encodeNode.getPropertyValueFor(KEYS.TRACK);
     const maxBitrate = encodeNode.getPropertyValueFor(KEYS.MAX_BITRATE);
     const active = encodeNode.getPropertyValueFor(KEYS.ACTIVE);
 
@@ -241,48 +300,18 @@ const encode = (peerNode, encodeNode, nodes) => {
 
     // Get transceiver and sender used
     const transceivers = win.pc.getTransceivers();
-    console.log(">>>SENDERS", win.pc.getSenders());
-    const transceiver = transceivers.find((transceiver) => {
-      const sender = transceiver.sender;
-      if (!sender) {
-        return false;
-      }
-
-      const track = sender.track;
-      if (!track) {
-        return false;
-      }
-      const constraints = track.getConstraints();
-      return track.kind === trackKind && constraints.deviceId === trackDeviceId;
-    });
-
+    const transceiver = getTransceiver(transceivers, trackKind, trackDeviceId);
     if (!transceiver) {
       resolve();
       return;
     }
 
-    const sender = transceiver.sender;
-    const track = sender.track;
-
-    console.log(">>>get tracks", track);
-
-    // Update codec
-    //const constraints = track.getConstraints();
-    const { codecs } = RTCRtpSender.getCapabilities("video");
-
-    const preferredCodecs = codecs.filter((codec) =>
-      codec.mimeType.toLowerCase().includes(codecMimeType.toLowerCase())
-    );
-    const firstCodecIndex = codecs.findIndex((codec) =>
-      codec.mimeType.toLowerCase().includes(codecMimeType.toLowerCase())
-    );
-
-    codecs.splice(firstCodecIndex, preferredCodecs.length);
-    codecs.unshift(...preferredCodecs);
-    console.log(">>>updated codecs", codecs);
-    // transceiver.setCodecPreferences(codecs);
-
     // Change active flags
+    const sender = transceiver.sender;
+    if(!sender) {
+      resolve();
+      return;
+    }
     const parameters = sender.getParameters();
     console.log(">>>current Parameters", parameters);
 
@@ -294,7 +323,10 @@ const encode = (peerNode, encodeNode, nodes) => {
       return;
     }
     encodings.active = active === "true";
-    encodings.maxBitrate = 100000;
+    if(maxBitrate > -1) {
+      encodings.maxBitrate = maxBitrate;
+    }
+
     encodings.maxFramerate = 8;
     console.log(">>>new Parameters", newParameters);
     sender
@@ -309,7 +341,7 @@ const encode = (peerNode, encodeNode, nodes) => {
       });
     //resolve();
   });
-};
+}
 
 const endPlayground = () => {
   return new Promise((resolve, reject) => {
@@ -388,6 +420,14 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           nodes
         );
         promises.push(encode(fromPeer, currentNode, nodes));
+        break;
+      }
+      case NODES.ADJUST: {
+        const fromPeer = getNodeById(
+          initialEvent.getPropertyValueFor("peer"),
+          nodes
+        );
+        promises.push(adjust(fromPeer, currentNode, nodes));
         break;
       }
       case NODES.END: {
