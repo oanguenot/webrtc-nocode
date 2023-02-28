@@ -1,3 +1,8 @@
 .pageLayout {
     height: calc(100% - 60px) !important;
 }
+
+.drawflow-screen {
+    width: 100%;
+    overflow: scroll;
+}

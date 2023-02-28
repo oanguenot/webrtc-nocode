@@ -144,16 +144,8 @@ function Properties({ dispatch }) {
 
   return (
     <div>
-      {!appState.selected && (
-        <EmptyState
-          header="No info!"
-          description="Click on a node to edit its properties"
-        />
-      )}
       {appState.selected && appState.selected.info && getInfo()}
-
       {appState.selected && appState.selected.properties && getProperties()}
-
       {appState.selected &&
         appState.selected.linksInput &&
         appState.selected.linksOutput &&
