@@ -171,19 +171,15 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
     }
 
     // Check that remaining enum exists
-    const toKeep = [
-      { label: "None", value: "none" },
-      { label: "Fake", value: "fake" },
-    ];
+    const toKeep = [];
     fromEnum.forEach((item) => {
-      const exist = devices.some(
-        (device) =>
-          device.deviceId === item.value && device.label === item.label
-      );
+      const exist = devices.some((device) => device.deviceId === item.value);
       if (exist) {
         toKeep.push(item);
       } else {
-        hasChanged = true;
+        if (item.value !== "none" && item.value !== "fake") {
+          hasChanged = true;
+        }
       }
     });
 
@@ -192,19 +188,19 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
     devices
       .filter((device) => device.kind === `${kind}input`)
       .forEach((device) => {
-        const exist = toKeep.some(
-          (item) =>
-            device.deviceId === item.value && device.label === item.label
-        );
+        const exist = toKeep.some((item) => device.deviceId === item.value);
         if (!exist) {
           toAdd.push({ label: device.label, value: device.deviceId });
           hasChanged = true;
         }
       });
 
-    const newEnum = [...toKeep, ...toAdd];
+    const defaultDevices = [
+      { label: "None", value: "none" },
+      { label: "Fake", value: "fake" },
+    ];
+    const newEnum = [...defaultDevices, ...toKeep, ...toAdd];
     fromProperty.enum = newEnum;
-
     track.updateDisplayInObject(KEYS.FROM);
   });
 
