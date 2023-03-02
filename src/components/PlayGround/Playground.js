@@ -52,7 +52,6 @@ function Playground({ dispatch }) {
       const items = availableObjects();
       setMenuItems(items);
       addFlowEvents();
-      loadFromStorage();
 
       let elements = document.getElementsByClassName("drag-drawflow");
       for (let i = 0; i < elements.length; i++) {
@@ -62,6 +61,12 @@ function Playground({ dispatch }) {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (appState.state === STATE.READY) {
+      loadFromStorage();
+    }
+  }, [appState.state]);
 
   useEffect(() => {
     if (appState.lastAdded) {
