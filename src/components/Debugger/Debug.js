@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import AppContext from "../../contexts/appContext";
 import EmptyState from "@atlaskit/empty-state";
 import { SimpleTag as Tag } from "@atlaskit/tag";
@@ -38,6 +38,7 @@ function Debug({ dispatch }) {
   const appState = useContext(AppContext);
   const [progress, setProgress] = useState(0);
   const [isStarted, setIsStarted] = useStateWithCallbackLazy(false);
+  const timelineRef = useRef();
 
   useEffect(() => {
     if (appState.nbTasks > 0) {
@@ -59,26 +60,22 @@ function Debug({ dispatch }) {
   }, []);
 
   useEffect(() => {
-    if (appState.timeline) {
-      // const items = new window.vis.DataSet();
-      // const event = appState.timeline;
-      // //appState.timeline.forEach((event, index) => {
-      // let elt = null;
-      // if (event.type === "marker") {
-      //   timeline.addCustomTime(event.timestamp, event.timestamp);
-      //   timeline.setCustomTimeMarker(event.message, event.timestamp);
-      // } else {
-      //   console.log(">>>ADD other");
-      //   elt = {
-      //     start: event.timestamp,
-      //     content: event.message,
-      //   };
-      //   items.add(elt);
-      // }
-      //});
-      //timeline.setItems(items);
+    if (appState.groups) {
+      const latest = appState.groups[appState.groups.length - 1];
+      if (latest) {
+        timelineRef.current.groups.add(latest);
+      }
     }
-  }, [appState.timeline]);
+  }, [appState.groups]);
+
+  useEffect(() => {
+    if (appState.events) {
+      const latest = appState.events[appState.events.length - 1];
+      if (latest) {
+        timelineRef.current.items.add(latest);
+      }
+    }
+  }, [appState.events]);
 
   const onStart = () => {
     setIsStarted(true, () => {
@@ -147,14 +144,7 @@ function Debug({ dispatch }) {
                           description="Please wait until the end of the test to see the result"
                         />
                       )}
-                      {(appState.playState === PLAY_STATE.ENDED ||
-                        appState.playState === PLAY_STATE.FAILED) && (
-                        <Timeline
-                          options={options}
-                          initialGroups={appState.groups}
-                          initialItems={appState.events}
-                        />
-                      )}
+                      <Timeline ref={timelineRef} options={options} />
                     </div>
                     <div className="details-area">
                       <p className="debug-iframes-title">Details</p>
