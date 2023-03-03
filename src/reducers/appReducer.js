@@ -26,6 +26,7 @@ const initialAppState = {
   devices: [],
   state: STATE.NOT_INITIALIZED,
   debug: [],
+  timeline: null,
   nbTasks: 0,
   tasksDone: 0,
   loadedCheckDevices: false,
@@ -368,6 +369,13 @@ const appReducer = (state = initialAppState, action) => {
       return {
         ...state,
         debug: [...state.debug, log],
+      };
+    }
+    case DEBUG_ACTIONS.ADD_TIMELINE: {
+      const event = action.payload;
+      return {
+        ...state,
+        timeline: event
       };
     }
     case DEBUG_ACTIONS.SET_TASK_NUMBER: {

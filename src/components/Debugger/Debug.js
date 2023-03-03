@@ -10,6 +10,9 @@ import ProgressBar from "@atlaskit/progress-bar";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { run } from "../../actions/playgroundActions";
 import { useStateWithCallbackLazy } from "use-state-with-callback";
+//import { Timeline } from "vis-timeline/esnext";
+
+let timeline = null;
 
 const getColorFromTag = (tag) => {
   switch (tag) {
@@ -34,6 +37,43 @@ function Debug({ dispatch }) {
       setProgress((1 * appState.tasksDone) / appState.nbTasks);
     }
   }, [appState.nbTasks, appState.tasksDone]);
+
+  useEffect(() => {
+    const container = document.querySelector("#timeline");
+    const items = new window.vis.DataSet();
+
+    var options = {
+      showCurrentTime: true,
+      editable: false,
+    };
+
+    // Create a Timeline
+    timeline = new window.vis.Timeline(container, items, options);
+  },[]);
+
+  useEffect(() => {
+    if(appState.timeline) {
+      const items = new window.vis.DataSet();
+      const event = appState.timeline;
+      //appState.timeline.forEach((event, index) => {
+      let elt = null;
+      if(event.type === "marker") {
+        timeline.addCustomTime(event.timestamp, event.timestamp)
+        timeline.setCustomTimeMarker(event.message, event.timestamp);
+      } else {
+        console.log(">>>ADD other")
+        elt = {
+          start: event.timestamp,
+          content: event.message,
+        }
+        items.add(elt)
+      }
+      //});
+
+      timeline.setItems(items);
+    }
+
+  }, [appState.timeline]);
 
   const onStart = () => {
     setIsStarted(true, () => {
@@ -72,7 +112,7 @@ function Debug({ dispatch }) {
         <div className="debug-main">
           <PageHeader actions={actionsContent}></PageHeader>
           <div className="debug-main-area">
-            {!isStarted && (
+            {1===2 && (
               <div className="debug-area">
                 <EmptyState
                   header="No Results"
@@ -80,7 +120,7 @@ function Debug({ dispatch }) {
                 />
               </div>
             )}
-            {isStarted && (
+            {1===1 && (
               <>
                 <div className="debug-progress">
                   <p className="debug-progress-title">
@@ -93,19 +133,25 @@ function Debug({ dispatch }) {
                 </div>
                 <div className="debug-layout">
                   <div className="debug-double-columns">
-                    <p className="debug-iframes-title">Details</p>
-                    <ul className="debug-actions">
-                      {appState.debug.map((log, key) => (
-                        <li key={key}>
-                          <Tag text={log.timestamp}></Tag>{" "}
-                          <Tag
-                            text={log.tag}
-                            color={getColorFromTag(log.tag)}
-                          ></Tag>{" "}
-                          {log.message}
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="timeline-area">
+                      <p className="debug-iframes-title">Timeline</p>
+                      <div id="timeline" />
+                    </div>
+                    <div className="details-area">
+                      <p className="debug-iframes-title">Details</p>
+                      <ul className="debug-actions">
+                        {appState.debug.map((log, key) => (
+                          <li key={key}>
+                            <Tag text={log.timestamp}></Tag>{" "}
+                            <Tag
+                              text={log.tag}
+                              color={getColorFromTag(log.tag)}
+                            ></Tag>{" "}
+                            {log.message}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                   <div className="debug-columns">
                     <p className="debug-iframes-title">IFrames</p>

@@ -1,8 +1,16 @@
 export const DEBUG_ACTIONS = {
   ADD_TRACE: "ADD_TRACE",
+  ADD_TIMELINE: "ADD_TIMELINE",
   SET_TASK_NUMBER: "SET_TASK_NUMBER",
   INCREMENT_TASK_DONE: "INCREMENT_TASK_DONE",
 };
+
+export const addTimeline = (group, timestamp, message, type, dispatch) => {
+  dispatch({
+    type: DEBUG_ACTIONS.ADD_TIMELINE,
+    payload: { group, timestamp, message, type },
+  });
+}
 
 export const addLog = (tag, level, message, object, dispatch) => {
   const fctLevel = {

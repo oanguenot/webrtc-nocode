@@ -63,3 +63,12 @@
 .debug-main-area {
     height: calc(100% - 80px);
 }
+
+.details-area {
+    height: 40%;
+    overflow: hidden;
+}
+
+.timeline-area {
+    height: 60%;
+}

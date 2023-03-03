@@ -10,7 +10,7 @@ import {
 import { KEYS, NODES } from "./model";
 import { rehydrateObject } from "./builder";
 import {
-  addLog,
+  addLog, addTimeline,
   incrementTaskDone,
   setTaskNumber,
 } from "../actions/DebugActions";
@@ -100,6 +100,12 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           null,
           dispatcher
         );
+        if(state === "connected"){
+          addTimeline("call", Date.now(), "start call", "marker", dispatcher)
+        } else if(state === "disconnected" || state === "failed") {
+          addTimeline("call", Date.now(), "end call", "marker", dispatcher)
+        }
+
         // Check iceEvents node to initiate actions
         iceEvents.forEach((eventNode) => {
           const eventState = eventNode.getPropertyValueFor(KEYS.ICESTATE);
