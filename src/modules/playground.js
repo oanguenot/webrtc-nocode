@@ -10,16 +10,20 @@ import {
 import { KEYS, NODES } from "./model";
 import { rehydrateObject } from "./builder";
 import {
-  addLog, addTimeline,
+  addLog,
+  addGroupToTimeline,
+  resetTimeline,
+  addEventToTimeline,
+  addPeriodToTimeline,
   incrementTaskDone,
   setTaskNumber,
 } from "../actions/DebugActions";
+import { createTempPeriod, endTempPeriod } from "./timeline";
 
 const frames = {};
 let dispatcher = null;
 
 const getTransceiver = (transceivers, trackKind, trackDeviceId) => {
-  //const transceivers = win.pc.getTransceivers();
   const transceiver = transceivers.find((transceiver) => {
     const sender = transceiver.sender;
     if (!sender) {
@@ -87,7 +91,7 @@ const addMediaToElementInIFrame = (media) => {};
 const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
   return new Promise(async (resolve, reject) => {
     const win = frames[peerNode.id];
-
+    let intervalId = null;
     if (win) {
       win.pc = new win.RTCPeerConnection();
       win.ices = [];
@@ -100,10 +104,35 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           null,
           dispatcher
         );
-        if(state === "connected"){
-          addTimeline("call", Date.now(), "start call", "marker", dispatcher)
-        } else if(state === "disconnected" || state === "failed") {
-          addTimeline("call", Date.now(), "end call", "marker", dispatcher)
+        if (state === "connected") {
+          createTempPeriod("call", peerNode.id, Date.now());
+          intervalId = setInterval(() => {
+            console.log(">>>ICE STATE", win.pc.iceConnectionState);
+            if (win.pc.iceConnectionState === "closed") {
+              clearInterval(intervalId);
+              const period = endTempPeriod(peerNode.id, Date.now());
+              addPeriodToTimeline(
+                period.content,
+                period.start,
+                period.end,
+                period.group,
+                dispatcher
+              );
+            }
+          }, 1000);
+        } else if (
+          state === "disconnected" ||
+          state === "failed" ||
+          state === "closed"
+        ) {
+          const period = endTempPeriod(peerNode.id, Date.now());
+          addPeriodToTimeline(
+            period.content,
+            period.start,
+            period.end,
+            period.group,
+            dispatcher
+          );
         }
 
         // Check iceEvents node to initiate actions
@@ -524,6 +553,9 @@ export const execute = (nodes, dispatch) => {
   return new Promise(async (resolve, reject) => {
     dispatcher = dispatch;
 
+    // Reset Timeline
+    resetTimeline(dispatch);
+
     addLog("play", "log", "started...", null, dispatcher);
     // found peer connections for creating iFrame
     const peers = filterNodesByName(NODES.PEER, nodes);
@@ -538,6 +570,13 @@ export const execute = (nodes, dispatch) => {
     for (const peer of peers) {
       const win = await createIFrame(peer);
       updateTitleInIFrame(win, peer.id);
+
+      addGroupToTimeline(
+        peer.getPropertyValueFor(KEYS.FROM),
+        peer.id,
+        dispatcher
+      );
+
       // Store iframe window context associated to a peer connection
       frames[peer.id] = win;
       await createWatchRTC(peer, nodes);

@@ -18,6 +18,13 @@ export const STATE = {
   READY: "READY",
 };
 
+export const PLAY_STATE = {
+  IDLE: "IDLE",
+  RUNNING: "RUNNING",
+  ENDED: "ENDED",
+  FAILED: "FAILED",
+};
+
 const initialAppState = {
   objects: [],
   lastAdded: null,
@@ -26,7 +33,9 @@ const initialAppState = {
   devices: [],
   state: STATE.NOT_INITIALIZED,
   debug: [],
-  timeline: null,
+  events: [],
+  groups: [],
+  playState: PLAY_STATE.IDLE,
   nbTasks: 0,
   tasksDone: 0,
   loadedCheckDevices: false,
@@ -371,11 +380,18 @@ const appReducer = (state = initialAppState, action) => {
         debug: [...state.debug, log],
       };
     }
-    case DEBUG_ACTIONS.ADD_TIMELINE: {
+    case DEBUG_ACTIONS.ADD_PERIOD_TO_TIMELINE: {
       const event = action.payload;
       return {
         ...state,
-        timeline: event
+        events: [...state.events, event],
+      };
+    }
+    case DEBUG_ACTIONS.ADD_GROUP_TO_TIMELINE: {
+      const group = action.payload;
+      return {
+        ...state,
+        groups: [...state.groups, group],
       };
     }
     case DEBUG_ACTIONS.SET_TASK_NUMBER: {
@@ -386,9 +402,18 @@ const appReducer = (state = initialAppState, action) => {
       };
     }
     case DEBUG_ACTIONS.INCREMENT_TASK_DONE: {
+      let playState = state.playState;
+      if (playState === PLAY_STATE.IDLE) {
+        playState = PLAY_STATE.RUNNING;
+      }
+      if (state.tasksDone + 1 === state.nbTasks) {
+        playState = PLAY_STATE.ENDED;
+      }
+
       return {
         ...state,
         tasksDone: state.tasksDone + 1,
+        playState,
       };
     }
     default:
