@@ -15,17 +15,24 @@ export const addGroupToTimeline = (name, id, dispatch) => {
   });
 };
 
-export const addEventToTimeline = (name, start, groupId, dispatch) => {
+export const addEventToTimeline = (content, start, group, type, dispatch) => {
   dispatch({
     type: DEBUG_ACTIONS.ADD_EVENT_TO_TIMELINE,
-    payload: { name, start, groupId },
+    payload: { content, start, group, type },
   });
 };
 
-export const addPeriodToTimeline = (content, start, end, group, dispatch) => {
+export const addPeriodToTimeline = (
+  content,
+  start,
+  end,
+  group,
+  type,
+  dispatch
+) => {
   dispatch({
     type: DEBUG_ACTIONS.ADD_PERIOD_TO_TIMELINE,
-    payload: { content, start, end, group },
+    payload: { content, start, end, group, type, className: content },
   });
 };
 

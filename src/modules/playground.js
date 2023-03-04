@@ -18,7 +18,7 @@ import {
   incrementTaskDone,
   setTaskNumber,
 } from "../actions/DebugActions";
-import { createTempPeriod, endTempPeriod } from "./timeline";
+import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
 
 const frames = {};
 let dispatcher = null;
@@ -105,17 +105,30 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           dispatcher
         );
         if (state === "connected") {
-          createTempPeriod("call", peerNode.id, Date.now());
+          const periodSetup = endTempPeriod(
+            "setup-call",
+            peerNode.id,
+            Date.now()
+          );
+          addPeriodToTimeline(
+            periodSetup.content,
+            periodSetup.start,
+            periodSetup.end,
+            periodSetup.group,
+            "background",
+            dispatcher
+          );
+          createTempPeriod("in-call", peerNode.id, Date.now());
           intervalId = setInterval(() => {
-            console.log(">>>ICE STATE", win.pc.iceConnectionState);
             if (win.pc.iceConnectionState === "closed") {
               clearInterval(intervalId);
-              const period = endTempPeriod(peerNode.id, Date.now());
+              const period = endTempPeriod("in-call", peerNode.id, Date.now());
               addPeriodToTimeline(
                 period.content,
                 period.start,
                 period.end,
                 period.group,
+                "background",
                 dispatcher
               );
             }
@@ -125,12 +138,28 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           state === "failed" ||
           state === "closed"
         ) {
-          const period = endTempPeriod(peerNode.id, Date.now());
+          if (hasPeriodFor("setup-call", peerNode.id)) {
+            const periodSetup = endTempPeriod(
+              "setup-call",
+              peerNode.id,
+              Date.now()
+            );
+            addPeriodToTimeline(
+              periodSetup.content,
+              periodSetup.start,
+              periodSetup.end,
+              periodSetup.group,
+              "background",
+              dispatcher
+            );
+          }
+          const period = endTempPeriod("in-call", peerNode.id, Date.now());
           addPeriodToTimeline(
             period.content,
             period.start,
             period.end,
             period.group,
+            "background",
             dispatcher
           );
         }
@@ -260,15 +289,17 @@ const call = (callerNode, calleeNode, callNode) => {
       reject();
     }
 
+    createTempPeriod("setup-call", callerNode.id, Date.now());
     const offer = await callerWin.pc.createOffer();
     await callerWin.pc.setLocalDescription(offer);
-    await delayer(2000);
+    await delayer(10);
+    createTempPeriod("setup-call", calleeNode.id, Date.now());
     await calleeWin.pc.setRemoteDescription(offer);
 
     callerWin.ices.forEach((ice) => calleeWin.pc.addIceCandidate(ice));
     const answer = await calleeWin.pc.createAnswer();
     await calleeWin.pc.setLocalDescription(answer);
-    await delayer(2000);
+    await delayer(10);
     await callerWin.pc.setRemoteDescription(answer);
     calleeWin.ices.forEach((ice) => callerWin.pc.addIceCandidate(ice));
     resolve();
@@ -386,6 +417,13 @@ const adjust = (peerNode, encodeNode, nodes) => {
     sender
       .setParameters(newParameters)
       .then(() => {
+        addEventToTimeline(
+          "set-parameters",
+          Date.now(),
+          peerNode.id,
+          "box",
+          dispatcher
+        );
         addLog(
           "action",
           "log",

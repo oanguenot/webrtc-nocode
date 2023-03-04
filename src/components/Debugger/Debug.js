@@ -73,6 +73,7 @@ function Debug({ dispatch }) {
       const latest = appState.events[appState.events.length - 1];
       if (latest) {
         timelineRef.current.items.add(latest);
+        timelineRef.current.timeline.fit();
       }
     }
   }, [appState.events]);

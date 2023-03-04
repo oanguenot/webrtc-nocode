@@ -72,3 +72,15 @@
 .timeline-area {
     height: 60%;
 }
+
+.vis-item.vis-background.in-call {
+    color: white;
+    background-color: #99bcf1;
+    border-color: #617eb7
+}
+
+.vis-item.vis-background.setup-call {
+    color: white;
+    background-color: #e7cf81;
+    border-color: #a48828;
+}

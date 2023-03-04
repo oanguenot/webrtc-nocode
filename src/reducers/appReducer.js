@@ -380,6 +380,7 @@ const appReducer = (state = initialAppState, action) => {
         debug: [...state.debug, log],
       };
     }
+    case DEBUG_ACTIONS.ADD_EVENT_TO_TIMELINE:
     case DEBUG_ACTIONS.ADD_PERIOD_TO_TIMELINE: {
       const event = action.payload;
       return {

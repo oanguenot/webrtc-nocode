@@ -1,12 +1,14 @@
 const tempCall = {};
 
 export const createTempPeriod = (content, group, start) => {
-  if (group in tempCall) {
-    console.warn(`Period already exists for ${group}`);
+  const id = `${group}-${content}`;
+  console.log(">>> create", id, start);
+  if (id in tempCall) {
+    console.warn(`Period already exists for ${id}`);
     return;
   }
 
-  tempCall[group] = {
+  tempCall[id] = {
     start,
     group,
     content,
@@ -14,12 +16,19 @@ export const createTempPeriod = (content, group, start) => {
   };
 };
 
-export const endTempPeriod = (group, end) => {
-  if (!group in tempCall) {
-    console.warn(`Can't find period for ${group}`);
+export const endTempPeriod = (content, group, end) => {
+  const id = `${group}-${content}`;
+  console.log(">>> end", id, end);
+  if (!id in tempCall) {
+    console.warn(`Can't find period for ${id}`);
     return null;
   }
-  let period = { ...tempCall[group], end };
-  delete tempCall[group];
+  let period = { ...tempCall[id], end };
+  delete tempCall[id];
   return period;
+};
+
+export const hasPeriodFor = (content, group) => {
+  const id = `${group}-${content}`;
+  return id in tempCall;
 };
