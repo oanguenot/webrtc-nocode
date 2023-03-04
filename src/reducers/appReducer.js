@@ -398,6 +398,7 @@ const appReducer = (state = initialAppState, action) => {
     }
     case DEBUG_ACTIONS.ADD_SUBGROUP_TO_TIMELINE: {
       const subGroup = action.payload;
+      console.log(">>>ADD subgroup", subGroup);
       return {
         ...state,
         subGroups: [...state.subGroups, subGroup],

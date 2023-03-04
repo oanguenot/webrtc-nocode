@@ -204,6 +204,14 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           peerNode.id,
           dispatcher
         );
+        addEventToTimeline(
+          "start-track",
+          nanoid(),
+          Date.now(),
+          `${peerNode.id}-${event.track.id}`,
+          "point",
+          dispatcher
+        );
         createMediaElementInIFrame(
           win,
           event.track.kind,
@@ -228,6 +236,14 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           `${track.kind}:${track.label}`,
           `${peerNode.id}-${track.id}`,
           peerNode.id,
+          dispatcher
+        );
+        addEventToTimeline(
+          "start-track",
+          nanoid(),
+          Date.now(),
+          `${peerNode.id}-${track.id}`,
+          "point",
           dispatcher
         );
         win.pc.addTrack(track);
