@@ -420,8 +420,8 @@ const adjust = (peerNode, encodeNode, nodes) => {
         addEventToTimeline(
           "set-parameters",
           Date.now(),
-          peerNode.id,
-          "box",
+          "playground",
+          "point",
           dispatcher
         );
         addLog(
@@ -593,6 +593,9 @@ export const execute = (nodes, dispatch) => {
 
     // Reset Timeline
     resetTimeline(dispatch);
+
+    addGroupToTimeline("playground", "playground", dispatcher);
+    addEventToTimeline("start", Date.now(), "playground", "point", dispatcher);
 
     addLog("play", "log", "started...", null, dispatcher);
     // found peer connections for creating iFrame
