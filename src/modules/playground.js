@@ -1,3 +1,4 @@
+import { customAlphabet } from "nanoid";
 import {
   filterSimilarNodesById,
   filterNodesByName,
@@ -17,11 +18,21 @@ import {
   addPeriodToTimeline,
   incrementTaskDone,
   setTaskNumber,
+  addGroupToSubGroup,
 } from "../actions/DebugActions";
-import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
+import {
+  addSubGroupInTempGroup,
+  createTempGroup,
+  createTempPeriod,
+  endTempPeriod,
+  hasPeriodFor,
+} from "./timeline";
 
 const frames = {};
 let dispatcher = null;
+
+const CUSTOM_ALPHABET = "0123456789abcdef";
+const nanoid = customAlphabet(CUSTOM_ALPHABET, 6);
 
 const getTransceiver = (transceivers, trackKind, trackDeviceId) => {
   const transceiver = transceivers.find((transceiver) => {
@@ -112,6 +123,7 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           );
           addPeriodToTimeline(
             periodSetup.content,
+            nanoid(),
             periodSetup.start,
             periodSetup.end,
             periodSetup.group,
@@ -125,6 +137,7 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
               const period = endTempPeriod("in-call", peerNode.id, Date.now());
               addPeriodToTimeline(
                 period.content,
+                nanoid(),
                 period.start,
                 period.end,
                 period.group,
@@ -146,6 +159,7 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
             );
             addPeriodToTimeline(
               periodSetup.content,
+              nanoid(),
               periodSetup.start,
               periodSetup.end,
               periodSetup.group,
@@ -156,6 +170,7 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           const period = endTempPeriod("in-call", peerNode.id, Date.now());
           addPeriodToTimeline(
             period.content,
+            nanoid(),
             period.start,
             period.end,
             period.group,
@@ -183,6 +198,12 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           null,
           dispatcher
         );
+        addGroupToSubGroup(
+          `${event.track.kind}:${event.track.label}`,
+          `${peerNode.id}-${event.track.id}`,
+          peerNode.id,
+          dispatcher
+        );
         createMediaElementInIFrame(
           win,
           event.track.kind,
@@ -201,6 +222,12 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           "log",
           `${peerNode.id} add track ${track.label} to ${peerNode.id}`,
           null,
+          dispatcher
+        );
+        addGroupToSubGroup(
+          `${track.kind}:${track.label}`,
+          `${peerNode.id}-${track.id}`,
+          peerNode.id,
           dispatcher
         );
         win.pc.addTrack(track);
@@ -419,6 +446,7 @@ const adjust = (peerNode, encodeNode, nodes) => {
       .then(() => {
         addEventToTimeline(
           "set-parameters",
+          nanoid(),
           Date.now(),
           "playground",
           "point",
@@ -595,7 +623,14 @@ export const execute = (nodes, dispatch) => {
     resetTimeline(dispatch);
 
     addGroupToTimeline("playground", "playground", dispatcher);
-    addEventToTimeline("start", Date.now(), "playground", "point", dispatcher);
+    addEventToTimeline(
+      "start",
+      nanoid(),
+      Date.now(),
+      "playground",
+      "point",
+      dispatcher
+    );
 
     addLog("play", "log", "started...", null, dispatcher);
     // found peer connections for creating iFrame
@@ -613,10 +648,11 @@ export const execute = (nodes, dispatch) => {
       updateTitleInIFrame(win, peer.id);
 
       addGroupToTimeline(
-        peer.getPropertyValueFor(KEYS.FROM),
+        peer.getPropertyValueFor(KEYS.NAME),
         peer.id,
         dispatcher
       );
+      //createTempGroup(peer.getPropertyValueFor(KEYS.NAME), peer.id);
 
       // Store iframe window context associated to a peer connection
       frames[peer.id] = win;

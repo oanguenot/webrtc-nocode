@@ -15,10 +15,15 @@ import { PLAY_STATE } from "../../reducers/appReducer";
 
 let timeline = null;
 
+let startDate = new Date();
+startDate.setHours(startDate.getHours() + 1);
+
 const options = {
   width: "100%",
   height: "300px",
   editable: false,
+  min: Date.now(),
+  max: startDate.getTime(),
 };
 
 const getColorFromTag = (tag) => {
@@ -46,34 +51,49 @@ function Debug({ dispatch }) {
     }
   }, [appState.nbTasks, appState.tasksDone]);
 
-  useEffect(() => {
-    // const container = document.querySelector("#timeline");
-    // const items = new window.vis.DataSet();
-    //
-    // var options = {
-    //   showCurrentTime: true,
-    //   editable: false,
-    // };
-    //
-    // // Create a Timeline
-    // timeline = new window.vis.Timeline(container, items, options);
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     if (appState.groups) {
       const latest = appState.groups[appState.groups.length - 1];
       if (latest) {
-        timelineRef.current.groups.add(latest);
+        const group = timelineRef.current.groups.get(latest.id);
+        // check if already exists - crash when duplicated
+        if (!group) {
+          timelineRef.current.groups.add(latest);
+        }
       }
     }
   }, [appState.groups]);
 
   useEffect(() => {
+    if (appState.subGroups) {
+      const latest = appState.subGroups[appState.subGroups.length - 1];
+      if (latest) {
+        const group = timelineRef.current.groups.get(latest.groupId);
+        if (group) {
+          if (!group.nestedGroups.includes(latest.id)) {
+            group.nestedGroups.push(latest.id);
+            timelineRef.current.groups.add({
+              id: latest.id,
+              content: latest.content,
+            });
+            timelineRef.current.groups.update(group);
+          }
+        }
+      }
+    }
+  }, [appState.subGroups]);
+
+  useEffect(() => {
     if (appState.events) {
       const latest = appState.events[appState.events.length - 1];
       if (latest) {
-        timelineRef.current.items.add(latest);
-        timelineRef.current.timeline.fit();
+        const item = timelineRef.current.items.get(latest.id);
+        if (!item || (item && item.length === 0)) {
+          timelineRef.current.items.add(latest);
+          timelineRef.current.timeline.fit();
+        }
       }
     }
   }, [appState.events]);

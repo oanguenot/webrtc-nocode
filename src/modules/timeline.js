@@ -1,4 +1,5 @@
 const tempCall = {};
+const tempGroups = {};
 
 export const createTempPeriod = (content, group, start) => {
   const id = `${group}-${content}`;
@@ -19,7 +20,7 @@ export const createTempPeriod = (content, group, start) => {
 export const endTempPeriod = (content, group, end) => {
   const id = `${group}-${content}`;
   console.log(">>> end", id, end);
-  if (!id in tempCall) {
+  if (!(id in tempCall)) {
     console.warn(`Can't find period for ${id}`);
     return null;
   }
@@ -31,4 +32,31 @@ export const endTempPeriod = (content, group, end) => {
 export const hasPeriodFor = (content, group) => {
   const id = `${group}-${content}`;
   return id in tempCall;
+};
+
+export const createTempGroup = (content, id) => {
+  if (!(id in tempGroups)) {
+    tempGroups[id] = {
+      id,
+      content,
+      nestedGroups: [],
+    };
+  }
+};
+
+export const addSubGroupInTempGroup = (subGroup, group) => {
+  if (!(group in tempGroups)) {
+    console.warn(`Can't find group for ${group}`);
+    return;
+  }
+
+  const existingGroup = tempGroups[group];
+  const nestedGroups = existingGroup.nestedGroups;
+  if (!nestedGroups.includes(subGroup)) {
+    nestedGroups.push(subGroup);
+  }
+};
+
+export const getGroups = () => {
+  return tempGroups;
 };

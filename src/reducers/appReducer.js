@@ -35,6 +35,7 @@ const initialAppState = {
   debug: [],
   events: [],
   groups: [],
+  subGroups: [],
   playState: PLAY_STATE.IDLE,
   nbTasks: 0,
   tasksDone: 0,
@@ -393,6 +394,13 @@ const appReducer = (state = initialAppState, action) => {
       return {
         ...state,
         groups: [...state.groups, group],
+      };
+    }
+    case DEBUG_ACTIONS.ADD_SUBGROUP_TO_TIMELINE: {
+      const subGroup = action.payload;
+      return {
+        ...state,
+        subGroups: [...state.subGroups, subGroup],
       };
     }
     case DEBUG_ACTIONS.SET_TASK_NUMBER: {
