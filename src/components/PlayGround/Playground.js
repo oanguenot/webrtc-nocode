@@ -317,6 +317,11 @@ function Playground({ dispatch }) {
     }
   };
 
+  const getHeight = (height, hasProblems) => {
+    const heightToRemove = hasProblems ? 200 : 56;
+    return height - heightToRemove;
+  };
+
   return (
     <>
       <LeftSidebar
@@ -341,7 +346,10 @@ function Playground({ dispatch }) {
         <div
           className="drawflow-screen"
           style={{
-            height: size.height ? size.height - 56 : window.innerHeight - 56,
+            height: getHeight(
+              size.height || window.innerHeight,
+              !!appState.problems.length
+            ),
           }}
         >
           <div
@@ -355,9 +363,7 @@ function Playground({ dispatch }) {
             }}
           ></div>
         </div>
-        {appState.problems.length > 0 && (
-          <Problems style={{ height: "150px" }} />
-        )}
+        {appState.problems.length > 0 && <Problems style={{ height: 144 }} />}
       </Main>
       <RightSidebar id="right-sidebar" width={250} isFixed={true}>
         {appState.selected && <Properties dispatch={dispatch} />}
