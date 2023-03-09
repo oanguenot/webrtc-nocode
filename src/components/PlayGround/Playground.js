@@ -359,11 +359,15 @@ function Playground({ dispatch }) {
           <Problems style={{ height: "150px" }} />
         )}
       </Main>
-      {appState.selected && (
-        <RightSidebar id="right-sidebar" width={250}>
-          <Properties dispatch={dispatch} />
-        </RightSidebar>
-      )}
+      <RightSidebar id="right-sidebar" width={250} isFixed={true}>
+        {appState.selected && <Properties dispatch={dispatch} />}
+        {!appState.selected && (
+          <EmptyState
+            header="No node"
+            description="Select a node to display its properties"
+          />
+        )}
+      </RightSidebar>
     </>
   );
 }
