@@ -528,10 +528,10 @@
     "@atlaskit/tokens" "^0.13.0"
     "@babel/runtime" "^7.0.0"
 
-"@atlaskit/tokens@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-1.2.1.tgz#2f3900b781c3715b2bd240ed5edc9c72a26110b7"
-  integrity sha512-E9bF8OLXVIr69QxELGgbS2rSM3uCAbjU6SlimE2Spu+CVWA3GU+lUeLBggBhz1eP1LzpuOzLCdm1ECMJBNBreg==
+"@atlaskit/tokens@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-1.2.2.tgz#4339f88695434d05494c45122a6cf379a12366ed"
+  integrity sha512-R+pm0TpFrtLYk1mx6rWE5l9QSlQHNj4wKuMffwFMibbL/Hic3lCpItN4HJYQsrY1+1dHL/MPvx6TXftdbjkbPQ==
   dependencies:
     "@atlaskit/ds-lib" "^2.1.0"
     "@babel/runtime" "^7.0.0"
