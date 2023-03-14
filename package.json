@@ -19,7 +19,7 @@
     "@atlaskit/select": "16.1.5",
     "@atlaskit/side-navigation": "1.6.0",
     "@atlaskit/table-tree": "9.2.10",
-    "@atlaskit/tabs": "13.3.12",
+    "@atlaskit/tabs": "13.3.13",
     "@atlaskit/tag": "11.4.10",
     "@atlaskit/tag-group": "^10.1.2",
     "@atlaskit/textfield": "5.3.6",
@@ -39,10 +39,10 @@
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "react-vis-timeline-2": "^2.1.6",
-    "styled-components": "5.3.8",
+    "styled-components": "5.3.9",
     "use-state-with-callback": "^3.0.2",
     "uuid": "^9.0.0",
-    "web-vitals": "3.1.1",
+    "web-vitals": "3.3.0",
     "yarn": "1.22.19"
   },
   "overrides": {
