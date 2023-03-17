@@ -43,6 +43,7 @@
     "use-state-with-callback": "^3.0.2",
     "uuid": "^9.0.0",
     "web-vitals": "3.3.0",
+    "webrtcmetrics": "5.3.1",
     "yarn": "1.22.19"
   },
   "overrides": {

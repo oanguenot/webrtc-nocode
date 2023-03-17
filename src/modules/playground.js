@@ -27,6 +27,7 @@ import {
   endTempPeriod,
   hasPeriodFor,
 } from "./timeline";
+import {initializeMetrics, monitorPeerConnection, startMonitoring, stopMonitoring} from "./metrics";
 
 const frames = {};
 let dispatcher = null;
@@ -249,7 +250,7 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
         win.pc.addTrack(track);
       });
     }
-    resolve();
+    resolve(win.pc);
   });
 };
 
@@ -496,6 +497,10 @@ const endPlayground = () => {
         winFrame.stream.getTracks().forEach((track) => track.stop());
       }
     });
+
+    // Stop monitoring
+    stopMonitoring();
+
     resolve();
   });
 };
@@ -638,6 +643,9 @@ export const execute = (nodes, dispatch) => {
     // Reset Timeline
     resetTimeline(dispatch);
 
+    // Initialize WebRTCMetrics
+    initializeMetrics();
+
     addGroupToTimeline("playground", "playground", dispatcher);
     addEventToTimeline(
       "start",
@@ -679,7 +687,9 @@ export const execute = (nodes, dispatch) => {
         iceEvents,
         KEYS.PEER
       );
-      await createPeerConnection(peer, stream, iceEventsForPeer, nodes);
+      const rtcPC = await createPeerConnection(peer, stream, iceEventsForPeer, nodes);
+      monitorPeerConnection(rtcPC, peer.id, peer.getPropertyValueFor(KEYS.NAME), frames);
+
       incrementTaskDone(dispatch);
     }
 
@@ -693,7 +703,13 @@ export const execute = (nodes, dispatch) => {
         dispatcher
       );
       reject("No ready event");
+      return;
     }
+
+    // start Monitoring
+    startMonitoring();
+
+    // Start ready node in playground
     executeEventNode(readyEvent, nodes).then(() => {
       resolve();
     });
