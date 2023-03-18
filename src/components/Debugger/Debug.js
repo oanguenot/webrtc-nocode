@@ -43,6 +43,7 @@ function Debug({ dispatch }) {
   const appState = useContext(AppContext);
   const [progress, setProgress] = useState(0);
   const [isStarted, setIsStarted] = useStateWithCallbackLazy(false);
+  const [isReset, setIsReset] = useStateWithCallbackLazy(true);
   const timelineRef = useRef();
 
   useEffect(() => {
@@ -53,45 +54,47 @@ function Debug({ dispatch }) {
 
   useEffect(() => {}, []);
 
-  useEffect(() => {
-    appState.groups.forEach((latest) => {
-      const group = timelineRef.current.groups.get(latest.id);
-      // check if already exists - crash when duplicated
-      if (!group) {
-        timelineRef.current.groups.add(latest);
-      }
-    });
-  }, [appState.groups]);
+  // useEffect(() => {
+  //   appState.groups.forEach((latest) => {
+  //     const group = timelineRef.current.groups.get(latest.id);
+  //     // check if already exists - crash when duplicated
+  //     if (!group) {
+  //       timelineRef.current.groups.add(latest);
+  //     }
+  //   });
+  // }, [appState.groups]);
 
-  useEffect(() => {
-    appState.subGroups.forEach((latest) => {
-      const group = timelineRef.current.groups.get(latest.groupId);
-      if (group) {
-        if (!group.nestedGroups.includes(latest.id)) {
-          group.nestedGroups.push(latest.id);
-          timelineRef.current.groups.add({
-            id: latest.id,
-            content: latest.content,
-          });
-          timelineRef.current.groups.update(group);
-        }
-      }
-    });
-  }, [appState.subGroups]);
+  // useEffect(() => {
+  //   appState.subGroups.forEach((latest) => {
+  //     const group = timelineRef.current.groups.get(latest.groupId);
+  //     if (group) {
+  //       if (!group.nestedGroups.includes(latest.id)) {
+  //         group.nestedGroups.push(latest.id);
+  //         timelineRef.current.groups.add({
+  //           id: latest.id,
+  //           content: latest.content,
+  //         });
+  //         timelineRef.current.groups.update(group);
+  //       }
+  //     }
+  //   });
+  // }, [appState.subGroups]);
 
-  useEffect(() => {
-    appState.events.forEach((latest) => {
-      const item = timelineRef.current.items.get(latest.id);
-      if (!item || (item && item.length === 0)) {
-        timelineRef.current.items.add(latest);
-        timelineRef.current.timeline.fit();
-      }
-    });
-  }, [appState.events]);
+  // useEffect(() => {
+  //   appState.events.forEach((latest) => {
+  //     const item = timelineRef.current.items.get(latest.id);
+  //     if (!item || (item && item.length === 0)) {
+  //       timelineRef.current.items.add(latest);
+  //       timelineRef.current.timeline.fit();
+  //     }
+  //   });
+  // }, [appState.events]);
 
   const onStart = () => {
     setIsStarted(true, () => {
-      run(appState.objects, dispatch);
+      setIsReset(false, () => {
+        run(appState.objects, dispatch);
+      });
     });
   };
 
@@ -125,17 +128,17 @@ function Debug({ dispatch }) {
       <Main id="debug-main-content" skipLinkTitle="Debug Content">
         <div className="debug-main">
           <PageHeader actions={actionsContent}></PageHeader>
-          <div className="debug-main-area">
-            {1 === 2 && (
-              <div className="debug-area">
-                <EmptyState
-                  header="No Results"
-                  description="Run the playground to have results"
-                />
-              </div>
-            )}
-            {1 === 1 && (
-              <>
+          {isReset && (
+            <div className="debug-empty-area">
+              <EmptyState
+                header="No Results"
+                description="Run the playground to have results"
+              />
+            </div>
+          )}
+          {!isReset && (
+            <>
+              {isStarted && progress !== 1 && (
                 <div className="debug-progress">
                   <p className="debug-progress-title">
                     Progress: {getProgressStatus()}
@@ -144,18 +147,17 @@ function Debug({ dispatch }) {
                     value={progress}
                     appearance={progress === 1 ? "success" : "default"}
                   />
+                  <div className="debug-columns">
+                    <p className="debug-iframes-title">IFrames</p>
+                    <div id="frames" className="iframes-sidebar"></div>
+                  </div>
                 </div>
+              )}
+              {progress === 1 && (
                 <div className="debug-layout">
                   <div className="debug-double-columns">
                     <div className="timeline-area">
                       <p className="debug-iframes-title">Timeline</p>
-                      {(appState.playState !== PLAY_STATE.ENDED ||
-                        appState.playState !== PLAY_STATE.FAILED) && (
-                        <EmptyState
-                          header="Timeline in progress"
-                          description="Please wait until the end of the test to see the result"
-                        />
-                      )}
                       <Timeline ref={timelineRef} options={options} />
                     </div>
                     <div className="details-area">
@@ -174,14 +176,10 @@ function Debug({ dispatch }) {
                       </ul>
                     </div>
                   </div>
-                  <div className="debug-columns">
-                    <p className="debug-iframes-title">IFrames</p>
-                    <div id="frames" className="iframes-sidebar"></div>
-                  </div>
                 </div>
-              </>
-            )}
-          </div>
+              )}
+            </>
+          )}
         </div>
       </Main>
     </>

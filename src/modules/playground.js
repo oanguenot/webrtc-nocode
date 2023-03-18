@@ -27,7 +27,12 @@ import {
   endTempPeriod,
   hasPeriodFor,
 } from "./timeline";
-import {initializeMetrics, monitorPeerConnection, startMonitoring, stopMonitoring} from "./metrics";
+import {
+  initializeMetrics,
+  monitorPeerConnection,
+  startMonitoring,
+  stopMonitoring,
+} from "./metrics";
 
 const frames = {};
 let dispatcher = null;
@@ -107,7 +112,7 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
     if (win) {
       win.pc = new win.RTCPeerConnection();
       win.ices = [];
-      win.pc.oniceconnectionstatechange = () => {
+      win.pc.addEventListener("iceconnectionstatechange", () => {
         const state = win.pc.iceConnectionState;
         addLog(
           "peer",
@@ -187,11 +192,11 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
             executeEventNode(eventNode, nodes);
           }
         });
-      };
-      win.pc.onicecandidate = (event) => {
+      });
+      win.pc.addEventListener("icecandidate", (event) => {
         win.ices.push(event.candidate);
-      };
-      win.pc.ontrack = (event) => {
+      });
+      win.pc.addEventListener("track", (event) => {
         addLog(
           "peer",
           "log",
@@ -223,7 +228,7 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
         captured.addTrack(event.track);
         win.document.querySelector(`#remote-${event.track.id}`).srcObject =
           captured;
-      };
+      });
 
       stream.getTracks().forEach((track) => {
         addLog(
@@ -496,10 +501,10 @@ const endPlayground = () => {
       if (winFrame.stream) {
         winFrame.stream.getTracks().forEach((track) => track.stop());
       }
-    });
 
-    // Stop monitoring
-    stopMonitoring();
+      // Stop monitoring
+      stopMonitoring(key, frames);
+    });
 
     resolve();
   });
@@ -687,8 +692,21 @@ export const execute = (nodes, dispatch) => {
         iceEvents,
         KEYS.PEER
       );
-      const rtcPC = await createPeerConnection(peer, stream, iceEventsForPeer, nodes);
-      monitorPeerConnection(rtcPC, peer.id, peer.getPropertyValueFor(KEYS.NAME), frames);
+      const rtcPC = await createPeerConnection(
+        peer,
+        stream,
+        iceEventsForPeer,
+        nodes
+      );
+      monitorPeerConnection(
+        rtcPC,
+        peer.id,
+        peer.getPropertyValueFor(KEYS.NAME),
+        frames
+      );
+
+      // start Monitoring
+      startMonitoring(peer.id, frames);
 
       incrementTaskDone(dispatch);
     }
@@ -705,9 +723,6 @@ export const execute = (nodes, dispatch) => {
       reject("No ready event");
       return;
     }
-
-    // start Monitoring
-    startMonitoring();
 
     // Start ready node in playground
     executeEventNode(readyEvent, nodes).then(() => {

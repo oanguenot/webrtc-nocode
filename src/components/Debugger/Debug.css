@@ -1,15 +1,9 @@
-.debug-area {
-    height: calc(100% - 150px);
-    margin-top: 25%;
-}
-
 .debug-title {
     font-size: 20px !important;
 }
 
 .debug-main {
-    padding: 8px;
-    height: calc(100% - 60px);
+    height: calc(100% - 24px);
 }
 
 .debug-layout {
@@ -42,8 +36,7 @@
 }
 
 .debug-progress-title {
-    margin-bottom: 6px;
-
+    margin-bottom: 12px;
 }
 
 .debug-progress {
@@ -51,8 +44,7 @@
 }
 
 .debug-iframes-title {
-    margin-top: 0;
-    margin-left: 6px;
+    margin-top: 24px;
 }
 
 .debug-actions {
@@ -61,11 +53,15 @@
 }
 
 .debug-main-area {
-    height: calc(100% - 80px);
+    height: calc(100% - 15px);
+}
+
+.debug-empty-area {
+    margin-top: 33%;
 }
 
 .details-area {
-    height: 40%;
+    height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
 }
