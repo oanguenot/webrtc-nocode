@@ -503,7 +503,19 @@ const endPlayground = () => {
       }
 
       // Stop monitoring
-      stopMonitoring(key, frames);
+      const ticket = stopMonitoring(key, frames);
+      ticket.call.events.forEach((event) => {
+        if (event.category === "quality") {
+          addEventToTimeline(
+            event.name,
+            nanoid(),
+            Date.now(),
+            `${key}`,
+            "point",
+            dispatcher
+          );
+        }
+      });
     });
 
     resolve();

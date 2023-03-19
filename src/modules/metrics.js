@@ -5,7 +5,7 @@ let metrics;
 const configuration = {
   refreshEvery: 2000, // Optional. Refresh every 3 seconds
   startAfter: 2000, // Optional. Start collecting stats after 5 seconds
-  verbose: true, // Optional. Display verbose logs or not.
+  verbose: false, // Optional. Display verbose logs or not.
 };
 
 export const initializeMetrics = () => {
@@ -30,15 +30,18 @@ export const startMonitoring = (id, frames) => {
   const win = frames[id];
 
   if (win && win.metrics) {
-    console.log(">>> try to start monitoring for ", id);
     win.metrics.startAllProbes();
   }
 };
 
 export const stopMonitoring = (id, frames) => {
   const win = frames[id];
-
-  if (win && win.metrics && win.metrics.isRunning) {
+  let ticket = null;
+  if (win && win.metrics && win.metrics.running) {
     win.metrics.stopAllProbes();
+    win.metrics.probes.forEach((probe) => {
+      ticket = probe.getTicket();
+    });
   }
+  return ticket;
 };

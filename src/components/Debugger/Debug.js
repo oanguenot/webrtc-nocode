@@ -20,7 +20,7 @@ startDate.setHours(startDate.getHours() + 1);
 
 const options = {
   width: "100%",
-  height: "300px",
+  height: "600px",
   editable: false,
   min: Date.now(),
   max: startDate.getTime(),
@@ -48,47 +48,45 @@ function Debug({ dispatch }) {
 
   useEffect(() => {
     if (appState.nbTasks > 0) {
-      setProgress((1 * appState.tasksDone) / appState.nbTasks);
+      setProgress(appState.tasksDone / appState.nbTasks);
     }
   }, [appState.nbTasks, appState.tasksDone]);
 
   useEffect(() => {}, []);
 
-  // useEffect(() => {
-  //   appState.groups.forEach((latest) => {
-  //     const group = timelineRef.current.groups.get(latest.id);
-  //     // check if already exists - crash when duplicated
-  //     if (!group) {
-  //       timelineRef.current.groups.add(latest);
-  //     }
-  //   });
-  // }, [appState.groups]);
+  useEffect(() => {
+    if (timelineRef && timelineRef.current && progress === 1) {
+      appState.groups.forEach((latest) => {
+        const group = timelineRef.current.groups.get(latest.id);
+        // check if already exists - crash when duplicated
+        if (!group) {
+          timelineRef.current.groups.add(latest);
+        }
+      });
 
-  // useEffect(() => {
-  //   appState.subGroups.forEach((latest) => {
-  //     const group = timelineRef.current.groups.get(latest.groupId);
-  //     if (group) {
-  //       if (!group.nestedGroups.includes(latest.id)) {
-  //         group.nestedGroups.push(latest.id);
-  //         timelineRef.current.groups.add({
-  //           id: latest.id,
-  //           content: latest.content,
-  //         });
-  //         timelineRef.current.groups.update(group);
-  //       }
-  //     }
-  //   });
-  // }, [appState.subGroups]);
+      appState.subGroups.forEach((latest) => {
+        const group = timelineRef.current.groups.get(latest.groupId);
+        if (group) {
+          if (!group.nestedGroups.includes(latest.id)) {
+            group.nestedGroups.push(latest.id);
+            timelineRef.current.groups.add({
+              id: latest.id,
+              content: latest.content,
+            });
+            timelineRef.current.groups.update(group);
+          }
+        }
+      });
 
-  // useEffect(() => {
-  //   appState.events.forEach((latest) => {
-  //     const item = timelineRef.current.items.get(latest.id);
-  //     if (!item || (item && item.length === 0)) {
-  //       timelineRef.current.items.add(latest);
-  //       timelineRef.current.timeline.fit();
-  //     }
-  //   });
-  // }, [appState.events]);
+      appState.events.forEach((latest) => {
+        const item = timelineRef.current.items.get(latest.id);
+        if (!item || (item && item.length === 0)) {
+          timelineRef.current.items.add(latest);
+          timelineRef.current.timeline.fit();
+        }
+      });
+    }
+  }, [appState.groups, appState.subGroups, appState.events, progress]);
 
   const onStart = () => {
     setIsStarted(true, () => {
