@@ -16,8 +16,6 @@ export const monitorPeerConnection = (pc, id, name, frames) => {
   const win = frames[id];
 
   if (win && win.WebRTCMetrics) {
-    console.log(">>> 1. monitor peer", id, win.pc);
-
     win.metrics = new win.WebRTCMetrics(configuration);
     win.metrics.createProbe(win.pc, {
       pname: name,
@@ -25,8 +23,6 @@ export const monitorPeerConnection = (pc, id, name, frames) => {
       ticket: true,
       record: false,
     });
-
-    console.log(">>> 2. started", win.metrics.version, win.metrics.running);
   }
 };
 
@@ -42,7 +38,7 @@ export const startMonitoring = (id, frames) => {
 export const stopMonitoring = (id, frames) => {
   const win = frames[id];
 
-  if (win && win.metrics && win.metrics.isRunning()) {
+  if (win && win.metrics && win.metrics.isRunning) {
     win.metrics.stopAllProbes();
   }
 };
