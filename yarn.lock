@@ -10098,10 +10098,10 @@ webpack@^5.64.4:
     watchpack "^2.4.0"
     webpack-sources "^3.2.3"
 
-webrtcmetrics@5.3.1:
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/webrtcmetrics/-/webrtcmetrics-5.3.1.tgz#35489a97b12b540e9496c23086f23c2d568f6312"
-  integrity sha512-E/nemgHgO0j9/AH/pczI6EdomVYjKb5B2SkOddDUnoJRna2oHKWJVwRAXQylEwv4PRDTaSIM+eQsFtRZAoAOqw==
+webrtcmetrics@5.3.3:
+  version "5.3.3"
+  resolved "https://registry.yarnpkg.com/webrtcmetrics/-/webrtcmetrics-5.3.3.tgz#3bb338f2c5ce28e519e4c68182e0a57fe328b7e3"
+  integrity sha512-ly7KVMSslh7OQoTAbXiXU5T2zWMMnSgJf3v1op1N51T4i7LHenHWMq3J8gL+6xCw2mLSN2f4HdC6SYjMXE9pDA==
   dependencies:
     loglevel "1.7.1"
     short-unique-id "^4.4.4"
