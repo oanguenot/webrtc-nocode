@@ -506,12 +506,13 @@ const endPlayground = () => {
       const ticket = stopMonitoring(key, frames);
       ticket.call.events.forEach((event) => {
         if (event.category === "quality") {
+          console.log(">>> ADD event", event);
           addEventToTimeline(
             event.name,
             nanoid(),
             Date.now(),
             `${key}`,
-            "point",
+            "box",
             dispatcher
           );
         }

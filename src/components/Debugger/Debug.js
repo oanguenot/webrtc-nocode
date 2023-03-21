@@ -22,6 +22,7 @@ const options = {
   width: "100%",
   height: "600px",
   editable: false,
+  zoomable: false,
   min: Date.now(),
   max: startDate.getTime(),
 };
