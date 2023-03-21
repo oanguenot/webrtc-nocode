@@ -25,6 +25,7 @@ export const addGroupToSubGroup = (content, id, groupId, dispatch) => {
 
 export const addEventToTimeline = (
   content,
+  title,
   id,
   start,
   group,
@@ -33,7 +34,7 @@ export const addEventToTimeline = (
 ) => {
   dispatch({
     type: DEBUG_ACTIONS.ADD_EVENT_TO_TIMELINE,
-    payload: { content, id, start, group, type },
+    payload: { content, id, start, group, type, title },
   });
 };
 

@@ -20,10 +20,13 @@ startDate.setHours(startDate.getHours() + 1);
 
 const options = {
   width: "100%",
-  height: "600px",
+  //height: "600px",
+  groupHeightMode: "fixed",
   editable: false,
   zoomable: false,
+  verticalScroll: true,
   min: Date.now(),
+  showCurrentTime: false,
   max: startDate.getTime(),
 };
 

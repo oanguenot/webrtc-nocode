@@ -68,6 +68,9 @@
 
 .timeline-area {
     margin-bottom: 16px;
+    height: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .vis-item.vis-background.in-call {

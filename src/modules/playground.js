@@ -28,7 +28,6 @@ import {
   hasPeriodFor,
 } from "./timeline";
 import {
-  initializeMetrics,
   monitorPeerConnection,
   startMonitoring,
   stopMonitoring,
@@ -212,6 +211,7 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
         );
         addEventToTimeline(
           "start-track",
+          "",
           nanoid(),
           Date.now(),
           `${peerNode.id}-${event.track.id}`,
@@ -246,6 +246,7 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
         );
         addEventToTimeline(
           "start-track",
+          "",
           nanoid(),
           Date.now(),
           `${peerNode.id}-${track.id}`,
@@ -468,6 +469,7 @@ const adjust = (peerNode, encodeNode, nodes) => {
       .then(() => {
         addEventToTimeline(
           "set-parameters",
+          "",
           nanoid(),
           Date.now(),
           "playground",
@@ -504,13 +506,15 @@ const endPlayground = () => {
 
       // Stop monitoring
       const ticket = stopMonitoring(key, frames);
+      console.log(">>>TICKET", ticket);
       ticket.call.events.forEach((event) => {
         if (event.category === "quality") {
           console.log(">>> ADD event", event);
           addEventToTimeline(
             event.name,
+            event.details.value,
             nanoid(),
-            Date.now(),
+            event.at,
             `${key}`,
             "box",
             dispatcher
@@ -661,12 +665,10 @@ export const execute = (nodes, dispatch) => {
     // Reset Timeline
     resetTimeline(dispatch);
 
-    // Initialize WebRTCMetrics
-    initializeMetrics();
-
     addGroupToTimeline("playground", "playground", dispatcher);
     addEventToTimeline(
       "start",
+      "",
       nanoid(),
       Date.now(),
       "playground",
