@@ -503,7 +503,7 @@ const endPlayground = () => {
             event.details.value,
             nanoid(),
             event.at,
-            `${key}`,
+            `${key}-${event.ssrc}`,
             "box",
             dispatcher
           );
