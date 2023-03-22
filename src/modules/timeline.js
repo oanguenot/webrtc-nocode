@@ -3,7 +3,6 @@ const tempGroups = {};
 
 export const createTempPeriod = (content, group, start) => {
   const id = `${group}-${content}`;
-  console.log(">>> create", id, start);
   if (id in tempCall) {
     console.warn(`Period already exists for ${id}`);
     return;
@@ -19,7 +18,6 @@ export const createTempPeriod = (content, group, start) => {
 
 export const endTempPeriod = (content, group, end) => {
   const id = `${group}-${content}`;
-  console.log(">>> end", id, end);
   if (!(id in tempCall)) {
     console.warn(`Can't find period for ${id}`);
     return null;

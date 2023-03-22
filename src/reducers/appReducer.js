@@ -110,7 +110,6 @@ const appReducer = (state = initialAppState, action) => {
         //   );
         //   object.addMultipleOptionsToSelect(steps, "next");
       } else if (nodeInfo === NODES.ENCODE) {
-        console.log(">>>added a encode");
         const tracks = filterNodesByName(
           NODES.TRACK,
           state.objects,
@@ -119,7 +118,6 @@ const appReducer = (state = initialAppState, action) => {
           value: obj.id,
           label: obj.id,
         }));
-        console.log(">>> existing tracks");
         object.addMultipleOptionsToSelect(tracks, KEYS.TRACK);
       } else if (nodeInfo === NODES.ADJUST) {
         const tracks = filterNodesByName(
@@ -398,7 +396,6 @@ const appReducer = (state = initialAppState, action) => {
     }
     case DEBUG_ACTIONS.ADD_SUBGROUP_TO_TIMELINE: {
       const subGroup = action.payload;
-      console.log(">>>ADD subgroup", subGroup);
       return {
         ...state,
         subGroups: [...state.subGroups, subGroup],

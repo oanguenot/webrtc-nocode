@@ -102,8 +102,6 @@ const createMediaElementInIFrame = (win, kind, id, isLocal = true) => {
   localElt.appendChild(elt);
 };
 
-const addMediaToElementInIFrame = (media) => {};
-
 const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
   return new Promise(async (resolve, reject) => {
     const win = frames[peerNode.id];
@@ -203,19 +201,13 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           null,
           dispatcher
         );
-        addGroupToSubGroup(
-          `${event.track.kind}:${event.track.label}`,
-          `${peerNode.id}-${event.track.id}`,
-          peerNode.id,
-          dispatcher
-        );
         addEventToTimeline(
           "start-track",
           "",
           nanoid(),
           Date.now(),
-          `${peerNode.id}-${event.track.id}`,
-          "point",
+          `${peerNode.id}-${event.ssrc}`,
+          "box",
           dispatcher
         );
         createMediaElementInIFrame(
@@ -238,12 +230,12 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           null,
           dispatcher
         );
-        addGroupToSubGroup(
-          `${track.kind}:${track.label}`,
-          `${peerNode.id}-${track.id}`,
-          peerNode.id,
-          dispatcher
-        );
+        // addGroupToSubGroup(
+        //   `${track.kind}:${track.label}`,
+        //   `${peerNode.id}-${track.id}`,
+        //   peerNode.id,
+        //   dispatcher
+        // );
         addEventToTimeline(
           "start-track",
           "",
@@ -300,7 +292,6 @@ const createMedia = (peerNode, nodes) => {
       }
       resolve(win.stream);
     } catch (err) {
-      console.log(">>>Reject", err);
       reject(err);
     }
   });
@@ -324,7 +315,6 @@ const createWatchRTC = (peerNode, nodes) => {
       win.watchRTC.init({ rtcApiKey, rtcRoomId, rtcPeerId });
       resolve();
     } catch (err) {
-      console.log(">>>Reject", err);
       reject(err);
     }
   });
@@ -506,10 +496,8 @@ const endPlayground = () => {
 
       // Stop monitoring
       const ticket = stopMonitoring(key, frames);
-      console.log(">>>TICKET", ticket);
       ticket.call.events.forEach((event) => {
         if (event.category === "quality") {
-          console.log(">>> ADD event", event);
           addEventToTimeline(
             event.name,
             event.details.value,
@@ -517,6 +505,15 @@ const endPlayground = () => {
             event.at,
             `${key}`,
             "box",
+            dispatcher
+          );
+        } else if (event.name === "track-added") {
+          addGroupToSubGroup(
+            `ssrc_${event.ssrc}_${event.details.kind}-${
+              event.details.direction.includes("in") ? "in" : "out"
+            }`,
+            `${key}-${event.ssrc}`,
+            key,
             dispatcher
           );
         }
