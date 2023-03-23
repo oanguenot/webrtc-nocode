@@ -18,6 +18,8 @@ let timeline = null;
 let startDate = new Date();
 startDate.setHours(startDate.getHours() + 1);
 
+let zoomLevel = 1;
+
 const options = {
   width: "100%",
   //height: "600px",
@@ -27,7 +29,10 @@ const options = {
   verticalScroll: true,
   min: Date.now(),
   showCurrentTime: false,
-  max: startDate.getTime(),
+  //max: startDate.getTime(),
+  timeAxis: { scale: "second", step: 5 },
+  zoomMin: 100,
+  zoomMax: 1000 * 3600,
 };
 
 const getColorFromTag = (tag) => {
@@ -125,6 +130,18 @@ function Debug({ dispatch }) {
     }
   };
 
+  const onZoom = () => {
+    zoomLevel -= 0.05;
+    zoomLevel = Math.max(0.5, zoomLevel);
+    timelineRef.current.timeline.zoomIn(zoomLevel);
+  };
+
+  const onUnzoom = () => {
+    zoomLevel += 0.05;
+    zoomLevel = Math.min(1, zoomLevel);
+    timelineRef.current.timeline.zoomOut(zoomLevel);
+  };
+
   return (
     <>
       <Main id="debug-main-content" skipLinkTitle="Debug Content">
@@ -161,6 +178,8 @@ function Debug({ dispatch }) {
                     <div className="timeline-area">
                       <p className="debug-iframes-title">Timeline</p>
                       <Timeline ref={timelineRef} options={options} />
+                      <Button onClick={() => onZoom()}>+</Button>
+                      <Button onClick={() => onUnzoom()}>-</Button>
                     </div>
                     <div className="details-area">
                       <p className="debug-iframes-title">Details</p>
