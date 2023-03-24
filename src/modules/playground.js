@@ -51,7 +51,14 @@ const getTransceiver = (transceivers, trackKind, trackDeviceId) => {
       return false;
     }
     const constraints = track.getConstraints();
-    return track.kind === trackKind && constraints.deviceId === trackDeviceId;
+    const settings = track.getSettings();
+    const capabilities = track.getCapabilities();
+    console.log(">>>constraints", constraints, settings, capabilities, track);
+    if(trackDeviceId !== "[default]") {
+      return track.kind === trackKind && constraints.deviceId === trackDeviceId;
+    } else {
+      return track.kind === trackKind;
+    }
   });
 
   return transceiver;
@@ -367,7 +374,6 @@ const encode = (peerNode, encodeNode, nodes) => {
 
     const win = frames[peerNode.id];
     if (!win.pc) {
-      console.log("Can't encode - no peer connection");
       resolve();
       return;
     }
@@ -398,6 +404,15 @@ const encode = (peerNode, encodeNode, nodes) => {
       "log",
       `${encodeNode.id} encode track ${trackLabel} using ${codecMimeType}`,
       null,
+      dispatcher
+    );
+    addEventToTimeline(
+      "encode",
+      "",
+      nanoid(),
+      Date.now(),
+      `playground`,
+      "point",
       dispatcher
     );
     resolve();
@@ -506,9 +521,26 @@ const endPlayground = () => {
       const ticket = stopMonitoring(key, frames);
       ticket.call.events.forEach((event) => {
         if (event.category === "quality") {
+          const getValueToDisplay = (name, value) => {
+            switch (name) {
+              case "size-up":
+                return `&#x2197; ${value}`;
+              case "size-down":
+                return `&#x2198; ${value}`;
+              case "fps-up":
+                return `&#x2191; ${value} fps`;
+              case "fps-down":
+                return `&#x2193; ${value} fps`;
+              case "limitation":
+              default:
+                return `&#8474; ${value}`
+            }
+          }
+
+
           addEventToTimeline(
-            event.name,
-            event.details.value,
+            getValueToDisplay(event.name, event.details.value),
+            "",
             nanoid(),
             event.at,
             `${key}-${event.ssrc}`,
