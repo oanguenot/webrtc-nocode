@@ -290,11 +290,11 @@ const createMedia = (peerNode, nodes) => {
             }
           }
           // Create media element in IFrame
-          createMediaElementInIFrame(win, kind, deviceId);
+          createMediaElementInIFrame(win, kind, inputId);
           const captured = await win.navigator.mediaDevices.getUserMedia(
             constraints
           );
-          win.document.querySelector(`#local-${deviceId}`).srcObject = captured;
+          win.document.querySelector(`#local-${inputId}`).srcObject = captured;
           captured.getTracks().forEach((track) => win.stream.addTrack(track));
         }
       }
