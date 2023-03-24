@@ -266,20 +266,28 @@ const createMedia = (peerNode, nodes) => {
           const deviceId = input.getPropertyValueFor("from");
           if (kind === "audio") {
             const channelCount = input.getPropertyValueFor("channelCount");
-            constraints.audio = {
-              channelCount,
-              deviceId,
-            };
+            if(deviceId !== "none") {
+              constraints.audio = {
+                channelCount,
+              };
+              if(deviceId !== "[default]") {
+                constraints.audio.deviceId = {exact: deviceId};
+              }
+            }
           } else {
             const framerate = input.getPropertyValueFor("framerate");
             const resolution = input.getPropertyValueFor("resolution");
             const dimension = getDimensionFromResolution(resolution);
-            constraints.video = {
-              framerate,
-              deviceId,
-              width: dimension.width,
-              height: dimension.height,
-            };
+            if (deviceId !== "none" ) {
+              constraints.video = {
+                framerate,
+                width: dimension.width,
+                height: dimension.height,
+              };
+              if(deviceId !== "[default]") {
+                constraints.video.deviceId = {exact: deviceId}
+              }
+            }
           }
           // Create media element in IFrame
           createMediaElementInIFrame(win, kind, deviceId);
