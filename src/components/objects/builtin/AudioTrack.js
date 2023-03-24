@@ -31,7 +31,7 @@ class AudioTrack extends Main {
           { label: "None", value: "none" },
           { label: "Fake", value: "fake" },
         ],
-        value: "default",
+        value: "[default]",
         description: "Choose the preferred microphone",
       },
       {
