@@ -152,7 +152,7 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
   // Get all tracks
   const tracks = filterNodesByName(NODES.TRACK, nodes);
 
-  const others = ["none", "default", "fake"];
+  const others = ["none", "[default]", "fake"];
 
   tracks.forEach((track) => {
     const fromProperty = track.getPropertyFor(KEYS.FROM);
@@ -168,7 +168,7 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
 
     if (!exist) {
       hasChanged = true;
-      fromProperty.value = fromValue === "default" ? "default" : "none";
+      fromProperty.value = fromValue !== "none" ? "[default]" : "none";
       fromProperty.enum = fromEnum.filter((item) => item.value !== fromValue);
     }
 
@@ -198,7 +198,7 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
       });
 
     const defaultDevices = [
-      { label: "Default", value: "default" },
+      { label: "[Default]", value: "[default]" },
       { label: "None", value: "none" },
       { label: "Fake", value: "fake" },
     ];

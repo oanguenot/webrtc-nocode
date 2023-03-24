@@ -27,7 +27,7 @@ class VideoTrack extends Main {
         label: "From",
         type: "enum",
         enum: [
-          { label: "[Default]", value: "default" },
+          { label: "[Default]", value: "[default]" },
           { label: "None", value: "none" },
           { label: "Fake", value: "fake" },
         ],
