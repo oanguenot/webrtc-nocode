@@ -1,5 +1,5 @@
 import Main from "../Main";
-import {NODES, KEYS, KEY_TYPE} from "../../../modules/model";
+import { NODES, KEYS, KEY_TYPE } from "../../../modules/model";
 
 class Ready extends Main {
   static item = "Ready";
@@ -63,14 +63,19 @@ class Ready extends Main {
         return `after ${label}`;
       }
       case KEYS.PEER: {
-        if(property.value === "none") {
+        if (property.value === "none") {
           return "No peer";
         }
-        return `from ${label}`;
+        return `${label}`;
       }
       default:
         return "";
     }
+  }
+
+  renderColorIsMissingProp(prop) {
+    const property = this.getPropertyFor(prop);
+    return property && property.value === "none";
   }
 
   render() {
@@ -83,9 +88,11 @@ class Ready extends Main {
         </div>
         <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="peer-${
-      this._uuid
-    }">${this.renderProp(KEYS.PEER)}</span>
+            <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
           </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="delay-${
@@ -95,8 +102,8 @@ class Ready extends Main {
             
              <div class="object-footer">
                 <span class="object-node object-title-box">${
-      this._info[0].value
-    }.${this._uuid}</span>    
+                  this._info[0].value
+                }.${this._uuid}</span>    
             </div>
         </div>
       </div>

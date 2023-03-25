@@ -65,8 +65,6 @@ class ICEConnectionEvent extends Main {
     }
   }
 
-  updateColorForProp(prop) {}
-
   renderColorIsMissingProp(prop) {
     const property = this.getPropertyFor(prop);
     return property && property.value === "none";
