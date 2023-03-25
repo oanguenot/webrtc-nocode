@@ -28,7 +28,7 @@ class VideoAdjust extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Video Adjustment",
+        value: "Adjust Video",
         description: "Name of the adjustment",
       },
       {

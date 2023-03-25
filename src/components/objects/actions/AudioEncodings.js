@@ -28,7 +28,7 @@ class AudioEncodings extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Audio Encode",
+        value: "Set Audio Codec",
         description: "Name of the Encodings",
       },
       {

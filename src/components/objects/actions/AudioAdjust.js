@@ -28,7 +28,7 @@ class AudioAdjust extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Audio Adjustment",
+        value: "Adjust Audio",
         description: "Name of the adjustment",
       },
       {
