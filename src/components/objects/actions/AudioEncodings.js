@@ -64,8 +64,13 @@ class AudioEncodings extends Main {
       case KEYS.PREFERENCE:
         return property.value === "unchanged" ? label : `use ${label}`;
       case KEYS.TRACK:
-        return property.value === "none" ? "no track" : `encode ${label}`;
+        return property.value === "none" ? "no track" : `${label}`;
     }
+  }
+
+  renderColorIsMissingProp(prop) {
+    const property = this.getPropertyFor(prop);
+    return property && property.value === "none";
   }
 
   render() {
@@ -78,9 +83,11 @@ class AudioEncodings extends Main {
         </div>
          <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="track-${
-              this._uuid
-            }">${this.renderProp(KEYS.TRACK)}</span>
+            <i id="track-color-${this._uuid}" class="fas fa-microphone ${
+      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
+    }" id="track-${this._uuid}">${this.renderProp(KEYS.TRACK)}</span>
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="preference-${
