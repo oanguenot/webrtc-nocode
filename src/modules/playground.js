@@ -51,7 +51,14 @@ const getTransceiver = (transceivers, trackKind, trackDeviceId) => {
       return false;
     }
     const constraints = track.getConstraints();
-    return track.kind === trackKind && constraints.deviceId === trackDeviceId;
+    const settings = track.getSettings();
+    const capabilities = track.getCapabilities();
+    console.log(">>>constraints", constraints, settings, capabilities, track);
+    if(trackDeviceId !== "[default]") {
+      return track.kind === trackKind && constraints.deviceId === trackDeviceId;
+    } else {
+      return track.kind === trackKind;
+    }
   });
 
   return transceiver;
@@ -260,27 +267,35 @@ const createMedia = (peerNode, nodes) => {
           const deviceId = input.getPropertyValueFor("from");
           if (kind === "audio") {
             const channelCount = input.getPropertyValueFor("channelCount");
-            constraints.audio = {
-              channelCount,
-              deviceId,
-            };
+            if(deviceId !== "none") {
+              constraints.audio = {
+                channelCount,
+              };
+              if(deviceId !== "[default]") {
+                constraints.audio.deviceId = {exact: deviceId};
+              }
+            }
           } else {
             const framerate = input.getPropertyValueFor("framerate");
             const resolution = input.getPropertyValueFor("resolution");
             const dimension = getDimensionFromResolution(resolution);
-            constraints.video = {
-              framerate,
-              deviceId,
-              width: dimension.width,
-              height: dimension.height,
-            };
+            if (deviceId !== "none" ) {
+              constraints.video = {
+                framerate,
+                width: dimension.width,
+                height: dimension.height,
+              };
+              if(deviceId !== "[default]") {
+                constraints.video.deviceId = {exact: deviceId}
+              }
+            }
           }
           // Create media element in IFrame
-          createMediaElementInIFrame(win, kind, deviceId);
+          createMediaElementInIFrame(win, kind, inputId);
           const captured = await win.navigator.mediaDevices.getUserMedia(
             constraints
           );
-          win.document.querySelector(`#local-${deviceId}`).srcObject = captured;
+          win.document.querySelector(`#local-${inputId}`).srcObject = captured;
           captured.getTracks().forEach((track) => win.stream.addTrack(track));
         }
       }
@@ -358,7 +373,6 @@ const encode = (peerNode, encodeNode, nodes) => {
 
     const win = frames[peerNode.id];
     if (!win.pc) {
-      console.log("Can't encode - no peer connection");
       resolve();
       return;
     }
@@ -389,6 +403,15 @@ const encode = (peerNode, encodeNode, nodes) => {
       "log",
       `${encodeNode.id} encode track ${trackLabel} using ${codecMimeType}`,
       null,
+      dispatcher
+    );
+    addEventToTimeline(
+      "encode",
+      "",
+      nanoid(),
+      Date.now(),
+      `playground`,
+      "point",
       dispatcher
     );
     resolve();
@@ -497,9 +520,26 @@ const endPlayground = () => {
       const ticket = stopMonitoring(key, frames);
       ticket.call.events.forEach((event) => {
         if (event.category === "quality") {
+          const getValueToDisplay = (name, value) => {
+            switch (name) {
+              case "size-up":
+                return `&#x2197; ${value}`;
+              case "size-down":
+                return `&#x2198; ${value}`;
+              case "fps-up":
+                return `&#x2191; ${value} fps`;
+              case "fps-down":
+                return `&#x2193; ${value} fps`;
+              case "limitation":
+              default:
+                return `&#8474; ${value}`
+            }
+          }
+
+
           addEventToTimeline(
-            event.name,
-            event.details.value,
+            getValueToDisplay(event.name, event.details.value),
+            "",
             nanoid(),
             event.at,
             `${key}-${event.ssrc}`,
