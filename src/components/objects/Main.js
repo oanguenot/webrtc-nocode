@@ -130,10 +130,30 @@ class Main {
     return "";
   }
 
+  renderColorIsMissingProp() {
+    return false;
+  }
+
   updateDisplayInObject(propertyName) {
+    const isMissing = this.renderColorIsMissingProp(propertyName);
     const nameElt = document.querySelector(`#${propertyName}-${this._uuid}`);
     if (nameElt) {
       nameElt.innerHTML = this.renderProp(propertyName);
+      if (nameElt.classList.contains("red") && !isMissing) {
+        nameElt.classList.remove("red");
+      } else if (!nameElt.classList.contains("red") && isMissing) {
+        nameElt.classList.add("red");
+      }
+    }
+    const nameColorElt = document.querySelector(
+      `#${propertyName}-color-${this._uuid}`
+    );
+    if (nameColorElt) {
+      if (nameColorElt.classList.contains("red") && !isMissing) {
+        nameColorElt.classList.remove("red");
+      } else if (!nameColorElt.classList.contains("red") && isMissing) {
+        nameColorElt.classList.add("red");
+      }
     }
   }
 

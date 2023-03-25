@@ -12,6 +12,11 @@
     padding-left: 16px;
 }
 
+.red {
+    color: #e3195a;
+}
+
+
 .object-footer {
     margin-top: 24px;
     font-size: 12px;
