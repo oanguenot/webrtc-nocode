@@ -230,12 +230,6 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           null,
           dispatcher
         );
-        // addGroupToSubGroup(
-        //   `${track.kind}:${track.label}`,
-        //   `${peerNode.id}-${track.id}`,
-        //   peerNode.id,
-        //   dispatcher
-        // );
         addEventToTimeline(
           "start-track",
           "",
@@ -312,7 +306,12 @@ const createWatchRTC = (peerNode, nodes) => {
       const rtcApiKey = watchNode.getPropertyValueFor("apiKey");
       const rtcRoomId = watchNode.getPropertyValueFor("roomId");
       const rtcPeerId = watchNode.getPropertyValueFor("peerId");
-      win.watchRTC.init({ rtcApiKey, rtcRoomId, rtcPeerId });
+      //const collectionInterval = 5;
+      win.watchRTC.init({
+        rtcApiKey,
+        rtcRoomId,
+        rtcPeerId,
+      });
       resolve();
     } catch (err) {
       reject(err);
