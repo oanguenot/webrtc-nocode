@@ -80,14 +80,19 @@ class AudioAdjust extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.ACTIVE:
-        return property.value === "yes" ? "active" : "inactive";
+        return property.value;
       case KEYS.MAX_BITRATE:
         return property.value === "unlimited"
           ? "no rate limit"
           : `limited to ${label}`;
       case KEYS.TRACK:
-        return property.value === "none" ? "no track" : `encode ${label}`;
+        return property.value === "none" ? "no track" : `${label}`;
     }
+  }
+
+  renderColorIsMissingProp(prop) {
+    const property = this.getPropertyFor(prop);
+    return property && property.value === "none";
   }
 
   render() {
@@ -100,9 +105,11 @@ class AudioAdjust extends Main {
         </div>
          <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="track-${
-              this._uuid
-            }">${this.renderProp(KEYS.TRACK)}</span>
+           <i id="track-color-${this._uuid}" class="fas fa-microphone ${
+      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
+    }" id="track-${this._uuid}">${this.renderProp(KEYS.TRACK)}</span>
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="active-${
