@@ -60,11 +60,15 @@ class Turn extends Main {
       case "name":
         return property.value;
       case "stun":
-        return !!property.value.length ? property.value : "no STUN configured";
+        return !!property.value.length
+          ? `${property.value.substring(0, 18)}...`
+          : "no STUN";
       case "turn":
-        return !!property.value.length ? property.value : "no TURN configured";
+        return !!property.value.length
+          ? `${property.value.substring(0, 18)}...`
+          : "no TURN";
       case "token":
-        return !!property.value.length ? property.value : "no token configured";
+        return !!property.value.length ? "*****" : "no token";
     }
   }
 
