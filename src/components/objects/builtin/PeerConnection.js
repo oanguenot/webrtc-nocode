@@ -44,10 +44,10 @@ class PeerConnection extends Main {
         label: "Connection type",
         type: KEY_TYPE.ENUM,
         enum: [
-          { label: "Any", value: "any" },
+          { label: "Unforced", value: "unforced" },
           { label: "Relay only", value: "relay" },
         ],
-        value: "any",
+        value: "unforced",
         description: "Choose the connection type to use",
       },
     ];
@@ -63,7 +63,7 @@ class PeerConnection extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.TURN:
-        return property.value === "local" ? "Local only" : property.value;
+        return property.value === "local" ? "Local only" : label;
       default:
         return "";
     }

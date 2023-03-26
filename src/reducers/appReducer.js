@@ -264,7 +264,10 @@ const appReducer = (state = initialAppState, action) => {
       //   );
       // }
 
-      if (object.getInfoValueFor(KEYS.NODE) === NODES.PEER) {
+      if (
+        object.getInfoValueFor(KEYS.NODE) === NODES.PEER &&
+        name === KEYS.NAME
+      ) {
         // Update all ready nodes when peer name changed
         const relatedReady = filterNodesByName(NODES.READY, objects);
         relatedReady.forEach((obj) =>
@@ -280,6 +283,15 @@ const appReducer = (state = initialAppState, action) => {
         const relatedP2P = filterNodesByName(NODES.CALL, objects);
         relatedP2P.forEach((obj) =>
           obj.updateLabelInSelect(object.id, value, KEYS.PEER)
+        );
+      } else if (
+        object.getInfoValueFor(KEYS.NODE) === NODES.TURN &&
+        name === KEYS.NAME
+      ) {
+        // Update all ready peer when turn name changed
+        const relatedPeers = filterNodesByName(NODES.PEER, objects);
+        relatedPeers.forEach((obj) =>
+          obj.updateLabelInSelect(object.id, value, KEYS.TURN)
         );
       }
 
