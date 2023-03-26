@@ -115,9 +115,12 @@ const createPeerConnection = (
     let intervalId = null;
     if (win) {
       const turnId = peerNode.getPropertyValueFor(KEYS.TURN);
-
+      const network = peerNode.getPropertyValueFor(KEYS.NETWORK);
       const configuration = turnsConfiguration[turnId];
       if (configuration) {
+        if (network === "relay") {
+          configuration.iceTransportPolicy = "relay";
+        }
         win.pc = new win.RTCPeerConnection(configuration);
       } else {
         win.pc = new win.RTCPeerConnection();
