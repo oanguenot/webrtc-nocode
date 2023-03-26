@@ -1,5 +1,5 @@
 import Main from "../Main";
-import {KEY_TYPE, KEYS, NODES} from "../../../modules/model";
+import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 
 class CallP2P extends Main {
   static item = "CallP2P";
@@ -54,20 +54,27 @@ class CallP2P extends Main {
     ];
   }
 
+  renderColorIsMissingProp(prop) {
+    const property = this.getPropertyFor(prop);
+    return property && property.value === "none";
+  }
+
   renderProp(prop) {
     const property = this.getPropertyFor(prop);
     const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
       case KEYS.DELAY:
-        return property.value === "0" ? "No latency" : `Latency of ${property.value}`;
+        return property.value === "0"
+          ? "No latency"
+          : `Latency of ${property.value}`;
       case KEYS.NAME:
         return property.value;
       case KEYS.PEER:
-        if(property.value === "none") {
+        if (property.value === "none") {
           return "No recipient";
         }
-        return `To ${label}`;
+        return label;
       default:
         return "";
     }
@@ -77,21 +84,27 @@ class CallP2P extends Main {
     return `
       <div>
         <div class="title-box">
-          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">${this.renderProp("name")}</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
+      this._uuid
+    }">${this.renderProp("name")}</span>
         </div>
         <div class="box">
          <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="peer-${this._uuid
-    }">${this.renderProp(KEYS.PEER)}</span>
+            <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
             </div>
         <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="delay-${this._uuid
-    }">${this.renderProp(KEYS.DELAY)}</span>
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="delay-${
+              this._uuid
+            }">${this.renderProp(KEYS.DELAY)}</span>
             </div>
             <div class="object-footer">
                 <span class="object-node object-title-box">${
-      this._info[0].value
-    }.${this._uuid}</span>    
+                  this._info[0].value
+                }.${this._uuid}</span>    
             </div>
         </div>
       </div>

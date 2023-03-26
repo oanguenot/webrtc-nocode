@@ -53,8 +53,7 @@ const getTransceiver = (transceivers, trackKind, trackDeviceId) => {
     const constraints = track.getConstraints();
     const settings = track.getSettings();
     const capabilities = track.getCapabilities();
-    console.log(">>>constraints", constraints, settings, capabilities, track);
-    if(trackDeviceId !== "[default]") {
+    if (trackDeviceId !== "[default]") {
       return track.kind === trackKind && constraints.deviceId === trackDeviceId;
     } else {
       return track.kind === trackKind;
@@ -267,26 +266,26 @@ const createMedia = (peerNode, nodes) => {
           const deviceId = input.getPropertyValueFor("from");
           if (kind === "audio") {
             const channelCount = input.getPropertyValueFor("channelCount");
-            if(deviceId !== "none") {
+            if (deviceId !== "none") {
               constraints.audio = {
                 channelCount,
               };
-              if(deviceId !== "[default]") {
-                constraints.audio.deviceId = {exact: deviceId};
+              if (deviceId !== "[default]") {
+                constraints.audio.deviceId = { exact: deviceId };
               }
             }
           } else {
             const framerate = input.getPropertyValueFor("framerate");
             const resolution = input.getPropertyValueFor("resolution");
             const dimension = getDimensionFromResolution(resolution);
-            if (deviceId !== "none" ) {
+            if (deviceId !== "none") {
               constraints.video = {
                 framerate,
                 width: dimension.width,
                 height: dimension.height,
               };
-              if(deviceId !== "[default]") {
-                constraints.video.deviceId = {exact: deviceId}
+              if (deviceId !== "[default]") {
+                constraints.video.deviceId = { exact: deviceId };
               }
             }
           }
@@ -532,10 +531,9 @@ const endPlayground = () => {
                 return `&#x2193; ${value} fps`;
               case "limitation":
               default:
-                return `&#8474; ${value}`
+                return `&#8474; ${value}`;
             }
-          }
-
+          };
 
           addEventToTimeline(
             getValueToDisplay(event.name, event.details.value),

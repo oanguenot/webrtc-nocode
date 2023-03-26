@@ -130,19 +130,40 @@ const appReducer = (state = initialAppState, action) => {
         }));
         object.addMultipleOptionsToSelect(tracks, KEYS.TRACK);
       } else if (nodeInfo === NODES.PEER) {
-        // Add peer to all ready
+        // Add peer to all ready event
         filterNodesByName(NODES.READY, state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
+          obj.addNewOptionToSelect(
+            object.id,
+            object.getPropertyValueFor(KEYS.NAME),
+            KEYS.PEER
+          );
+        });
+
+        // Add peer to all ICE event
+        filterNodesByName(NODES.ICE, state.objects).forEach((obj) => {
+          obj.addNewOptionToSelect(
+            object.id,
+            object.getPropertyValueFor(KEYS.NAME),
+            KEYS.PEER
+          );
         });
 
         // Add peer to all call
         filterNodesByName(NODES.CALL, state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
+          obj.addNewOptionToSelect(
+            object.id,
+            object.getPropertyValueFor(KEYS.NAME),
+            KEYS.PEER
+          );
         });
 
-        filterNodesByName(NODES.ICE, state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
-        });
+        const turns = filterNodesByName(NODES.TURN, state.objects).map(
+          (obj) => ({
+            value: obj.id,
+            label: obj.getPropertyValueFor(KEYS.NAME),
+          })
+        );
+        object.addMultipleOptionsToSelect(turns, KEYS.TURN);
       } else if (nodeInfo === NODES.READY) {
         const peers = filterNodesByName(NODES.PEER, state.objects).map(
           (obj) => ({
@@ -167,6 +188,15 @@ const appReducer = (state = initialAppState, action) => {
           })
         );
         object.addMultipleOptionsToSelect(peers, KEYS.PEER);
+      } else if (nodeInfo === NODES.TURN) {
+        // Add TURN to all peer
+        filterNodesByName(NODES.PEER, state.objects).forEach((obj) => {
+          obj.addNewOptionToSelect(
+            object.id,
+            object.getPropertyValueFor(KEYS.NAME),
+            KEYS.TURN
+          );
+        });
       }
 
       const newObjects = [...state.objects, object];
@@ -238,6 +268,11 @@ const appReducer = (state = initialAppState, action) => {
         // Update all ready nodes when peer name changed
         const relatedReady = filterNodesByName(NODES.READY, objects);
         relatedReady.forEach((obj) =>
+          obj.updateLabelInSelect(object.id, value, KEYS.PEER)
+        );
+
+        const relatedIce = filterNodesByName(NODES.ICE, objects);
+        relatedIce.forEach((obj) =>
           obj.updateLabelInSelect(object.id, value, KEYS.PEER)
         );
 

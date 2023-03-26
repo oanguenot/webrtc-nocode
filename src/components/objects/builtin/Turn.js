@@ -1,4 +1,5 @@
 import Main from "../Main";
+import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 
 class Turn extends Main {
   static item = "Turn Server";
@@ -11,41 +12,41 @@ class Turn extends Main {
     super(x, y);
     this._inputs = 0;
     this._outputs = 0;
+    this._acceptInputs = [];
+    this._acceptOutputs = [];
     this._info = [
-      { key: "node", value: "rtc.turn" },
+      { key: KEYS.NODE, value: NODES.TURN },
       {
         key: "info",
         value: "Configure a STUN and TURN server to use for any calls",
       },
     ];
-    this._acceptInputs = [];
-    this._acceptOutputs = [];
     this._properties = [
       {
-        prop: "name",
+        prop: KEYS.NAME,
         label: "Name",
-        type: "text",
-        value: "STUN & TURN",
+        type: KEY_TYPE.TEXT,
+        value: `TURN-${this._uuid}`,
         description: "Name of the Turn server",
       },
       {
-        prop: "stun",
+        prop: KEYS.STUNURL,
         label: "STUN Url",
-        type: "text",
+        type: KEY_TYPE.TEXT,
         value: "",
         description: "URL of the STUN server",
       },
       {
-        prop: "turn",
+        prop: KEYS.TURNURL,
         label: "TURN Url",
-        type: "text",
+        type: KEY_TYPE.TEXT,
         value: "",
         description: "Url of the TURN server",
       },
       {
-        prop: "token",
+        prop: KEYS.TURNTOKEN,
         label: "TURN token",
-        type: "text",
+        type: KEY_TYPE.TEXT,
         value: "",
         description: "Token used for authenticating users",
       },
@@ -57,17 +58,17 @@ class Turn extends Main {
     const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
-      case "name":
+      case KEYS.NAME:
         return property.value;
-      case "stun":
+      case KEYS.STUNURL:
         return !!property.value.length
           ? `${property.value.substring(0, 18)}...`
           : "no STUN";
-      case "turn":
+      case KEYS.TURNURL:
         return !!property.value.length
           ? `${property.value.substring(0, 18)}...`
           : "no TURN";
-      case "token":
+      case KEYS.TURNTOKEN:
         return !!property.value.length ? "*****" : "no token";
     }
   }
@@ -78,23 +79,23 @@ class Turn extends Main {
         <div class="title-box">
           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
       this._uuid
-    }">${this.renderProp("name")}</span>
+    }">${this.renderProp(KEYS.NAME)}</span>
         </div>
          <div class="box">
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="stun-${
               this._uuid
-            }">${this.renderProp("stun")}</span>
+            }">${this.renderProp(KEYS.STUNURL)}</span>
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="turn-${
               this._uuid
-            }">${this.renderProp("turn")}</span>
+            }">${this.renderProp(KEYS.TURNURL)}</span>
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="token-${
               this._uuid
-            }">${this.renderProp("token")}</span>
+            }">${this.renderProp(KEYS.TURNTOKEN)}</span>
             </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${

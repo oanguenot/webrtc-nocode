@@ -35,6 +35,10 @@ export const KEYS = {
   DELAY: "delay",
   PEER: "peer",
   ICESTATE: "iceState",
+  TURN: "turn",
+  STUNURL: "stunurl",
+  TURNURL: "turnurl",
+  TURNTOKEN: "turntoken",
 };
 
 export const KEY_TYPE = {
