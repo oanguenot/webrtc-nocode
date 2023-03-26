@@ -31,6 +31,7 @@
     "@testing-library/user-event": "14.4.3",
     "@testrtc/watchrtc-sdk": "1.36.2",
     "add": "2.0.6",
+    "crypto-js": "^4.1.1",
     "drawflow": "^0.0.59",
     "moment": "2.29.4",
     "nanoid": "4.0.1",

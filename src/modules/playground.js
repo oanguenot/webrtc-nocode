@@ -20,13 +20,7 @@ import {
   setTaskNumber,
   addGroupToSubGroup,
 } from "../actions/DebugActions";
-import {
-  addSubGroupInTempGroup,
-  createTempGroup,
-  createTempPeriod,
-  endTempPeriod,
-  hasPeriodFor,
-} from "./timeline";
+import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
 import {
   monitorPeerConnection,
   startMonitoring,
@@ -330,6 +324,21 @@ const createWatchRTC = (peerNode, nodes) => {
     } catch (err) {
       reject(err);
     }
+  });
+};
+
+const createTurnConfiguration = (turns) => {
+  return new Promise((resolve, reject) => {
+    if (!turns.length) {
+      resolve();
+      return;
+    }
+
+    turns.forEach((turnNode) => {
+      const stunUrl = turnNode.getPropertyValueFor(KEYS.STUNURL);
+      const turnUrl = turnNode.getPropertyValueFor(KEYS.TURNURL);
+      const turnToken = turnNode.getPropertyValueFor(KEYS.TURNTOKEN);
+    });
   });
 };
 
@@ -715,10 +724,14 @@ export const execute = (nodes, dispatch) => {
     const peers = filterNodesByName(NODES.PEER, nodes);
     const iceEvents = filterNodesByName(NODES.ICE, nodes);
     const readyEvent = findNodeByName(NODES.READY, nodes);
+    const turns = findNodeByName(NODES.TURN, nodes);
 
     // Estimate the number of task to do
     const numberOfTasks = estimateTasks(peers, iceEvents, readyEvent, nodes);
     setTaskNumber(numberOfTasks, dispatch);
+
+    // Create Turn Configuration
+    createTurnConfiguration(turns);
 
     // Initialize Peer Connections
     for (const peer of peers) {
@@ -734,6 +747,8 @@ export const execute = (nodes, dispatch) => {
 
       // Store iframe window context associated to a peer connection
       frames[peer.id] = win;
+
+      // Create WatchRTC
       await createWatchRTC(peer, nodes);
       const stream = await createMedia(peer, nodes);
       const iceEventsForPeer = filterSimilarNodesById(

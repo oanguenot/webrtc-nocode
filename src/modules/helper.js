@@ -1,4 +1,4 @@
-import { KEYS, NODES } from "./model";
+import CryptoJS from "crypto-js";
 
 export const getDimensionFromResolution = (resolution) => {
   switch (resolution) {
@@ -61,4 +61,37 @@ export const filterNodesByName = (node, nodes, kind) => {
 
 export const findNodeByName = (node, nodes) => {
   return nodes.find((item) => item.node === node);
+};
+
+export const getTURNCredentials = (
+  name,
+  secret,
+  turnUsername,
+  turnPassword
+) => {
+  // First check if token is provided
+  if (secret) {
+    const unixTimeStamp = parseInt(Date.now() / 1000) + 24 * 3600; // this credential would be valid for the next 24 hours
+    const username = [unixTimeStamp, name].join(":");
+    const hmac = CryptoJS.HmacSHA1(username, secret);
+    const credential = CryptoJS.enc.Base64.stringify(hmac);
+    return {
+      username,
+      credential,
+    };
+  }
+
+  // Second check if username and password are provided
+  if (turnUsername && turnPassword) {
+    return {
+      username: turnUsername,
+      credential: turnPassword,
+    };
+  }
+
+  // else return empty credentials
+  return {
+    username: "",
+    password: "",
+  };
 };
