@@ -7,6 +7,7 @@ import {
   getNodeById,
   getNodeInfoValue,
   getNodesFromIds,
+  getTURNCredentials,
 } from "./helper";
 import { KEYS, NODES } from "./model";
 import { rehydrateObject } from "./builder";
@@ -102,12 +103,25 @@ const createMediaElementInIFrame = (win, kind, id, isLocal = true) => {
   localElt.appendChild(elt);
 };
 
-const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
+const createPeerConnection = (
+  peerNode,
+  stream,
+  iceEvents,
+  turnsConfiguration,
+  nodes
+) => {
   return new Promise(async (resolve, reject) => {
     const win = frames[peerNode.id];
     let intervalId = null;
     if (win) {
-      win.pc = new win.RTCPeerConnection();
+      const turnId = peerNode.getPropertyValueFor(KEYS.TURN);
+
+      const configuration = turnsConfiguration[turnId];
+      if (configuration) {
+        win.pc = new win.RTCPeerConnection(configuration);
+      } else {
+        win.pc = new win.RTCPeerConnection();
+      }
       win.ices = [];
       win.pc.addEventListener("iceconnectionstatechange", () => {
         const state = win.pc.iceConnectionState;
@@ -327,18 +341,51 @@ const createWatchRTC = (peerNode, nodes) => {
   });
 };
 
-const createTurnConfiguration = (turns) => {
+const createTurnConfiguration = (turns, peerid) => {
   return new Promise((resolve, reject) => {
     if (!turns.length) {
       resolve();
       return;
     }
 
+    const turnsConfiguration = {};
+
     turns.forEach((turnNode) => {
       const stunUrl = turnNode.getPropertyValueFor(KEYS.STUNURL);
       const turnUrl = turnNode.getPropertyValueFor(KEYS.TURNURL);
       const turnToken = turnNode.getPropertyValueFor(KEYS.TURNTOKEN);
+
+      const user = getTURNCredentials(`user#peerid`, turnToken);
+
+      const configuration = {
+        iceServers: [],
+        iceTransportPolicy: "all",
+      };
+
+      // Add all stun urls
+      const urlsForStun = stunUrl.split(";");
+      urlsForStun.forEach((url) => {
+        if (url) {
+          configuration.iceServers.push({ urls: url });
+        }
+      });
+
+      const urlsForTurn = turnUrl.split(";");
+      urlsForTurn.forEach((url) => {
+        if (url) {
+          configuration.iceServers.push({
+            urls: url,
+            username: user.username,
+            credential: user.credential,
+          });
+        }
+      });
+
+      // Store each Turn configuration
+      turnsConfiguration[turnNode.id] = configuration;
     });
+
+    resolve(turnsConfiguration);
   });
 };
 
@@ -724,14 +771,14 @@ export const execute = (nodes, dispatch) => {
     const peers = filterNodesByName(NODES.PEER, nodes);
     const iceEvents = filterNodesByName(NODES.ICE, nodes);
     const readyEvent = findNodeByName(NODES.READY, nodes);
-    const turns = findNodeByName(NODES.TURN, nodes);
+    const turns = filterNodesByName(NODES.TURN, nodes);
 
     // Estimate the number of task to do
     const numberOfTasks = estimateTasks(peers, iceEvents, readyEvent, nodes);
     setTaskNumber(numberOfTasks, dispatch);
 
     // Create Turn Configuration
-    createTurnConfiguration(turns);
+    const turnsConfiguration = await createTurnConfiguration(turns);
 
     // Initialize Peer Connections
     for (const peer of peers) {
@@ -743,13 +790,13 @@ export const execute = (nodes, dispatch) => {
         peer.id,
         dispatcher
       );
-      //createTempGroup(peer.getPropertyValueFor(KEYS.NAME), peer.id);
 
       // Store iframe window context associated to a peer connection
       frames[peer.id] = win;
 
       // Create WatchRTC
       await createWatchRTC(peer, nodes);
+
       const stream = await createMedia(peer, nodes);
       const iceEventsForPeer = filterSimilarNodesById(
         peer.id,
@@ -760,6 +807,7 @@ export const execute = (nodes, dispatch) => {
         peer,
         stream,
         iceEventsForPeer,
+        turnsConfiguration,
         nodes
       );
       monitorPeerConnection(
