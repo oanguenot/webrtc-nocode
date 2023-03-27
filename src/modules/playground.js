@@ -116,7 +116,9 @@ const createPeerConnection = (
     if (win) {
       const turnId = peerNode.getPropertyValueFor(KEYS.TURN);
       const network = peerNode.getPropertyValueFor(KEYS.NETWORK);
-      const configuration = turnsConfiguration[turnId];
+      const configuration = turnsConfiguration
+        ? turnsConfiguration[turnId]
+        : null;
       if (configuration) {
         if (network === "relay") {
           configuration.iceTransportPolicy = "relay";
@@ -206,9 +208,6 @@ const createPeerConnection = (
             executeEventNode(eventNode, nodes);
           }
         });
-      });
-      win.pc.addEventListener("icecandidate", (event) => {
-        win.ices.push(event.candidate);
       });
       win.pc.addEventListener("track", (event) => {
         addLog(
@@ -344,7 +343,7 @@ const createWatchRTC = (peerNode, nodes) => {
   });
 };
 
-const createTurnConfiguration = (turns, peerid) => {
+const createTurnConfiguration = (turns, peerId) => {
   return new Promise((resolve, reject) => {
     if (!turns.length) {
       resolve();
@@ -358,7 +357,7 @@ const createTurnConfiguration = (turns, peerid) => {
       const turnUrl = turnNode.getPropertyValueFor(KEYS.TURNURL);
       const turnToken = turnNode.getPropertyValueFor(KEYS.TURNTOKEN);
 
-      const user = getTURNCredentials(`user#peerid`, turnToken);
+      const user = getTURNCredentials(`user#${peerId}`, turnToken);
 
       const configuration = {
         iceServers: [],
@@ -394,6 +393,20 @@ const createTurnConfiguration = (turns, peerid) => {
 
 const call = (callerNode, calleeNode, callNode) => {
   return new Promise(async (resolve, reject) => {
+    const waitForIce = (peer, id) => {
+      return new Promise((resolve, reject) => {
+        const ices = [];
+
+        peer.addEventListener("icecandidate", (event) => {
+          if (event.candidate) {
+            ices.push(event.candidate);
+          } else {
+            resolve(ices);
+          }
+        });
+      });
+    };
+
     const callerWin = frames[callerNode.id];
     const calleeWin = frames[calleeNode.id];
     if (!callerWin || !calleeWin || !callerWin.pc || !calleeWin.pc) {
@@ -404,16 +417,18 @@ const call = (callerNode, calleeNode, callNode) => {
     createTempPeriod("setup-call", callerNode.id, Date.now());
     const offer = await callerWin.pc.createOffer();
     await callerWin.pc.setLocalDescription(offer);
-    await delayer(10);
+    const ices = await waitForIce(callerWin.pc, callerNode.id);
+
     createTempPeriod("setup-call", calleeNode.id, Date.now());
     await calleeWin.pc.setRemoteDescription(offer);
-
-    callerWin.ices.forEach((ice) => calleeWin.pc.addIceCandidate(ice));
     const answer = await calleeWin.pc.createAnswer();
     await calleeWin.pc.setLocalDescription(answer);
-    await delayer(10);
+
+    const calleeIces = await waitForIce(calleeWin.pc, calleeNode.id);
+    ices.forEach((ice) => calleeWin.pc.addIceCandidate(ice));
+
     await callerWin.pc.setRemoteDescription(answer);
-    calleeWin.ices.forEach((ice) => callerWin.pc.addIceCandidate(ice));
+    calleeIces.forEach((ice) => callerWin.pc.addIceCandidate(ice));
     resolve();
   });
 };
@@ -576,44 +591,46 @@ const endPlayground = () => {
 
       // Stop monitoring
       const ticket = stopMonitoring(key, frames);
-      ticket.call.events.forEach((event) => {
-        if (event.category === "quality") {
-          const getValueToDisplay = (name, value) => {
-            switch (name) {
-              case "size-up":
-                return `&#x2197; ${value}`;
-              case "size-down":
-                return `&#x2198; ${value}`;
-              case "fps-up":
-                return `&#x2191; ${value} fps`;
-              case "fps-down":
-                return `&#x2193; ${value} fps`;
-              case "limitation":
-              default:
-                return `&#8474; ${value}`;
-            }
-          };
+      if (ticket) {
+        ticket.call.events.forEach((event) => {
+          if (event.category === "quality") {
+            const getValueToDisplay = (name, value) => {
+              switch (name) {
+                case "size-up":
+                  return `&#x2197; ${value}`;
+                case "size-down":
+                  return `&#x2198; ${value}`;
+                case "fps-up":
+                  return `&#x2191; ${value} fps`;
+                case "fps-down":
+                  return `&#x2193; ${value} fps`;
+                case "limitation":
+                default:
+                  return `&#8474; ${value}`;
+              }
+            };
 
-          addEventToTimeline(
-            getValueToDisplay(event.name, event.details.value),
-            "",
-            nanoid(),
-            event.at,
-            `${key}-${event.ssrc}`,
-            "box",
-            dispatcher
-          );
-        } else if (event.name === "track-added") {
-          addGroupToSubGroup(
-            `ssrc_${event.ssrc}_${event.details.kind}-${
-              event.details.direction.includes("in") ? "in" : "out"
-            }`,
-            `${key}-${event.ssrc}`,
-            key,
-            dispatcher
-          );
-        }
-      });
+            addEventToTimeline(
+              getValueToDisplay(event.name, event.details.value),
+              "",
+              nanoid(),
+              event.at,
+              `${key}-${event.ssrc}`,
+              "box",
+              dispatcher
+            );
+          } else if (event.name === "track-added") {
+            addGroupToSubGroup(
+              `ssrc_${event.ssrc}_${event.details.kind}-${
+                event.details.direction.includes("in") ? "in" : "out"
+              }`,
+              `${key}-${event.ssrc}`,
+              key,
+              dispatcher
+            );
+          }
+        });
+      }
     });
 
     resolve();
@@ -658,10 +675,12 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           initialEvent.getPropertyValueFor("peer"),
           nodes
         );
+
         const recipientPeer = getNodeById(
           currentNode.getPropertyValueFor("peer"),
           nodes
         );
+
         if (recipientPeer && fromPeer) {
           promises.push(call(fromPeer, recipientPeer, currentNode));
         } else {
@@ -813,6 +832,7 @@ export const execute = (nodes, dispatch) => {
         turnsConfiguration,
         nodes
       );
+
       monitorPeerConnection(
         rtcPC,
         peer.id,
