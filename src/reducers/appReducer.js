@@ -426,6 +426,12 @@ const appReducer = (state = initialAppState, action) => {
         debug: [...state.debug, log],
       };
     }
+    case DEBUG_ACTIONS.ADD_EVENTS_TO_TIMELINE:
+      const events = action.payload;
+      return {
+        ...state,
+        events: [...state.events, ...events],
+      };
     case DEBUG_ACTIONS.ADD_EVENT_TO_TIMELINE:
     case DEBUG_ACTIONS.ADD_PERIOD_TO_TIMELINE: {
       const event = action.payload;
@@ -441,11 +447,18 @@ const appReducer = (state = initialAppState, action) => {
         groups: [...state.groups, group],
       };
     }
-    case DEBUG_ACTIONS.ADD_SUBGROUP_TO_TIMELINE: {
-      const subGroup = action.payload;
+    case DEBUG_ACTIONS.ADD_SUBGROUPS_TO_TIMELINE: {
+      const subGroups = action.payload;
       return {
         ...state,
-        subGroups: [...state.subGroups, subGroup],
+        subGroups: [...state.subGroups, ...subGroups],
+      };
+    }
+    case DEBUG_ACTIONS.ADD_SUBGROUP_TO_TIMELINE: {
+      const subGroups = action.payload;
+      return {
+        ...state,
+        subGroups: [...state.subGroups, subGroups],
       };
     }
     case DEBUG_ACTIONS.SET_TASK_NUMBER: {

@@ -20,6 +20,8 @@ import {
   incrementTaskDone,
   setTaskNumber,
   addGroupToSubGroup,
+  addGroupsToSubGroup,
+  addEventsToTimeline,
 } from "../actions/DebugActions";
 import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
 import {
@@ -592,6 +594,8 @@ const endPlayground = () => {
       // Stop monitoring
       const ticket = stopMonitoring(key, frames);
       if (ticket) {
+        const subGroups = [];
+        const events = [];
         ticket.call.events.forEach((event) => {
           if (event.category === "quality") {
             const getValueToDisplay = (name, value) => {
@@ -610,26 +614,27 @@ const endPlayground = () => {
               }
             };
 
-            addEventToTimeline(
-              getValueToDisplay(event.name, event.details.value),
-              "",
-              nanoid(),
-              event.at,
-              `${key}-${event.ssrc}`,
-              "box",
-              dispatcher
-            );
+            events.push({
+              content: getValueToDisplay(event.name, event.details.value),
+              title: "",
+              id: nanoid(),
+              start: event.at,
+              group: `${key}-${event.ssrc}`,
+              type: "box",
+            });
           } else if (event.name === "track-added") {
-            addGroupToSubGroup(
-              `ssrc_${event.ssrc}_${event.details.kind}-${
+            subGroups.push({
+              content: `ssrc_${event.ssrc}_${event.details.kind}-${
                 event.details.direction.includes("in") ? "in" : "out"
               }`,
-              `${key}-${event.ssrc}`,
-              key,
-              dispatcher
-            );
+              id: `${key}-${event.ssrc}`,
+              groupId: key,
+            });
           }
         });
+
+        addGroupsToSubGroup(subGroups, dispatcher);
+        addEventsToTimeline(events, dispatcher);
       }
     });
 

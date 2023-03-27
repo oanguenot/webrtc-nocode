@@ -11,12 +11,6 @@ import Button, { ButtonGroup } from "@atlaskit/button";
 import { run } from "../../actions/playgroundActions";
 import { useStateWithCallbackLazy } from "use-state-with-callback";
 import Timeline from "react-vis-timeline-2";
-import { PLAY_STATE } from "../../reducers/appReducer";
-
-let timeline = null;
-
-let endDate = new Date();
-endDate.setMinutes(endDate.getMinutes() + 3);
 
 let zoomLevel = 1;
 
@@ -29,8 +23,7 @@ const options = {
   verticalScroll: true,
   min: Date.now(),
   showCurrentTime: false,
-  max: endDate.getTime(),
-  //timeAxis: { scale: "second", step: 2 },
+  //timeAxis: { scale: "second", step: 1 },
   //zoomMin: 100,
   //zoomMax: 1000 * 3600,
 };

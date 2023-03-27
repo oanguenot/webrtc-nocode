@@ -2,7 +2,9 @@ export const DEBUG_ACTIONS = {
   ADD_TRACE: "ADD_TRACE",
   ADD_GROUP_TO_TIMELINE: "ADD_GROUP_TO_TIMELINE",
   ADD_SUBGROUP_TO_TIMELINE: "ADD_SUBGROUP_TO_TIMELINE",
+  ADD_SUBGROUPS_TO_TIMELINE: "ADD_SUBGROUPS_TO_TIMELINE",
   ADD_EVENT_TO_TIMELINE: "ADD_EVENT_TO_TIMELINE",
+  ADD_EVENTS_TO_TIMELINE: "ADD_EVENTS_TO_TIMELINE",
   ADD_PERIOD_TO_TIMELINE: "ADD_PERIOD_TO_TIMELINE",
   RESET_TIMELINE: "RESET_TIMELINE",
   SET_TASK_NUMBER: "SET_TASK_NUMBER",
@@ -23,6 +25,13 @@ export const addGroupToSubGroup = (content, id, groupId, dispatch) => {
   });
 };
 
+export const addGroupsToSubGroup = (groups, dispatch) => {
+  dispatch({
+    type: DEBUG_ACTIONS.ADD_SUBGROUPS_TO_TIMELINE,
+    payload: groups,
+  });
+};
+
 export const addEventToTimeline = (
   content,
   title,
@@ -35,6 +44,13 @@ export const addEventToTimeline = (
   dispatch({
     type: DEBUG_ACTIONS.ADD_EVENT_TO_TIMELINE,
     payload: { content, id, start, group, type, title },
+  });
+};
+
+export const addEventsToTimeline = (events, dispatch) => {
+  dispatch({
+    type: DEBUG_ACTIONS.ADD_EVENTS_TO_TIMELINE,
+    payload: events,
   });
 };
 
