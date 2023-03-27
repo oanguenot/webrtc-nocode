@@ -83,17 +83,17 @@ class Turn extends Main {
         </div>
          <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="stun-${
+            <i class="fas fa-at"></i><span class="object-details-value" id="stunurl-${
               this._uuid
             }">${this.renderProp(KEYS.STUNURL)}</span>
             </div>
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="turn-${
+            <i class="fas fa-at"></i><span class="object-details-value" id="turnurl-${
               this._uuid
             }">${this.renderProp(KEYS.TURNURL)}</span>
             </div>
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="token-${
+            <i class="fas fa-key"></i><span class="object-details-value" id="turntoken-${
               this._uuid
             }">${this.renderProp(KEYS.TURNTOKEN)}</span>
             </div>
