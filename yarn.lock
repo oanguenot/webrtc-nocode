@@ -141,10 +141,10 @@
     "@babel/runtime" "^7.0.0"
     bind-event-listener "^2.1.1"
 
-"@atlaskit/empty-state@7.4.9":
-  version "7.4.9"
-  resolved "https://registry.yarnpkg.com/@atlaskit/empty-state/-/empty-state-7.4.9.tgz#aed572673f543fc19aa863f5c10b772c660fb0c9"
-  integrity sha512-hUSs0ec8R2xbKzrZNUpcH0g1o3Jd0NWfF1uXn+3ajiPkH1JASAXfdJssi1UHzldZqHk/842rO2zdl1HAzHAdaA==
+"@atlaskit/empty-state@7.4.10":
+  version "7.4.10"
+  resolved "https://registry.yarnpkg.com/@atlaskit/empty-state/-/empty-state-7.4.10.tgz#217d95856dfdd9869025dc4c3c51c776f0ed5447"
+  integrity sha512-FGyqP8Kq3+RfH+/7wKPWM98W7Wi8LzwZPGA8WUsBsp2rQWABgR9wKuMTBZaiQJR54G9aCfwSE0DL51BjlTbdzw==
   dependencies:
     "@atlaskit/button" "^16.5.0"
     "@atlaskit/spinner" "^15.4.0"
@@ -153,10 +153,10 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/flag@15.0.9":
-  version "15.0.9"
-  resolved "https://registry.yarnpkg.com/@atlaskit/flag/-/flag-15.0.9.tgz#6d20d62bb58b39accd90c381694257c0ccfca6b8"
-  integrity sha512-rDXMtB3Ik3+XQDqWMzQ6jgSPmn2Nk1dpK7pN6ZsAXYdzaFjbuphZbBjV28hBL6IvdoCkK6C26XctQzGOR/pDLQ==
+"@atlaskit/flag@15.0.10":
+  version "15.0.10"
+  resolved "https://registry.yarnpkg.com/@atlaskit/flag/-/flag-15.0.10.tgz#10a684bce4aac5fa3aa35b3b906698262571b0db"
+  integrity sha512-im4Htre+CqhfF09mhLlW6ho2ZO2Xf0sTl2Z7XN2Glh58WfTQeITbSTeZyIT1EoRBTc8NnrUPRqhKPyOBxgvCjA==
   dependencies:
     "@atlaskit/analytics-next" "^9.0.0"
     "@atlaskit/button" "^16.5.0"
@@ -310,12 +310,13 @@
     "@emotion/react" "^11.7.1"
     bind-event-listener "^2.1.1"
 
-"@atlaskit/page-header@^10.3.2":
-  version "10.3.2"
-  resolved "https://registry.yarnpkg.com/@atlaskit/page-header/-/page-header-10.3.2.tgz#38db750844b50b1a2b12a37d51606a43fce6bed3"
-  integrity sha512-erawMvTILGJQiEegpWQ+HB0ykcDblRz3xvlKAbz+gevcPnw9Ls+Ii7ZQCQPHBZT87LPxxwi+Y6CKRsE3ItFWSQ==
+"@atlaskit/page-header@10.3.3":
+  version "10.3.3"
+  resolved "https://registry.yarnpkg.com/@atlaskit/page-header/-/page-header-10.3.3.tgz#e4ff709d58beb090338ba94b1ee3d3f3810f2374"
+  integrity sha512-J5a46/aIyitNn/3Bw9zJKhZjRgKIOBdYBX2x/8WZdgWI0wqG3NoZK4uFPCz/N0Nswh2teO1xTTcMMkktLeV/BQ==
   dependencies:
     "@atlaskit/theme" "^12.2.0"
+    "@atlaskit/tokens" "^1.2.5"
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
@@ -396,14 +397,14 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/select@16.1.5":
-  version "16.1.5"
-  resolved "https://registry.yarnpkg.com/@atlaskit/select/-/select-16.1.5.tgz#8b0dda5952c68358a34b11135bcc7a42a5bc4ac1"
-  integrity sha512-nI86ytnPSe4Oid0i7mcyZdseemhg9snF+MvFu9WhjCOycbTBLE3DPQiMYswubVWreDN/PikGV6xDh984uRQDAw==
+"@atlaskit/select@16.1.6":
+  version "16.1.6"
+  resolved "https://registry.yarnpkg.com/@atlaskit/select/-/select-16.1.6.tgz#452f1fd3c90562f82a777db23615b9cb6731b44a"
+  integrity sha512-SBx9DR69f03hbMW7Y6pAQGMJiw6cO5zY5cdX3ETTV1BmFOPMUo1UvP944g0KmEEQlauXKHo+W3ompPTfNCoNIQ==
   dependencies:
     "@atlaskit/analytics-next" "^9.0.0"
     "@atlaskit/icon" "^21.11.0"
-    "@atlaskit/spinner" "^15.3.0"
+    "@atlaskit/spinner" "^15.4.0"
     "@atlaskit/theme" "^12.2.0"
     "@atlaskit/tokens" "^1.2.0"
     "@atlaskit/visually-hidden" "^1.1.0"
@@ -550,7 +551,7 @@
     "@atlaskit/tokens" "^0.13.0"
     "@babel/runtime" "^7.0.0"
 
-"@atlaskit/tokens@1.2.6":
+"@atlaskit/tokens@1.2.6", "@atlaskit/tokens@^1.2.5":
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-1.2.6.tgz#99a1052e487599d35d6a13af2badc62d433c5866"
   integrity sha512-0hD7TZVyqn1IFOJaj2JjNYcnGfSaHVvUiUgwcl7SgocQiizft4Lnr1a6bx7tJWTXHCG+L/Q+yKhYczh5uOlPBQ==
@@ -7281,10 +7282,10 @@ multicast-dns@^7.2.5:
     dns-packet "^5.2.2"
     thunky "^1.0.2"
 
-nanoid@4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-4.0.1.tgz#398d7ccfdbf9faf2231b2ca7e8fff5dbca6a509b"
-  integrity sha512-udKGtCCUafD3nQtJg9wBhRP3KMbPglUsgV5JVsXhvyBs/oefqb4sqMEhKBBgqZncYowu58p1prsZQBYvAj/Gww==
+nanoid@4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-4.0.2.tgz#140b3c5003959adbebf521c170f282c5e7f9fb9e"
+  integrity sha512-7ZtY5KTCNheRGfEFxnedV5zFiORN1+Y1N6zvPTnHQd8ENUvfaDBeuJDZb2bN/oXwXxu3qkTXDzy57W5vAmDTBw==
 
 nanoid@^3.3.4:
   version "3.3.4"
