@@ -145,15 +145,17 @@ const createPeerConnection = (
             peerNode.id,
             Date.now()
           );
-          addPeriodToTimeline(
-            periodSetup.content,
-            nanoid(),
-            periodSetup.start,
-            periodSetup.end,
-            periodSetup.group,
-            "background",
-            dispatcher
-          );
+          if (periodSetup) {
+            addPeriodToTimeline(
+              periodSetup.content,
+              nanoid(),
+              periodSetup.start,
+              periodSetup.end,
+              periodSetup.group,
+              "background",
+              dispatcher
+            );
+          }
           createTempPeriod("in-call", peerNode.id, Date.now());
           intervalId = setInterval(() => {
             if (win.pc.iceConnectionState === "closed") {
@@ -599,7 +601,7 @@ const adjust = (peerNode, encodeNode, nodes) => {
   });
 };
 
-const restartIce = (peerNode, nodes) => {
+const restartIce = (peerNode, currentNode, nodes) => {
   return new Promise((resolve, reject) => {
     const win = frames[peerNode.id];
     if (!win.pc) {
@@ -608,9 +610,15 @@ const restartIce = (peerNode, nodes) => {
       return;
     }
 
+    const callNodeId = currentNode.getPropertyValueFor(KEYS.CALL);
+    const callNode = getNodeById(callNodeId, nodes);
+    const calleePeerId = callNode.getPropertyValueFor(KEYS.PEER);
+    const calleeNode = getNodeById(calleePeerId, nodes);
+
     win.pc.addEventListener(
       "negotiationneeded",
-      () => {
+      async () => {
+        await call(peerNode, calleeNode, callNode);
         resolve();
       },
       { once: true }
@@ -771,7 +779,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           initialEvent.getPropertyValueFor("peer"),
           nodes
         );
-        promises.push(restartIce(fromPeer, nodes));
+        promises.push(restartIce(fromPeer, currentNode, nodes));
         break;
       }
       case NODES.END: {
