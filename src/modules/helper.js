@@ -92,6 +92,6 @@ export const getTURNCredentials = (
   // else return empty credentials
   return {
     username: "",
-    password: "",
+    credential: "",
   };
 };

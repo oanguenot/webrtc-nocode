@@ -122,6 +122,20 @@ const createPeerConnection = (
         ? turnsConfiguration[turnId]
         : null;
       if (configuration) {
+        const turnNode = getNodeById(turnId, nodes);
+        const turnToken = turnNode.getPropertyValueFor(KEYS.TURNTOKEN);
+        const { username, credential } = getTURNCredentials(
+          `user#${peerNode.id}`,
+          turnToken
+        );
+
+        configuration.iceServers.forEach((server) => {
+          if ("username" in server) {
+            server.username = username;
+            server.credential = credential;
+          }
+        });
+
         if (network === "relay") {
           configuration.iceTransportPolicy = "relay";
         }
@@ -378,9 +392,6 @@ const createTurnConfiguration = (turns, peerId) => {
     turns.forEach((turnNode) => {
       const stunUrl = turnNode.getPropertyValueFor(KEYS.STUNURL);
       const turnUrl = turnNode.getPropertyValueFor(KEYS.TURNURL);
-      const turnToken = turnNode.getPropertyValueFor(KEYS.TURNTOKEN);
-
-      const user = getTURNCredentials(`user#${peerId}`, turnToken);
 
       const configuration = {
         iceServers: [],
@@ -400,8 +411,8 @@ const createTurnConfiguration = (turns, peerId) => {
         if (url) {
           configuration.iceServers.push({
             urls: url,
-            username: user.username,
-            credential: user.credential,
+            username: null,
+            credential: null,
           });
         }
       });
