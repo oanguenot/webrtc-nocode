@@ -74,7 +74,7 @@ class AudioTrack extends Main {
       case "from":
         return label;
       case "channelCount":
-        return `Capture in ${label}`;
+        return `${label}`;
       default:
         return "";
     }
@@ -89,7 +89,7 @@ class AudioTrack extends Main {
     }">${this.renderProp("from")}</span>
         </div>
         <div class="box">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="channelCount-${
+            <i class="fas fa-headphones"></i><span class="object-details-value" id="channelCount-${
               this._uuid
             }">${this.renderProp("channelCount")}</span>
              <div class="object-footer">

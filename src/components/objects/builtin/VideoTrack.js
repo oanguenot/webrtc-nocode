@@ -91,7 +91,7 @@ class VideoTrack extends Main {
       case "from":
         return label;
       case "framerate":
-        return `At ${label}`;
+        return `${label}`;
       case "resolution":
         return `${label}`;
       default:
@@ -109,12 +109,12 @@ class VideoTrack extends Main {
         </div>
         <div class="box">
           <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="resolution-${
+            <i class="fas fa-ruler-combined"></i><span class="object-details-value" id="resolution-${
               this._uuid
             }">${this.renderProp("resolution")}</span>
           </div>
           <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="framerate-${
+            <i class="fas fa-tachometer-alt"></i><span class="object-details-value" id="framerate-${
               this._uuid
             }">${this.renderProp("framerate")}</span>
           </div>
