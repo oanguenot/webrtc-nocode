@@ -5,6 +5,7 @@ export const NODES = {
   ENCODE: "action.encode",
   ADJUST: "action.adjust",
   CALL: "action.call",
+  RESTARTICE: "action.restart",
   ANALYZE: "action.analyze", // for WebRTCMetrics
   WATCH: "rtc.watchrtc", // for WatchRTC
   WAIT: "action.wait",

@@ -211,6 +211,17 @@ const createPeerConnection = (
           }
         });
       });
+
+      win.pc.addEventListener("negotiationneeded", (event) => {
+        addLog(
+          "peer",
+          "log",
+          `${peerNode.id} negotiation needed`,
+          null,
+          dispatcher
+        );
+      });
+
       win.pc.addEventListener("track", (event) => {
         addLog(
           "peer",
@@ -329,10 +340,18 @@ const createWatchRTC = (peerNode, nodes) => {
         return;
       }
 
+      // Don't activate watchRTC if paused
+      const active = watchNode.getPropertyValueFor("active");
+      if (active === "no") {
+        resolve();
+        return;
+      }
+
       const rtcApiKey = watchNode.getPropertyValueFor("apiKey");
       const rtcRoomId = watchNode.getPropertyValueFor("roomId");
-      const rtcPeerId = watchNode.getPropertyValueFor("peerId");
-      //const collectionInterval = 5;
+      // Use the property name from peer as the peerId
+      const rtcPeerId = peerNode.getPropertyValueFor("name");
+
       win.watchRTC.init({
         rtcApiKey,
         rtcRoomId,
@@ -579,6 +598,37 @@ const adjust = (peerNode, encodeNode, nodes) => {
   });
 };
 
+const restartIce = (peerNode, nodes) => {
+  return new Promise((resolve, reject) => {
+    const win = frames[peerNode.id];
+    if (!win.pc) {
+      console.log("Can't restartIce - no peer connection");
+      resolve();
+      return;
+    }
+
+    win.pc.addEventListener(
+      "negotiationneeded",
+      () => {
+        resolve();
+      },
+      { once: true }
+    );
+
+    // Restart ICE
+    win.pc.restartIce();
+    addEventToTimeline(
+      "restartIce",
+      "",
+      nanoid(),
+      Date.now(),
+      `playground`,
+      "point",
+      dispatcher
+    );
+  });
+};
+
 const endPlayground = () => {
   return new Promise((resolve, reject) => {
     Object.keys(frames).forEach((key) => {
@@ -713,6 +763,14 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           nodes
         );
         promises.push(adjust(fromPeer, currentNode, nodes));
+        break;
+      }
+      case NODES.RESTARTICE: {
+        const fromPeer = getNodeById(
+          initialEvent.getPropertyValueFor("peer"),
+          nodes
+        );
+        promises.push(restartIce(fromPeer, nodes));
         break;
       }
       case NODES.END: {
