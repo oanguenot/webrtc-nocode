@@ -188,6 +188,15 @@ const appReducer = (state = initialAppState, action) => {
           })
         );
         object.addMultipleOptionsToSelect(peers, KEYS.PEER);
+
+        // Add call to all restartIce
+        filterNodesByName(NODES.RESTARTICE, state.objects).forEach((obj) => {
+          obj.addNewOptionToSelect(
+            object.id,
+            object.getPropertyValueFor(KEYS.NAME),
+            KEYS.CALL
+          );
+        });
       } else if (nodeInfo === NODES.TURN) {
         // Add TURN to all peer
         filterNodesByName(NODES.PEER, state.objects).forEach((obj) => {
@@ -197,6 +206,14 @@ const appReducer = (state = initialAppState, action) => {
             KEYS.TURN
           );
         });
+      } else if (nodeInfo === NODES.RESTARTICE) {
+        const calls = filterNodesByName(NODES.CALL, state.objects).map(
+          (obj) => ({
+            value: obj.id,
+            label: obj.getPropertyValueFor(KEYS.NAME),
+          })
+        );
+        object.addMultipleOptionsToSelect(calls, KEYS.CALL);
       }
 
       const newObjects = [...state.objects, object];
@@ -292,6 +309,15 @@ const appReducer = (state = initialAppState, action) => {
         const relatedPeers = filterNodesByName(NODES.PEER, objects);
         relatedPeers.forEach((obj) =>
           obj.updateLabelInSelect(object.id, value, KEYS.TURN)
+        );
+      } else if (
+        object.getInfoValueFor(KEYS.NODE) === NODES.CALL &&
+        name === KEYS.NAME
+      ) {
+        // Update all restartIce when call name changed
+        const relatedRestartIce = filterNodesByName(NODES.RESTARTICE, objects);
+        relatedRestartIce.forEach((obj) =>
+          obj.updateLabelInSelect(object.id, value, KEYS.CALL)
         );
       }
 

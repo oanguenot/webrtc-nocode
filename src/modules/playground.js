@@ -435,12 +435,13 @@ const call = (callerNode, calleeNode, callNode) => {
       reject();
     }
 
-    createTempPeriod("setup-call", callerNode.id, Date.now());
+    // to do --> Put in peer event iceconnectionchange: "checking" --> "connected"
+    //createTempPeriod("setup-call", callerNode.id, Date.now());
     const offer = await callerWin.pc.createOffer();
     await callerWin.pc.setLocalDescription(offer);
     const ices = await waitForIce(callerWin.pc, callerNode.id);
 
-    createTempPeriod("setup-call", calleeNode.id, Date.now());
+    //createTempPeriod("setup-call", calleeNode.id, Date.now());
     await calleeWin.pc.setRemoteDescription(offer);
     const answer = await calleeWin.pc.createAnswer();
     await calleeWin.pc.setLocalDescription(answer);

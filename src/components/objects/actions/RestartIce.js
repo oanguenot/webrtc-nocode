@@ -29,6 +29,14 @@ class RestartIce extends Main {
         value: "Restart ICE",
         description: "Action/Name",
       },
+      {
+        prop: KEYS.CALL,
+        label: "Call",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "None", value: "none" }],
+        value: "none",
+        description: "Choose the call to update",
+      },
     ];
   }
 
@@ -44,9 +52,16 @@ class RestartIce extends Main {
     switch (prop) {
       case KEYS.NAME:
         return property.value;
+      case KEYS.CALL:
+        return property.value === "none" ? "no call" : `${label}`;
       default:
         return "";
     }
+  }
+
+  renderColorIsMissingProp(prop) {
+    const property = this.getPropertyFor(prop);
+    return property && property.value === "none";
   }
 
   render() {
@@ -58,6 +73,13 @@ class RestartIce extends Main {
     }">${this.renderProp("name")}</span>
         </div>
         <div class="box">
+        <div class="object-box-line">
+            <i id="call-color-${this._uuid}" class="fas fa-phone-volume ${
+      this.renderColorIsMissingProp(KEYS.CALL) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.CALL) ? "red" : ""
+    }" id="call-${this._uuid}">${this.renderProp(KEYS.CALL)}</span>
+            </div>
             <div class="object-footer">
                 <span class="object-node object-title-box">${
                   this._info[0].value

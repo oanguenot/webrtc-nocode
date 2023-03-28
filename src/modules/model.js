@@ -25,6 +25,7 @@ export const KEYS = {
   NODE: "node",
   KIND: "kind",
   INFO: "info",
+  CALL: "call",
   FROM: "from",
   NAME: "name",
   NETWORK: "network",
