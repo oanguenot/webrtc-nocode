@@ -38,6 +38,8 @@ class RestartIce extends Main {
         description: "Choose the call to update",
       },
     ];
+    this._sources = [`${KEYS.NAME}:${KEYS.CALL}@${NODES.CALL}`];
+    this._targets = [];
   }
 
   renderColorIsMissingProp(prop) {

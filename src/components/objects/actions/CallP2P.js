@@ -52,6 +52,8 @@ class CallP2P extends Main {
         description: "Choose the RTCPeerConnection to call",
       },
     ];
+    this._sources = [`${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`];
+    this._targets = [`${KEYS.NAME}:${KEYS.CALL}@${NODES.RESTARTICE}`];
   }
 
   renderColorIsMissingProp(prop) {

@@ -10,7 +10,7 @@ class Main {
   static description = "a description"; // Used in the menu
   static icon = "an icon"; // Used in the menu
   static section = "section"; // Can be Basic, BuiltIn, External
-  static name = "Main";
+  static name = "Main"; // Name of the class
 
   constructor(posX = 0, posY = 0) {
     this._inputs = 1;
@@ -24,6 +24,8 @@ class Main {
     this._uuid = nanoid();
     this._acceptInputs = [];
     this._acceptOutputs = [];
+    this._sources = []; // Import data from these nodes
+    this._targets = []; // Export data to these nodes (format: label:prop@node)
   }
 
   get inputs() {
@@ -86,6 +88,14 @@ class Main {
   get kind() {
     const infoNode = this._info.find((info) => info.key === KEYS.KIND);
     return infoNode ? infoNode.value : null;
+  }
+
+  get sources() {
+    return this._sources;
+  }
+
+  get targets() {
+    return this._targets;
   }
 
   getInfoValueFor(name) {

@@ -51,6 +51,8 @@ class Turn extends Main {
         description: "Token used for authenticating users",
       },
     ];
+    this._sources = [];
+    this._targets = [`${KEYS.NAME}:${KEYS.TURN}@${NODES.PEER}`];
   }
 
   renderProp(prop) {
@@ -63,11 +65,11 @@ class Turn extends Main {
       case KEYS.STUNURL:
         return !!property.value.length
           ? `${property.value.substring(0, 18)}...`
-          : "no STUN";
+          : "no STUN Url";
       case KEYS.TURNURL:
         return !!property.value.length
           ? `${property.value.substring(0, 18)}...`
-          : "no TURN";
+          : "no TURN Url";
       case KEYS.TURNTOKEN:
         return !!property.value.length ? "*****" : "no token";
     }

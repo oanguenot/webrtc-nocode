@@ -33,6 +33,7 @@ export const KEYS = {
   PREFERENCE: "preference",
   MAX_BITRATE: "maxBitrate",
   MAX_FRAMERATE: "maxFramerate",
+  CHANNEL_COUNT: "channelCount",
   TRACK: "track",
   DELAY: "delay",
   PEER: "peer",

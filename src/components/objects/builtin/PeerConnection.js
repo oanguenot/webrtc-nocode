@@ -51,6 +51,12 @@ class PeerConnection extends Main {
         description: "Choose the connection type to use",
       },
     ];
+    this._sources = [`${KEYS.NAME}:${KEYS.TURN}@${NODES.TURN}`];
+    this._targets = [
+      `${KEYS.NAME}:${KEYS.PEER}@${NODES.READY}`,
+      `${KEYS.NAME}:${KEYS.PEER}@${NODES.ICE}`,
+      `${KEYS.NAME}:${KEYS.PEER}@${NODES.CALL}`,
+    ];
   }
 
   renderProp(prop) {

@@ -43,6 +43,8 @@ class ICEConnectionEvent extends Main {
     ];
     this._acceptOutputs = [NODES.ACTIONS];
     this._acceptInputs = [];
+    this._sources = [`${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`];
+    this._targets = [];
   }
 
   renderProp(prop) {
