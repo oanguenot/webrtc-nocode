@@ -70,11 +70,6 @@ class VideoEncodings extends Main {
     }
   }
 
-  renderColorIsMissingProp(prop) {
-    const property = this.getPropertyFor(prop);
-    return property && property.value === "none";
-  }
-
   render() {
     return `
       <div>

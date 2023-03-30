@@ -42,11 +42,6 @@ class RestartIce extends Main {
     this._targets = [];
   }
 
-  renderColorIsMissingProp(prop) {
-    const property = this.getPropertyFor(prop);
-    return property && property.value === "none";
-  }
-
   renderProp(prop) {
     const property = this.getPropertyFor(prop);
     const label = this.getLabelFromPropertySelect(property);
@@ -59,11 +54,6 @@ class RestartIce extends Main {
       default:
         return "";
     }
-  }
-
-  renderColorIsMissingProp(prop) {
-    const property = this.getPropertyFor(prop);
-    return property && property.value === "none";
   }
 
   render() {

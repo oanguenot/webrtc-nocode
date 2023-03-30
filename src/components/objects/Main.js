@@ -140,8 +140,9 @@ class Main {
     return "";
   }
 
-  renderColorIsMissingProp() {
-    return false;
+  renderColorIsMissingProp(prop) {
+    const property = this.getPropertyFor(prop);
+    return property && property.value === "none";
   }
 
   updateDisplayInObject(propertyName) {

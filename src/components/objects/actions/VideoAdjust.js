@@ -89,11 +89,6 @@ class VideoAdjust extends Main {
     ];
   }
 
-  renderColorIsMissingProp(prop) {
-    const property = this.getPropertyFor(prop);
-    return property && property.value === "none";
-  }
-
   renderProp(prop) {
     const property = this.getPropertyFor(prop);
     const label = this.getLabelFromPropertySelect(property);

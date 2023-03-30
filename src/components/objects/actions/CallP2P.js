@@ -56,11 +56,6 @@ class CallP2P extends Main {
     this._targets = [`${KEYS.NAME}:${KEYS.CALL}@${NODES.RESTARTICE}`];
   }
 
-  renderColorIsMissingProp(prop) {
-    const property = this.getPropertyFor(prop);
-    return property && property.value === "none";
-  }
-
   renderProp(prop) {
     const property = this.getPropertyFor(prop);
     const label = this.getLabelFromPropertySelect(property);
