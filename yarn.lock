@@ -324,10 +324,10 @@
     "@emotion/react" "^11.7.1"
     bind-event-listener "^2.1.1"
 
-"@atlaskit/page-header@10.3.4":
-  version "10.3.4"
-  resolved "https://registry.yarnpkg.com/@atlaskit/page-header/-/page-header-10.3.4.tgz#76171d297194cbcdeffdd01eee2c9d97f57245fd"
-  integrity sha512-InxMHXFeHiJFqgUvoHMZ/JtfCzunsTU8ClwmrUQrhRfC3m6M/7IXNEO+uW5RDYbK9VmvzVR2abOooT6XYQqpKQ==
+"@atlaskit/page-header@10.3.5":
+  version "10.3.5"
+  resolved "https://registry.yarnpkg.com/@atlaskit/page-header/-/page-header-10.3.5.tgz#39a908374c2a06bf63ff86b88f09fb249d49434d"
+  integrity sha512-g6jmE3SWTDz7lJtTsJF9WJHHRqtxoKX9mFMhR4IF0UtYYFSXPUv7zV61lk85EjCmGA8xKBpMYohnOgRIAjqpHw==
   dependencies:
     "@atlaskit/theme" "^12.3.0"
     "@atlaskit/tokens" "^1.2.5"
@@ -411,15 +411,15 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/select@16.1.6":
-  version "16.1.6"
-  resolved "https://registry.yarnpkg.com/@atlaskit/select/-/select-16.1.6.tgz#452f1fd3c90562f82a777db23615b9cb6731b44a"
-  integrity sha512-SBx9DR69f03hbMW7Y6pAQGMJiw6cO5zY5cdX3ETTV1BmFOPMUo1UvP944g0KmEEQlauXKHo+W3ompPTfNCoNIQ==
+"@atlaskit/select@16.1.7":
+  version "16.1.7"
+  resolved "https://registry.yarnpkg.com/@atlaskit/select/-/select-16.1.7.tgz#ef6952027b5b85a3c976b68111262037dfac4244"
+  integrity sha512-ejZjdydi0pZZE8cgtVVsQaUMzOsOi6UfDyLLugpGnBlgI1IElHmKDHzJT/3R6zkPkkmEAf53inrSBKzi+RXSUg==
   dependencies:
     "@atlaskit/analytics-next" "^9.0.0"
     "@atlaskit/icon" "^21.11.0"
     "@atlaskit/spinner" "^15.4.0"
-    "@atlaskit/theme" "^12.2.0"
+    "@atlaskit/theme" "^12.3.0"
     "@atlaskit/tokens" "^1.2.0"
     "@atlaskit/visually-hidden" "^1.1.0"
     "@babel/runtime" "^7.0.0"
