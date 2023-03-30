@@ -2,6 +2,10 @@ import Main from "../Main";
 
 import "../Main.css";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { customAlphabet } from "nanoid";
+
+const CUSTOM_ALPHABET = "0123456789abcdef";
+const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class PeerConnection extends Main {
   static item = "Peer Connection";
@@ -28,7 +32,7 @@ class PeerConnection extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `PC-${this._uuid}`,
+        value: `PC-${nanoid()}`,
         description: "Name of the Peer Connection",
       },
       {
