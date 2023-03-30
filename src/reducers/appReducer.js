@@ -139,9 +139,28 @@ const appReducer = (state = initialAppState, action) => {
     }
     case OBJECT_ACTIONS.REMOVE_OBJECT_SUCCESS: {
       if (state.selected) {
+        // Remove selected from all targets
+        if (!!state.selected.targets) {
+          state.selected.targets.forEach((target) => {
+            const splitTarget = target.split("@");
+            const prop = splitTarget[0].split(":")[1];
+            const nodeName = splitTarget[1];
+
+            filterNodesByName(
+              nodeName,
+              state.objects,
+              state.selected.kind
+            ).forEach((obj) => {
+              // only add track to encoding of the same kind
+              obj.removeOptionFromSelect(state.selected.id, prop);
+            });
+          });
+        }
+
         const newObjects = state.objects.filter(
           (object) => object.id !== state.selected.id
         );
+
         saveModelToStorage(newObjects);
         const problems = checkNodesProblems(newObjects);
         return {

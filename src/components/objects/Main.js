@@ -132,7 +132,7 @@ class Main {
     );
     if (property) {
       property.value = value;
-      this.updateDisplayInObject(name, label || value);
+      this.updateDisplayInObject(name);
     }
   }
 
@@ -230,6 +230,20 @@ class Main {
     const found = existingSteps.find((step) => [value].includes(step.value));
     if (!found) {
       existingSteps.push({ label, value });
+    }
+  }
+
+  removeOptionFromSelect(value, propertyName) {
+    const prop = this._properties.find(
+      (property) => property.prop === propertyName
+    );
+    if (prop && prop.enum) {
+      prop.enum = prop.enum.filter((item) => item.value !== value);
+    }
+
+    if (prop.value === value) {
+      prop.value = prop.enum[0].value;
+      this.updateDisplayInObject(propertyName);
     }
   }
 
