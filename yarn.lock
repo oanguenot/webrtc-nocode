@@ -287,10 +287,10 @@
     "@atlaskit/tokens" "^1.2.0"
     "@babel/runtime" "^7.0.0"
 
-"@atlaskit/menu@1.5.2":
-  version "1.5.2"
-  resolved "https://registry.yarnpkg.com/@atlaskit/menu/-/menu-1.5.2.tgz#bf8469d6193292921b1200b747db6cec3a71ce7d"
-  integrity sha512-pdnVRuSOuEOnpZmEWAU/h3rHkLHF+IRbO7ftWU9OhslTgpmeHORhUoLiRsgEFpIn7qvv8WPZ1HLAwFKrTPvL9w==
+"@atlaskit/menu@1.5.3":
+  version "1.5.3"
+  resolved "https://registry.yarnpkg.com/@atlaskit/menu/-/menu-1.5.3.tgz#1be763a7cda546b1f4d90676b599ac5b269fdb32"
+  integrity sha512-WcDHzvuXr3Xpo6rpRlwMj/5o5ioNNZH5pMidF2q4E4oHPfUKFJfkd4OIiRyyF18qs+txUCjjEpBFzbxf0iwFbA==
   dependencies:
     "@atlaskit/ds-explorations" "^2.0.0"
     "@atlaskit/ds-lib" "^2.1.0"
