@@ -28,7 +28,7 @@ class AudioEncodings extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Audio Encode",
+        value: "Set Audio Codec",
         description: "Name of the Encodings",
       },
       {
@@ -52,6 +52,8 @@ class AudioEncodings extends Main {
         description: "Choose the track to update",
       },
     ];
+    this._sources = [`${KEYS.NAME}:${KEYS.TRACK}@${NODES.TRACK}`];
+    this._targets = [];
   }
 
   renderProp(prop) {
@@ -64,7 +66,7 @@ class AudioEncodings extends Main {
       case KEYS.PREFERENCE:
         return property.value === "unchanged" ? label : `use ${label}`;
       case KEYS.TRACK:
-        return property.value === "none" ? "no track" : `encode ${label}`;
+        return property.value === "none" ? "no track" : `${label}`;
     }
   }
 
@@ -78,9 +80,11 @@ class AudioEncodings extends Main {
         </div>
          <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="track-${
-              this._uuid
-            }">${this.renderProp(KEYS.TRACK)}</span>
+            <i id="track-color-${this._uuid}" class="fas fa-microphone ${
+      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
+    }" id="track-${this._uuid}">${this.renderProp(KEYS.TRACK)}</span>
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="preference-${

@@ -79,94 +79,51 @@ const appReducer = (state = initialAppState, action) => {
     case OBJECT_ACTIONS.ADD_OBJECT_SUCCESS: {
       const object = action.payload.object;
       const nodeInfo = object.getInfoValueFor(KEYS.NODE);
+
+      // Manage all target nodes
+      if (!!object.targets.length) {
+        object.targets.forEach((target) => {
+          const splitTarget = target.split("@");
+          const label = splitTarget[0].split(":")[0];
+          const prop = splitTarget[0].split(":")[1];
+          const nodeName = splitTarget[1];
+          // Find all target nodes and add a reference label/prop
+          filterNodesByName(nodeName, state.objects, object.kind).forEach(
+            (obj) => {
+              // only add track to encoding of the same kind
+              obj.addNewOptionToSelect(
+                object.id,
+                object.getPropertyValueFor(label),
+                prop
+              );
+            }
+          );
+        });
+      }
+
+      // Manage all source nodes
+      if (!!object.sources.length) {
+        object.sources.forEach((source) => {
+          const splitSource = source.split("@");
+          const label = splitSource[0].split(":")[0];
+          const prop = splitSource[0].split(":")[1];
+          const nodeName = splitSource[1];
+
+          // Find all source nodes and get a reference label/prop
+          const sources = filterNodesByName(
+            nodeName,
+            state.objects,
+            object.kind
+          ).map((obj) => ({
+            value: obj.id,
+            label: obj.getPropertyValueFor(label),
+          }));
+          object.addMultipleOptionsToSelect(sources, prop);
+        });
+      }
+
       if (nodeInfo === NODES.TRACK) {
         object.addDevices(state.devices);
-        filterNodesByName(NODES.ENCODE, state.objects, object.kind).forEach(
-          (obj) => {
-            // only add track to encoding of the same kind
-            obj.addNewOptionToSelect(object.id, object.id, KEYS.TRACK);
-          }
-        );
-        filterNodesByName(NODES.ADJUST, state.objects, object.kind).forEach(
-          (obj) => {
-            // only add track to adjustment of the same kind
-            obj.addNewOptionToSelect(object.id, object.id, KEYS.TRACK);
-          }
-        );
-        // } else if (node.includes("step")) {
-        //   filterObjectsWithNode("goto", state.objects).forEach((obj) => {
-        //     obj.addNewOptionToSelect(
-        //       object.id,
-        //       object.getPropertyValueFor("name"),
-        //       "next"
-        //     );
-        //   });
-        // } else if (node.includes("goto")) {
-        //   const steps = filterObjectsWithNode("step", state.objects).map(
-        //     (obj) => ({
-        //       value: obj.id,
-        //       label: obj.getPropertyValueFor("name"),
-        //     })
-        //   );
-        //   object.addMultipleOptionsToSelect(steps, "next");
-      } else if (nodeInfo === NODES.ENCODE) {
-        const tracks = filterNodesByName(
-          NODES.TRACK,
-          state.objects,
-          object.getInfoValueFor(KEYS.KIND)
-        ).map((obj) => ({
-          value: obj.id,
-          label: obj.id,
-        }));
-        object.addMultipleOptionsToSelect(tracks, KEYS.TRACK);
-      } else if (nodeInfo === NODES.ADJUST) {
-        const tracks = filterNodesByName(
-          NODES.TRACK,
-          state.objects,
-          object.getInfoValueFor(KEYS.KIND)
-        ).map((obj) => ({
-          value: obj.id,
-          label: obj.id,
-        }));
-        object.addMultipleOptionsToSelect(tracks, KEYS.TRACK);
-      } else if (nodeInfo === NODES.PEER) {
-        // Add peer to all ready
-        filterNodesByName(NODES.READY, state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
-        });
-
-        // Add peer to all call
-        filterNodesByName(NODES.CALL, state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
-        });
-
-        filterNodesByName(NODES.ICE, state.objects).forEach((obj) => {
-          obj.addNewOptionToSelect(object.id, object.id, KEYS.PEER);
-        });
-      } else if (nodeInfo === NODES.READY) {
-        const peers = filterNodesByName(NODES.PEER, state.objects).map(
-          (obj) => ({
-            value: obj.id,
-            label: obj.getPropertyValueFor(KEYS.NAME),
-          })
-        );
-        object.addMultipleOptionsToSelect(peers, KEYS.PEER);
-      } else if (nodeInfo === NODES.ICE) {
-        const peers = filterNodesByName(NODES.PEER, state.objects).map(
-          (obj) => ({
-            value: obj.id,
-            label: obj.getPropertyValueFor(KEYS.NAME),
-          })
-        );
-        object.addMultipleOptionsToSelect(peers, KEYS.PEER);
-      } else if (nodeInfo === NODES.CALL) {
-        const peers = filterNodesByName(NODES.PEER, state.objects).map(
-          (obj) => ({
-            value: obj.id,
-            label: obj.getPropertyValueFor(KEYS.NAME),
-          })
-        );
-        object.addMultipleOptionsToSelect(peers, KEYS.PEER);
       }
 
       const newObjects = [...state.objects, object];
@@ -182,9 +139,28 @@ const appReducer = (state = initialAppState, action) => {
     }
     case OBJECT_ACTIONS.REMOVE_OBJECT_SUCCESS: {
       if (state.selected) {
+        // Remove selected from all targets
+        if (!!state.selected.targets) {
+          state.selected.targets.forEach((target) => {
+            const splitTarget = target.split("@");
+            const prop = splitTarget[0].split(":")[1];
+            const nodeName = splitTarget[1];
+
+            filterNodesByName(
+              nodeName,
+              state.objects,
+              state.selected.kind
+            ).forEach((obj) => {
+              // only add track to encoding of the same kind
+              obj.removeOptionFromSelect(state.selected.id, prop);
+            });
+          });
+        }
+
         const newObjects = state.objects.filter(
           (object) => object.id !== state.selected.id
         );
+
         saveModelToStorage(newObjects);
         const problems = checkNodesProblems(newObjects);
         return {
@@ -193,6 +169,7 @@ const appReducer = (state = initialAppState, action) => {
           problems,
         };
       }
+      break;
     }
     case OBJECT_ACTIONS.SELECT_OBJECT_SUCCESS: {
       const objectId = action.payload.objectId;
@@ -234,10 +211,18 @@ const appReducer = (state = initialAppState, action) => {
       //   );
       // }
 
-      if (object.getInfoValueFor(KEYS.NODE) === NODES.PEER) {
+      if (
+        object.getInfoValueFor(KEYS.NODE) === NODES.PEER &&
+        name === KEYS.NAME
+      ) {
         // Update all ready nodes when peer name changed
         const relatedReady = filterNodesByName(NODES.READY, objects);
         relatedReady.forEach((obj) =>
+          obj.updateLabelInSelect(object.id, value, KEYS.PEER)
+        );
+
+        const relatedIce = filterNodesByName(NODES.ICE, objects);
+        relatedIce.forEach((obj) =>
           obj.updateLabelInSelect(object.id, value, KEYS.PEER)
         );
 
@@ -245,6 +230,24 @@ const appReducer = (state = initialAppState, action) => {
         const relatedP2P = filterNodesByName(NODES.CALL, objects);
         relatedP2P.forEach((obj) =>
           obj.updateLabelInSelect(object.id, value, KEYS.PEER)
+        );
+      } else if (
+        object.getInfoValueFor(KEYS.NODE) === NODES.TURN &&
+        name === KEYS.NAME
+      ) {
+        // Update all ready peer when turn name changed
+        const relatedPeers = filterNodesByName(NODES.PEER, objects);
+        relatedPeers.forEach((obj) =>
+          obj.updateLabelInSelect(object.id, value, KEYS.TURN)
+        );
+      } else if (
+        object.getInfoValueFor(KEYS.NODE) === NODES.CALL &&
+        name === KEYS.NAME
+      ) {
+        // Update all restartIce when call name changed
+        const relatedRestartIce = filterNodesByName(NODES.RESTARTICE, objects);
+        relatedRestartIce.forEach((obj) =>
+          obj.updateLabelInSelect(object.id, value, KEYS.CALL)
         );
       }
 
@@ -379,6 +382,12 @@ const appReducer = (state = initialAppState, action) => {
         debug: [...state.debug, log],
       };
     }
+    case DEBUG_ACTIONS.ADD_EVENTS_TO_TIMELINE:
+      const events = action.payload;
+      return {
+        ...state,
+        events: [...state.events, ...events],
+      };
     case DEBUG_ACTIONS.ADD_EVENT_TO_TIMELINE:
     case DEBUG_ACTIONS.ADD_PERIOD_TO_TIMELINE: {
       const event = action.payload;
@@ -394,11 +403,18 @@ const appReducer = (state = initialAppState, action) => {
         groups: [...state.groups, group],
       };
     }
-    case DEBUG_ACTIONS.ADD_SUBGROUP_TO_TIMELINE: {
-      const subGroup = action.payload;
+    case DEBUG_ACTIONS.ADD_SUBGROUPS_TO_TIMELINE: {
+      const subGroups = action.payload;
       return {
         ...state,
-        subGroups: [...state.subGroups, subGroup],
+        subGroups: [...state.subGroups, ...subGroups],
+      };
+    }
+    case DEBUG_ACTIONS.ADD_SUBGROUP_TO_TIMELINE: {
+      const subGroups = action.payload;
+      return {
+        ...state,
+        subGroups: [...state.subGroups, subGroups],
       };
     }
     case DEBUG_ACTIONS.SET_TASK_NUMBER: {

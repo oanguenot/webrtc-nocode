@@ -7,6 +7,7 @@ import {
   getNodeById,
   getNodeInfoValue,
   getNodesFromIds,
+  getTURNCredentials,
 } from "./helper";
 import { KEYS, NODES } from "./model";
 import { rehydrateObject } from "./builder";
@@ -19,14 +20,10 @@ import {
   incrementTaskDone,
   setTaskNumber,
   addGroupToSubGroup,
+  addGroupsToSubGroup,
+  addEventsToTimeline,
 } from "../actions/DebugActions";
-import {
-  addSubGroupInTempGroup,
-  createTempGroup,
-  createTempPeriod,
-  endTempPeriod,
-  hasPeriodFor,
-} from "./timeline";
+import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
 import {
   monitorPeerConnection,
   startMonitoring,
@@ -53,8 +50,7 @@ const getTransceiver = (transceivers, trackKind, trackDeviceId) => {
     const constraints = track.getConstraints();
     const settings = track.getSettings();
     const capabilities = track.getCapabilities();
-    console.log(">>>constraints", constraints, settings, capabilities, track);
-    if(trackDeviceId !== "[default]") {
+    if (trackDeviceId !== "[default]") {
       return track.kind === trackKind && constraints.deviceId === trackDeviceId;
     } else {
       return track.kind === trackKind;
@@ -109,12 +105,44 @@ const createMediaElementInIFrame = (win, kind, id, isLocal = true) => {
   localElt.appendChild(elt);
 };
 
-const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
+const createPeerConnection = (
+  peerNode,
+  stream,
+  iceEvents,
+  turnsConfiguration,
+  nodes
+) => {
   return new Promise(async (resolve, reject) => {
     const win = frames[peerNode.id];
     let intervalId = null;
     if (win) {
-      win.pc = new win.RTCPeerConnection();
+      const turnId = peerNode.getPropertyValueFor(KEYS.TURN);
+      const network = peerNode.getPropertyValueFor(KEYS.NETWORK);
+      const configuration = turnsConfiguration
+        ? turnsConfiguration[turnId]
+        : null;
+      if (configuration) {
+        const turnNode = getNodeById(turnId, nodes);
+        const turnToken = turnNode.getPropertyValueFor(KEYS.TURNTOKEN);
+        const { username, credential } = getTURNCredentials(
+          `user#${peerNode.id}`,
+          turnToken
+        );
+
+        configuration.iceServers.forEach((server) => {
+          if ("username" in server) {
+            server.username = username;
+            server.credential = credential;
+          }
+        });
+
+        if (network === "relay") {
+          configuration.iceTransportPolicy = "relay";
+        }
+        win.pc = new win.RTCPeerConnection(configuration);
+      } else {
+        win.pc = new win.RTCPeerConnection();
+      }
       win.ices = [];
       win.pc.addEventListener("iceconnectionstatechange", () => {
         const state = win.pc.iceConnectionState;
@@ -131,15 +159,17 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
             peerNode.id,
             Date.now()
           );
-          addPeriodToTimeline(
-            periodSetup.content,
-            nanoid(),
-            periodSetup.start,
-            periodSetup.end,
-            periodSetup.group,
-            "background",
-            dispatcher
-          );
+          if (periodSetup) {
+            addPeriodToTimeline(
+              periodSetup.content,
+              nanoid(),
+              periodSetup.start,
+              periodSetup.end,
+              periodSetup.group,
+              "background",
+              dispatcher
+            );
+          }
           createTempPeriod("in-call", peerNode.id, Date.now());
           intervalId = setInterval(() => {
             if (win.pc.iceConnectionState === "closed") {
@@ -197,9 +227,17 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           }
         });
       });
-      win.pc.addEventListener("icecandidate", (event) => {
-        win.ices.push(event.candidate);
+
+      win.pc.addEventListener("negotiationneeded", (event) => {
+        addLog(
+          "peer",
+          "log",
+          `${peerNode.id} negotiation needed`,
+          null,
+          dispatcher
+        );
       });
+
       win.pc.addEventListener("track", (event) => {
         addLog(
           "peer",
@@ -237,12 +275,6 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
           null,
           dispatcher
         );
-        // addGroupToSubGroup(
-        //   `${track.kind}:${track.label}`,
-        //   `${peerNode.id}-${track.id}`,
-        //   peerNode.id,
-        //   dispatcher
-        // );
         addEventToTimeline(
           "start-track",
           "",
@@ -273,26 +305,26 @@ const createMedia = (peerNode, nodes) => {
           const deviceId = input.getPropertyValueFor("from");
           if (kind === "audio") {
             const channelCount = input.getPropertyValueFor("channelCount");
-            if(deviceId !== "none") {
+            if (deviceId !== "none") {
               constraints.audio = {
                 channelCount,
               };
-              if(deviceId !== "[default]") {
-                constraints.audio.deviceId = {exact: deviceId};
+              if (deviceId !== "[default]") {
+                constraints.audio.deviceId = { exact: deviceId };
               }
             }
           } else {
             const framerate = input.getPropertyValueFor("framerate");
             const resolution = input.getPropertyValueFor("resolution");
             const dimension = getDimensionFromResolution(resolution);
-            if (deviceId !== "none" ) {
+            if (deviceId !== "none") {
               constraints.video = {
                 framerate,
                 width: dimension.width,
                 height: dimension.height,
               };
-              if(deviceId !== "[default]") {
-                constraints.video.deviceId = {exact: deviceId}
+              if (deviceId !== "[default]") {
+                constraints.video.deviceId = { exact: deviceId };
               }
             }
           }
@@ -324,10 +356,23 @@ const createWatchRTC = (peerNode, nodes) => {
         return;
       }
 
+      // Don't activate watchRTC if paused
+      const active = watchNode.getPropertyValueFor("active");
+      if (active === "no") {
+        resolve();
+        return;
+      }
+
       const rtcApiKey = watchNode.getPropertyValueFor("apiKey");
       const rtcRoomId = watchNode.getPropertyValueFor("roomId");
-      const rtcPeerId = watchNode.getPropertyValueFor("peerId");
-      win.watchRTC.init({ rtcApiKey, rtcRoomId, rtcPeerId });
+      // Use the property name from peer as the peerId
+      const rtcPeerId = peerNode.getPropertyValueFor("name");
+
+      win.watchRTC.init({
+        rtcApiKey,
+        rtcRoomId,
+        rtcPeerId,
+      });
       resolve();
     } catch (err) {
       reject(err);
@@ -335,8 +380,67 @@ const createWatchRTC = (peerNode, nodes) => {
   });
 };
 
+const createTurnConfiguration = (turns, peerId) => {
+  return new Promise((resolve, reject) => {
+    if (!turns.length) {
+      resolve();
+      return;
+    }
+
+    const turnsConfiguration = {};
+
+    turns.forEach((turnNode) => {
+      const stunUrl = turnNode.getPropertyValueFor(KEYS.STUNURL);
+      const turnUrl = turnNode.getPropertyValueFor(KEYS.TURNURL);
+
+      const configuration = {
+        iceServers: [],
+        iceTransportPolicy: "all",
+      };
+
+      // Add all stun urls
+      const urlsForStun = stunUrl.split(";");
+      urlsForStun.forEach((url) => {
+        if (url) {
+          configuration.iceServers.push({ urls: url });
+        }
+      });
+
+      const urlsForTurn = turnUrl.split(";");
+      urlsForTurn.forEach((url) => {
+        if (url) {
+          configuration.iceServers.push({
+            urls: url,
+            username: null,
+            credential: null,
+          });
+        }
+      });
+
+      // Store each Turn configuration
+      turnsConfiguration[turnNode.id] = configuration;
+    });
+
+    resolve(turnsConfiguration);
+  });
+};
+
 const call = (callerNode, calleeNode, callNode) => {
   return new Promise(async (resolve, reject) => {
+    const waitForIce = (peer, id) => {
+      return new Promise((resolve, reject) => {
+        const ices = [];
+
+        peer.addEventListener("icecandidate", (event) => {
+          if (event.candidate) {
+            ices.push(event.candidate);
+          } else {
+            resolve(ices);
+          }
+        });
+      });
+    };
+
     const callerWin = frames[callerNode.id];
     const calleeWin = frames[calleeNode.id];
     if (!callerWin || !calleeWin || !callerWin.pc || !calleeWin.pc) {
@@ -344,19 +448,22 @@ const call = (callerNode, calleeNode, callNode) => {
       reject();
     }
 
-    createTempPeriod("setup-call", callerNode.id, Date.now());
+    // to do --> Put in peer event iceconnectionchange: "checking" --> "connected"
+    //createTempPeriod("setup-call", callerNode.id, Date.now());
     const offer = await callerWin.pc.createOffer();
     await callerWin.pc.setLocalDescription(offer);
-    await delayer(10);
-    createTempPeriod("setup-call", calleeNode.id, Date.now());
-    await calleeWin.pc.setRemoteDescription(offer);
+    const ices = await waitForIce(callerWin.pc, callerNode.id);
 
-    callerWin.ices.forEach((ice) => calleeWin.pc.addIceCandidate(ice));
+    //createTempPeriod("setup-call", calleeNode.id, Date.now());
+    await calleeWin.pc.setRemoteDescription(offer);
     const answer = await calleeWin.pc.createAnswer();
     await calleeWin.pc.setLocalDescription(answer);
-    await delayer(10);
+
+    const calleeIces = await waitForIce(calleeWin.pc, calleeNode.id);
+    ices.forEach((ice) => calleeWin.pc.addIceCandidate(ice));
+
     await callerWin.pc.setRemoteDescription(answer);
-    calleeWin.ices.forEach((ice) => callerWin.pc.addIceCandidate(ice));
+    calleeIces.forEach((ice) => callerWin.pc.addIceCandidate(ice));
     resolve();
   });
 };
@@ -505,6 +612,43 @@ const adjust = (peerNode, encodeNode, nodes) => {
   });
 };
 
+const restartIce = (peerNode, currentNode, nodes) => {
+  return new Promise((resolve, reject) => {
+    const win = frames[peerNode.id];
+    if (!win.pc) {
+      console.log("Can't restartIce - no peer connection");
+      resolve();
+      return;
+    }
+
+    const callNodeId = currentNode.getPropertyValueFor(KEYS.CALL);
+    const callNode = getNodeById(callNodeId, nodes);
+    const calleePeerId = callNode.getPropertyValueFor(KEYS.PEER);
+    const calleeNode = getNodeById(calleePeerId, nodes);
+
+    win.pc.addEventListener(
+      "negotiationneeded",
+      async () => {
+        await call(peerNode, calleeNode, callNode);
+        resolve();
+      },
+      { once: true }
+    );
+
+    // Restart ICE
+    win.pc.restartIce();
+    addEventToTimeline(
+      "restartIce",
+      "",
+      nanoid(),
+      Date.now(),
+      `playground`,
+      "point",
+      dispatcher
+    );
+  });
+};
+
 const endPlayground = () => {
   return new Promise((resolve, reject) => {
     Object.keys(frames).forEach((key) => {
@@ -519,45 +663,49 @@ const endPlayground = () => {
 
       // Stop monitoring
       const ticket = stopMonitoring(key, frames);
-      ticket.call.events.forEach((event) => {
-        if (event.category === "quality") {
-          const getValueToDisplay = (name, value) => {
-            switch (name) {
-              case "size-up":
-                return `&#x2197; ${value}`;
-              case "size-down":
-                return `&#x2198; ${value}`;
-              case "fps-up":
-                return `&#x2191; ${value} fps`;
-              case "fps-down":
-                return `&#x2193; ${value} fps`;
-              case "limitation":
-              default:
-                return `&#8474; ${value}`
-            }
+      if (ticket) {
+        const subGroups = [];
+        const events = [];
+        ticket.call.events.forEach((event) => {
+          if (event.category === "quality") {
+            const getValueToDisplay = (name, value) => {
+              switch (name) {
+                case "size-up":
+                  return `&#x2197; ${value}`;
+                case "size-down":
+                  return `&#x2198; ${value}`;
+                case "fps-up":
+                  return `&#x2191; ${value} fps`;
+                case "fps-down":
+                  return `&#x2193; ${value} fps`;
+                case "limitation":
+                default:
+                  return `&#8474; ${value}`;
+              }
+            };
+
+            events.push({
+              content: getValueToDisplay(event.name, event.details.value),
+              title: "",
+              id: nanoid(),
+              start: event.at,
+              group: `${key}-${event.ssrc}`,
+              type: "box",
+            });
+          } else if (event.name === "track-added") {
+            subGroups.push({
+              content: `ssrc_${event.ssrc}_${event.details.kind}-${
+                event.details.direction.includes("in") ? "in" : "out"
+              }`,
+              id: `${key}-${event.ssrc}`,
+              groupId: key,
+            });
           }
+        });
 
-
-          addEventToTimeline(
-            getValueToDisplay(event.name, event.details.value),
-            "",
-            nanoid(),
-            event.at,
-            `${key}-${event.ssrc}`,
-            "box",
-            dispatcher
-          );
-        } else if (event.name === "track-added") {
-          addGroupToSubGroup(
-            `ssrc_${event.ssrc}_${event.details.kind}-${
-              event.details.direction.includes("in") ? "in" : "out"
-            }`,
-            `${key}-${event.ssrc}`,
-            key,
-            dispatcher
-          );
-        }
-      });
+        addGroupsToSubGroup(subGroups, dispatcher);
+        addEventsToTimeline(events, dispatcher);
+      }
     });
 
     resolve();
@@ -602,10 +750,12 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           initialEvent.getPropertyValueFor("peer"),
           nodes
         );
+
         const recipientPeer = getNodeById(
           currentNode.getPropertyValueFor("peer"),
           nodes
         );
+
         if (recipientPeer && fromPeer) {
           promises.push(call(fromPeer, recipientPeer, currentNode));
         } else {
@@ -633,6 +783,14 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           nodes
         );
         promises.push(adjust(fromPeer, currentNode, nodes));
+        break;
+      }
+      case NODES.RESTARTICE: {
+        const fromPeer = getNodeById(
+          initialEvent.getPropertyValueFor("peer"),
+          nodes
+        );
+        promises.push(restartIce(fromPeer, currentNode, nodes));
         break;
       }
       case NODES.END: {
@@ -718,10 +876,14 @@ export const execute = (nodes, dispatch) => {
     const peers = filterNodesByName(NODES.PEER, nodes);
     const iceEvents = filterNodesByName(NODES.ICE, nodes);
     const readyEvent = findNodeByName(NODES.READY, nodes);
+    const turns = filterNodesByName(NODES.TURN, nodes);
 
     // Estimate the number of task to do
     const numberOfTasks = estimateTasks(peers, iceEvents, readyEvent, nodes);
     setTaskNumber(numberOfTasks, dispatch);
+
+    // Create Turn Configuration
+    const turnsConfiguration = await createTurnConfiguration(turns);
 
     // Initialize Peer Connections
     for (const peer of peers) {
@@ -733,11 +895,13 @@ export const execute = (nodes, dispatch) => {
         peer.id,
         dispatcher
       );
-      //createTempGroup(peer.getPropertyValueFor(KEYS.NAME), peer.id);
 
       // Store iframe window context associated to a peer connection
       frames[peer.id] = win;
+
+      // Create WatchRTC
       await createWatchRTC(peer, nodes);
+
       const stream = await createMedia(peer, nodes);
       const iceEventsForPeer = filterSimilarNodesById(
         peer.id,
@@ -748,8 +912,10 @@ export const execute = (nodes, dispatch) => {
         peer,
         stream,
         iceEventsForPeer,
+        turnsConfiguration,
         nodes
       );
+
       monitorPeerConnection(
         rtcPC,
         peer.id,

@@ -10,7 +10,7 @@ class Main {
   static description = "a description"; // Used in the menu
   static icon = "an icon"; // Used in the menu
   static section = "section"; // Can be Basic, BuiltIn, External
-  static name = "Main";
+  static name = "Main"; // Name of the class
 
   constructor(posX = 0, posY = 0) {
     this._inputs = 1;
@@ -24,6 +24,8 @@ class Main {
     this._uuid = nanoid();
     this._acceptInputs = [];
     this._acceptOutputs = [];
+    this._sources = []; // Import data from these nodes
+    this._targets = []; // Export data to these nodes (format: label:prop@node)
   }
 
   get inputs() {
@@ -88,6 +90,14 @@ class Main {
     return infoNode ? infoNode.value : null;
   }
 
+  get sources() {
+    return this._sources;
+  }
+
+  get targets() {
+    return this._targets;
+  }
+
   getInfoValueFor(name) {
     const info = this._info.find((info) => info.key === name);
     return info ? info.value : "unknown";
@@ -122,7 +132,7 @@ class Main {
     );
     if (property) {
       property.value = value;
-      this.updateDisplayInObject(name, label || value);
+      this.updateDisplayInObject(name);
     }
   }
 
@@ -130,10 +140,31 @@ class Main {
     return "";
   }
 
+  renderColorIsMissingProp(prop) {
+    const property = this.getPropertyFor(prop);
+    return property && property.value === "none";
+  }
+
   updateDisplayInObject(propertyName) {
+    const isMissing = this.renderColorIsMissingProp(propertyName);
     const nameElt = document.querySelector(`#${propertyName}-${this._uuid}`);
     if (nameElt) {
       nameElt.innerHTML = this.renderProp(propertyName);
+      if (nameElt.classList.contains("red") && !isMissing) {
+        nameElt.classList.remove("red");
+      } else if (!nameElt.classList.contains("red") && isMissing) {
+        nameElt.classList.add("red");
+      }
+    }
+    const nameColorElt = document.querySelector(
+      `#${propertyName}-color-${this._uuid}`
+    );
+    if (nameColorElt) {
+      if (nameColorElt.classList.contains("red") && !isMissing) {
+        nameColorElt.classList.remove("red");
+      } else if (!nameColorElt.classList.contains("red") && isMissing) {
+        nameColorElt.classList.add("red");
+      }
     }
   }
 
@@ -200,6 +231,20 @@ class Main {
     const found = existingSteps.find((step) => [value].includes(step.value));
     if (!found) {
       existingSteps.push({ label, value });
+    }
+  }
+
+  removeOptionFromSelect(value, propertyName) {
+    const prop = this._properties.find(
+      (property) => property.prop === propertyName
+    );
+    if (prop && prop.enum) {
+      prop.enum = prop.enum.filter((item) => item.value !== value);
+    }
+
+    if (prop.value === value) {
+      prop.value = prop.enum[0].value;
+      this.updateDisplayInObject(propertyName);
     }
   }
 

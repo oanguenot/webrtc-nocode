@@ -11,12 +11,6 @@ import Button, { ButtonGroup } from "@atlaskit/button";
 import { run } from "../../actions/playgroundActions";
 import { useStateWithCallbackLazy } from "use-state-with-callback";
 import Timeline from "react-vis-timeline-2";
-import { PLAY_STATE } from "../../reducers/appReducer";
-
-let timeline = null;
-
-let startDate = new Date();
-startDate.setHours(startDate.getHours() + 1);
 
 let zoomLevel = 1;
 
@@ -29,10 +23,9 @@ const options = {
   verticalScroll: true,
   min: Date.now(),
   showCurrentTime: false,
-  //max: startDate.getTime(),
-  timeAxis: { scale: "second", step: 5 },
-  zoomMin: 100,
-  zoomMax: 1000 * 3600,
+  //timeAxis: { scale: "second", step: 1 },
+  //zoomMin: 100,
+  //zoomMax: 1000 * 3600,
 };
 
 const getColorFromTag = (tag) => {
@@ -54,6 +47,7 @@ function Debug({ dispatch }) {
   const [isStarted, setIsStarted] = useStateWithCallbackLazy(false);
   const [isReset, setIsReset] = useStateWithCallbackLazy(true);
   const timelineRef = useRef();
+  const [zoom, setZoom] = useState({ action: null, level: 1 });
 
   useEffect(() => {
     if (appState.nbTasks > 0) {
@@ -62,6 +56,16 @@ function Debug({ dispatch }) {
   }, [appState.nbTasks, appState.tasksDone]);
 
   useEffect(() => {}, []);
+
+  useEffect(() => {
+    if (timelineRef && timelineRef.current) {
+      if (zoom && zoom.action && zoom.action === "in") {
+        timelineRef.current.timeline.zoomIn(zoomLevel);
+      } else {
+        timelineRef.current.timeline.zoomOut(zoomLevel);
+      }
+    }
+  }, [zoom]);
 
   useEffect(() => {
     if (timelineRef && timelineRef.current && progress === 1) {
@@ -131,15 +135,16 @@ function Debug({ dispatch }) {
   };
 
   const onZoom = () => {
-    zoomLevel -= 0.05;
-    zoomLevel = Math.max(0.5, zoomLevel);
-    timelineRef.current.timeline.zoomIn(zoomLevel);
+    setZoom({ action: "in", level: zoom.level - 0.05 });
+    // zoomLevel = Math.max(0.5, zoomLevel);
+    // timelineRef.current.timeline.zoomIn(zoomLevel);
   };
 
   const onUnzoom = () => {
-    zoomLevel += 0.05;
-    zoomLevel = Math.min(1, zoomLevel);
-    timelineRef.current.timeline.zoomOut(zoomLevel);
+    setZoom({ action: "out", level: zoom.level + 0.05 });
+    // console.log(">>>ZOOM", zoomLevel);
+    // zoomLevel = Math.min(1, zoomLevel);
+    // timelineRef.current.timeline.zoomOut(zoomLevel);
   };
 
   return (

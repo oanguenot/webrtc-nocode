@@ -28,7 +28,7 @@ class VideoEncodings extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Change Video Codec",
+        value: "Set Video Codec",
         description: "Name of the Encodings",
       },
       {
@@ -66,7 +66,7 @@ class VideoEncodings extends Main {
       case KEYS.PREFERENCE:
         return property.value === "unchanged" ? label : `use ${label}`;
       case KEYS.TRACK:
-        return property.value === "none" ? "no track" : `encode ${label}`;
+        return property.value === "none" ? " no track" : ` ${label}`;
     }
   }
 
@@ -80,9 +80,11 @@ class VideoEncodings extends Main {
         </div>
          <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="track-${
-              this._uuid
-            }">${this.renderProp(KEYS.TRACK)}</span>
+            <i id="track-color-${this._uuid}" class="fas fa-video ${
+      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
+    }""></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
+    }" id="track-${this._uuid}">${this.renderProp(KEYS.TRACK)}</span>
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="preference-${

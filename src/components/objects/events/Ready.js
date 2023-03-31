@@ -1,5 +1,5 @@
 import Main from "../Main";
-import {NODES, KEYS, KEY_TYPE} from "../../../modules/model";
+import { NODES, KEYS, KEY_TYPE } from "../../../modules/model";
 
 class Ready extends Main {
   static item = "Ready";
@@ -25,16 +25,16 @@ class Ready extends Main {
         label: "Delay",
         type: KEY_TYPE.ENUM,
         enum: [
-          { label: "No delay", value: "none" },
-          { label: "1 second", value: "1000" },
-          { label: "2 seconds", value: "2000" },
-          { label: "3 seconds", value: "3000" },
-          { label: "5 seconds", value: "5000" },
-          { label: "10 seconds", value: "10000" },
-          { label: "15 seconds", value: "15000" },
-          { label: "30 seconds", value: "30000" },
+          { label: "Immediately", value: 0 },
+          { label: "1 second", value: 1000 },
+          { label: "2 seconds", value: 2000 },
+          { label: "3 seconds", value: 3000 },
+          { label: "5 seconds", value: 5000 },
+          { label: "10 seconds", value: 10000 },
+          { label: "15 seconds", value: 15000 },
+          { label: "30 seconds", value: 30000 },
         ],
-        value: "none",
+        value: 0,
         description: "Name of the Step",
       },
       {
@@ -48,6 +48,8 @@ class Ready extends Main {
     ];
     this._acceptOutputs = [NODES.ACTIONS];
     this._acceptInputs = [];
+    this._sources = [`${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`];
+    this._targets = [];
   }
 
   renderProp(prop) {
@@ -57,16 +59,16 @@ class Ready extends Main {
     switch (prop) {
       case KEYS.DELAY: {
         const label = this.getLabelFromPropertySelect(property);
-        if (property.value === "none") {
-          return "No delay";
+        if (property.value === 0) {
+          return `${label}`;
         }
         return `after ${label}`;
       }
       case KEYS.PEER: {
-        if(property.value === "none") {
+        if (property.value === "none") {
           return "No peer";
         }
-        return `from ${label}`;
+        return `${label}`;
       }
       default:
         return "";
@@ -83,9 +85,11 @@ class Ready extends Main {
         </div>
         <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="peer-${
-      this._uuid
-    }">${this.renderProp(KEYS.PEER)}</span>
+            <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
           </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="delay-${
@@ -95,8 +99,8 @@ class Ready extends Main {
             
              <div class="object-footer">
                 <span class="object-node object-title-box">${
-      this._info[0].value
-    }.${this._uuid}</span>    
+                  this._info[0].value
+                }.${this._uuid}</span>    
             </div>
         </div>
       </div>

@@ -28,7 +28,7 @@ class VideoAdjust extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Video Adjustment",
+        value: "Adjust Video",
         description: "Name of the adjustment",
       },
       {
@@ -40,7 +40,7 @@ class VideoAdjust extends Main {
           { label: "Yes", value: "yes" },
           { label: "No", value: "no" },
         ],
-        value: "yes",
+        value: "unchanged",
         description: "Choose if the stream is active",
       },
       {
@@ -97,7 +97,7 @@ class VideoAdjust extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.ACTIVE:
-        return property.value === "yes" ? "active" : "inactive";
+        return property.value;
       case KEYS.MAX_BITRATE:
         return property.value === "unlimited"
           ? "no rate limit"
@@ -107,7 +107,7 @@ class VideoAdjust extends Main {
           ? "no frames limit"
           : `limited to ${label}`;
       case KEYS.TRACK:
-        return property.value === "none" ? "no track" : `encode ${label}`;
+        return property.value === "none" ? "no track" : `${label}`;
     }
   }
 
@@ -121,9 +121,11 @@ class VideoAdjust extends Main {
         </div>
          <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="track-${
-              this._uuid
-            }">${this.renderProp(KEYS.TRACK)}</span>
+            <i id="track-color-${this._uuid}" class="fas fa-video ${
+      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
+    }" id="track-${this._uuid}">${this.renderProp(KEYS.TRACK)}</span>
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="active-${

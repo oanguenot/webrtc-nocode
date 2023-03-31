@@ -1,7 +1,11 @@
 import Main from "../Main";
 
 import "../Main.css";
-import {KEY_TYPE, KEYS, NODES} from "../../../modules/model";
+import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { customAlphabet } from "nanoid";
+
+const CUSTOM_ALPHABET = "0123456789abcdef";
+const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class PeerConnection extends Main {
   static item = "Peer Connection";
@@ -28,20 +32,34 @@ class PeerConnection extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `PC-${this._uuid}`,
+        value: `PC-${nanoid()}`,
         description: "Name of the Peer Connection",
+      },
+      {
+        prop: KEYS.TURN,
+        label: "Use STUN/TURN",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "No, local only", value: "local" }],
+        value: "local",
+        description: "Select the TURN server to use",
       },
       {
         prop: KEYS.NETWORK,
         label: "Connection type",
         type: KEY_TYPE.ENUM,
         enum: [
-          { label: "Any", value: "any" },
+          { label: "Unforced", value: "unforced" },
           { label: "Relay only", value: "relay" },
         ],
-        value: "any",
+        value: "unforced",
         description: "Choose the connection type to use",
       },
+    ];
+    this._sources = [`${KEYS.NAME}:${KEYS.TURN}@${NODES.TURN}`];
+    this._targets = [
+      `${KEYS.NAME}:${KEYS.PEER}@${NODES.READY}`,
+      `${KEYS.NAME}:${KEYS.PEER}@${NODES.ICE}`,
+      `${KEYS.NAME}:${KEYS.PEER}@${NODES.CALL}`,
     ];
   }
 
@@ -54,6 +72,8 @@ class PeerConnection extends Main {
         return property.value === "any" ? "Unforced network" : label;
       case KEYS.NAME:
         return property.value;
+      case KEYS.TURN:
+        return property.value === "local" ? "Local only" : label;
       default:
         return "";
     }
@@ -68,6 +88,11 @@ class PeerConnection extends Main {
     }">${this.renderProp(KEYS.NAME)}</span>
         </div>
         <div class="box">
+        <div class="object-box-line">
+            <i class="fas fa-bezier-curve"></i><span class="object-details-value" id="turn-${
+              this._uuid
+            }">${this.renderProp(KEYS.TURN)}</span>
+            </div>
             <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="network-${
               this._uuid
             }">${this.renderProp(KEYS.NETWORK)}</span>

@@ -5,6 +5,8 @@ export const NODES = {
   ENCODE: "action.encode",
   ADJUST: "action.adjust",
   CALL: "action.call",
+  RESTARTICE: "action.restart",
+  MUNGING: "action.munging",
   ANALYZE: "action.analyze", // for WebRTCMetrics
   WATCH: "rtc.watchrtc", // for WatchRTC
   WAIT: "action.wait",
@@ -24,17 +26,25 @@ export const KEYS = {
   NODE: "node",
   KIND: "kind",
   INFO: "info",
+  CALL: "call",
   FROM: "from",
   NAME: "name",
   NETWORK: "network",
   ACTIVE: "active",
   PREFERENCE: "preference",
   MAX_BITRATE: "maxBitrate",
+  FRAMERATE: "framerate",
   MAX_FRAMERATE: "maxFramerate",
+  RESOLUTION: "resolution",
+  CHANNEL_COUNT: "channelCount",
   TRACK: "track",
   DELAY: "delay",
   PEER: "peer",
   ICESTATE: "iceState",
+  TURN: "turn",
+  STUNURL: "stunurl",
+  TURNURL: "turnurl",
+  TURNTOKEN: "turntoken",
 };
 
 export const KEY_TYPE = {

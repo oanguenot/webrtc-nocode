@@ -1,4 +1,9 @@
 import Main from "../Main";
+import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
+import { customAlphabet } from "nanoid";
+
+const CUSTOM_ALPHABET = "0123456789abcdef";
+const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class AudioTrack extends Main {
   static item = "Audio Track";
@@ -12,20 +17,27 @@ class AudioTrack extends Main {
     this._inputs = 0;
     this._outputs = 1;
     this._acceptInputs = [];
-    this._acceptOutputs = ["rtc.peer"];
+    this._acceptOutputs = [NODES.PEER];
     this._info = [
-      { key: "node", value: "rtc.track" },
-      { key: "kind", value: "audio" },
+      { key: KEYS.NODE, value: NODES.TRACK },
+      { key: KEYS.KIND, value: KIND.AUDIO },
       {
-        key: "info",
+        key: KEYS.INFO,
         value: "Get the MediaStreamTrack instance from the selected device",
       },
     ];
     this._properties = [
       {
-        prop: "from",
+        prop: KEYS.NAME,
+        label: "Name",
+        type: KEY_TYPE.TEXT,
+        value: `${KIND.AUDIO}-${nanoid()}`,
+        description: "Choose the preferred microphone",
+      },
+      {
+        prop: KEYS.FROM,
         label: "From",
-        type: "enum",
+        type: KEY_TYPE.ENUM,
         enum: [
           { label: "[Default]", value: "[default]" },
           { label: "None", value: "none" },
@@ -35,9 +47,9 @@ class AudioTrack extends Main {
         description: "Choose the preferred microphone",
       },
       {
-        prop: "channelCount",
+        prop: KEYS.CHANNEL_COUNT,
         label: "Channels Count",
-        type: "enum",
+        type: KEY_TYPE.ENUM,
         enum: [
           { label: "Mono", value: 1 },
           { label: "Stereo", value: 2 },
@@ -46,10 +58,17 @@ class AudioTrack extends Main {
         description: "Number of Channels (mono or stereo)",
       },
     ];
+    this._sources = [];
+    this._targets = [
+      `${KEYS.NAME}:${KEYS.TRACK}@${NODES.ENCODE}`,
+      `${KEYS.NAME}:${KEYS.TRACK}@${NODES.ADJUST}`,
+    ];
   }
 
   addDevices(list) {
-    const prop = this._properties.find((property) => property.prop === "from");
+    const prop = this._properties.find(
+      (property) => property.prop === KEYS.FROM
+    );
     const existingDevices = prop.enum;
     list.forEach((mediaDevice) => {
       if (mediaDevice.kind === "audioinput") {
@@ -71,10 +90,12 @@ class AudioTrack extends Main {
     const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
-      case "from":
+      case KEYS.NAME:
+        return property.value;
+      case KEYS.FROM:
         return label;
-      case "channelCount":
-        return `Capture in ${label}`;
+      case KEYS.CHANNEL_COUNT:
+        return `${label}`;
       default:
         return "";
     }
@@ -84,21 +105,29 @@ class AudioTrack extends Main {
     return `
       <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="from-${
+            <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
       this._uuid
-    }">${this.renderProp("from")}</span>
+    }">${this.renderProp(KEYS.NAME)}</span>
         </div>
         <div class="box">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="channelCount-${
-              this._uuid
-            }">${this.renderProp("channelCount")}</span>
-             <div class="object-footer">
+            <div class="object-box-line">
+                <i class="fas fa-play"></i><span class="object-details-value" id="from-${
+                  this._uuid
+                }">${this.renderProp(KEYS.FROM)}</span>
+            </div>
+            <div class="object-box-line">
+                <i class="fas fa-headphones"></i><span class="object-details-value" id="channelCount-${
+                  this._uuid
+                }">${this.renderProp(KEYS.CHANNEL_COUNT)}</span>
+            </div>
+            
+            <div class="object-footer">
                 <span class="object-node object-title-box">${
                   this._info[0].value
                 }.${this._uuid}</span>    
             </div>
         </div>
-      </div>
+        </div>
     `;
   }
 }

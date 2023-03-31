@@ -15,6 +15,7 @@ import ICEConnectionEvent from "../components/objects/events/ICEConnectionEvent"
 import WatchRTC from "../components/objects/external/WatchRTC";
 import AudioAdjust from "../components/objects/actions/AudioAdjust";
 import VideoAdjust from "../components/objects/actions/VideoAdjust";
+import RestartIce from "../components/objects/actions/RestartIce";
 
 const ObjectBuilder = {
   Ready: Ready,
@@ -30,9 +31,9 @@ const ObjectBuilder = {
   VideoEncodings: VideoEncodings,
   AudioAdjust: AudioAdjust,
   VideoAdjust: VideoAdjust,
-  //WebRTCMetrics: WebRTCMetrics,
   WatchRTC: WatchRTC,
   CallP2P: CallP2P,
+  RestartIce: RestartIce,
   End: End,
 };
 
@@ -49,6 +50,7 @@ const convertNodeNameToClass = (name, kind) => {
     "action.adjust": kind === "audio" ? AudioAdjust : VideoAdjust,
     "action.analyze": WebRTCMetrics,
     "action.call": CallP2P,
+    "action.restart": RestartIce,
     "action.end": End,
   };
 

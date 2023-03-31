@@ -1,4 +1,6 @@
 import Main from "../Main";
+import { KEY_TYPE, KEYS } from "../../../modules/model";
+import { nanoid } from "nanoid";
 
 class WatchRTC extends Main {
   static item = "WatchRTC";
@@ -29,6 +31,17 @@ class WatchRTC extends Main {
         description: "Name of the tool",
       },
       {
+        prop: KEYS.ACTIVE,
+        label: "Active",
+        type: KEY_TYPE.ENUM,
+        enum: [
+          { label: "Yes", value: "yes" },
+          { label: "No", value: "no" },
+        ],
+        value: "yes",
+        description: "Choose if watchRTC is active or not",
+      },
+      {
         prop: "apiKey",
         label: "API Key",
         type: "text",
@@ -39,15 +52,8 @@ class WatchRTC extends Main {
         prop: "roomId",
         label: "Room ID",
         type: "text",
-        value: "",
+        value: `room-${nanoid(4)}`,
         description: "Name of the room",
-      },
-      {
-        prop: "peerId",
-        label: "Peer ID",
-        type: "text",
-        value: "",
-        description: "Name of the peer",
       },
     ];
   }
@@ -58,12 +64,12 @@ class WatchRTC extends Main {
     switch (prop) {
       case "name":
         return property.value;
+      case "active":
+        return property.value === "yes" ? "active" : "pause";
       case "apiKey":
-        return `key: ${property.value ? property.value.substring(0, 10) + "..." : "none"}`;
+        return property.value ? "*****" : "none";
       case "roomId":
-        return property.value ? `$room ${property.value}` : "no ID for room";
-      case "peerId":
-        return property.value ? `user ${property.value}` : "no ID for peer";
+        return property.value ? property.value : "no ID for room";
     }
   }
 
@@ -77,25 +83,25 @@ class WatchRTC extends Main {
         </div>
          <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="apiKey-${
-      this._uuid
-    }">${this.renderProp("apiKey")}</span>
+            <i class="fas fa-key"></i><span class="object-details-value" id="apiKey-${
+              this._uuid
+            }">${this.renderProp("apiKey")}</span>
             </div>
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="roomId-${
-      this._uuid
-    }">${this.renderProp("roomId")}</span>
+            <i class="fas fa-house-user"></i><span class="object-details-value" id="roomId-${
+              this._uuid
+            }">${this.renderProp("roomId")}</span>
             </div>
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="peerId-${
-      this._uuid
-    }">${this.renderProp("peerId")}</span>
+            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="active-${
+              this._uuid
+            }">${this.renderProp("active")}</span>
             </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${
-      this._info[0].value
-    }.${this._uuid}
-                </span>    
+                  this._info[0].value
+                }.${this._uuid}
+                </span>
             </div>
         </div>
       </div>
