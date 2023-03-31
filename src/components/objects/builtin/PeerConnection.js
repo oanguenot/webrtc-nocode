@@ -98,8 +98,8 @@ class PeerConnection extends Main {
             }">${this.renderProp(KEYS.NETWORK)}</span>
              <div class="object-footer">
                 <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}</span>    
+                  this.node
+                }</span>    
             </div>
         </div>
       </div>

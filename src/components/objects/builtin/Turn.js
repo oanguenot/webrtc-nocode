@@ -100,9 +100,7 @@ class Turn extends Main {
             }">${this.renderProp(KEYS.TURNTOKEN)}</span>
             </div>
              <div class="object-footer">
-                <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}
+                <span class="object-node object-title-box">${this.node}
                 </span>    
             </div>
         </div>
