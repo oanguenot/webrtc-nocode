@@ -10,7 +10,7 @@ class CallP2P extends Main {
 
   constructor(x, y) {
     super(x, y);
-    this._inputs = 1;
+    this._inputs = 2;
     this._outputs = 1;
     this._info = [
       { key: KEYS.NODE, value: NODES.CALL },
@@ -19,7 +19,7 @@ class CallP2P extends Main {
         value: "Initiate a P2P call to a recipient by sending an offer",
       },
     ];
-    this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS];
+    this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS, NODES.MUNGING];
     this._acceptOutputs = [NODES.ACTIONS];
     this._properties = [
       {

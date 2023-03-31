@@ -9,12 +9,12 @@ class SDPMunging extends Main {
   static item = "SDPMunging";
   static description = "Mungle SDP";
   static icon = "vial";
-  static section = "actions";
+  static section = "builtin";
   static name = "SDPMunging";
 
   constructor(x, y) {
     super(x, y);
-    this._inputs = 1;
+    this._inputs = 0;
     this._outputs = 1;
     this._info = [
       { key: KEYS.NODE, value: NODES.MUNGING },
@@ -23,8 +23,8 @@ class SDPMunging extends Main {
         value: "Modify the SDP when negotiating the call",
       },
     ];
-    this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS];
-    this._acceptOutputs = [NODES.ACTIONS];
+    this._acceptInputs = [];
+    this._acceptOutputs = [NODES.CALL];
     this._properties = [
       {
         prop: KEYS.NAME,
@@ -34,15 +34,15 @@ class SDPMunging extends Main {
         description: "Action/Name",
       },
       {
-        prop: KEYS.CALL,
-        label: "Call",
+        prop: KEYS.OPERATION,
+        label: "Operation",
         type: KEY_TYPE.ENUM,
-        enum: [{ label: "None", value: "none" }],
+        enum: [{ label: "None", value: "none" }, {label: "RRTR", value: "rrtr"}],
         value: "none",
-        description: "Choose the call to update",
+        description: "Choose the operation to apply on the SDP",
       },
     ];
-    this._sources = [`${KEYS.NAME}:${KEYS.CALL}@${NODES.CALL}`];
+    this._sources = [];
     this._targets = [];
   }
 
@@ -53,8 +53,8 @@ class SDPMunging extends Main {
     switch (prop) {
       case KEYS.NAME:
         return property.value;
-      case KEYS.CALL:
-        return property.value === "none" ? "no call" : `${label}`;
+      case KEYS.OPERATION:
+        return property.value === "none" ? "no operation" : `${label}`;
       default:
         return "";
     }
@@ -66,15 +66,15 @@ class SDPMunging extends Main {
         <div class="title-box">
           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
       this._uuid
-    }">${this.renderProp("name")}</span>
+    }">${this.renderProp(KEYS.NAME)}</span>
         </div>
         <div class="box">
         <div class="object-box-line">
-            <i id="call-color-${this._uuid}" class="fas fa-phone-volume ${
-      this.renderColorIsMissingProp(KEYS.CALL) ? "red" : ""
+            <i id="operation-color-${this._uuid}" class="fas fa-wrench ${
+      this.renderColorIsMissingProp(KEYS.OPERATION) ? "red" : ""
     }"></i><span class="object-details-value ${
-      this.renderColorIsMissingProp(KEYS.CALL) ? "red" : ""
-    }" id="call-${this._uuid}">${this.renderProp(KEYS.CALL)}</span>
+      this.renderColorIsMissingProp(KEYS.OPERATION) ? "red" : ""
+    }" id="operation-${this._uuid}">${this.renderProp(KEYS.OPERATION)}</span>
             </div>
             <div class="object-footer">
                 <span class="object-node object-title-box">${

@@ -16,6 +16,7 @@ import WatchRTC from "../components/objects/external/WatchRTC";
 import AudioAdjust from "../components/objects/actions/AudioAdjust";
 import VideoAdjust from "../components/objects/actions/VideoAdjust";
 import RestartIce from "../components/objects/actions/RestartIce";
+import SDPMunging from "../components/objects/builtin/SDPMunging";
 
 const ObjectBuilder = {
   Ready: Ready,
@@ -27,6 +28,7 @@ const ObjectBuilder = {
   AudioTrack: AudioTrack,
   VideoTrack: VideoTrack,
   Turn: Turn,
+  SDPMunging: SDPMunging,
   AudioEncodings: AudioEncodings,
   VideoEncodings: VideoEncodings,
   AudioAdjust: AudioAdjust,
@@ -45,6 +47,7 @@ const convertNodeNameToClass = (name, kind) => {
     "rtc.watchrtc": WatchRTC,
     "rtc.track": kind === "audio" ? AudioTrack : VideoTrack,
     "rtc.turn": Turn,
+    "rtc.munging": SDPMunging,
     "action.wait": Waiting,
     "action.encode": kind === "audio" ? AudioEncodings : VideoEncodings,
     "action.adjust": kind === "audio" ? AudioAdjust : VideoAdjust,

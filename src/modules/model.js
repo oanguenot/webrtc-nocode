@@ -2,11 +2,11 @@ export const NODES = {
   PEER: "rtc.peer",
   TRACK: "rtc.track",
   TURN: "rtc.turn",
+  MUNGING: "rtc.munging",
   ENCODE: "action.encode",
   ADJUST: "action.adjust",
   CALL: "action.call",
   RESTARTICE: "action.restart",
-  MUNGING: "action.munging",
   ANALYZE: "action.analyze", // for WebRTCMetrics
   WATCH: "rtc.watchrtc", // for WatchRTC
   WAIT: "action.wait",
@@ -45,6 +45,7 @@ export const KEYS = {
   STUNURL: "stunurl",
   TURNURL: "turnurl",
   TURNTOKEN: "turntoken",
+  OPERATION: "operation",
 };
 
 export const KEY_TYPE = {
