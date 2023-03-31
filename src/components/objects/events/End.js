@@ -1,5 +1,5 @@
 import Main from "../Main";
-import {KEYS, NODES} from "../../../modules/model";
+import { KEYS, NODES } from "../../../modules/model";
 
 class End extends Main {
   static item = "End";
@@ -12,7 +12,8 @@ class End extends Main {
     super(x, y);
     this._inputs = 1;
     this._outputs = 0;
-    this._info = [{ key: KEYS.NODE, value: NODES.END },
+    this._info = [
+      { key: KEYS.NODE, value: NODES.END },
       {
         key: KEYS.INFO,
         value: "Terminate the scenario and release all media and devices",
@@ -32,9 +33,7 @@ class End extends Main {
         <div class="box">
             <span class="object-full">Well done! Your scenario is finished and stopped.</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">${
-      this._info[0].value
-    }.${this._uuid}</span>    
+                <span class="object-node object-title-box">${this.node}</span>    
             </div>
         </div>
       </div>

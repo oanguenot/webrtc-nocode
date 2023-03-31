@@ -4,7 +4,7 @@ import { NODES, KEYS, KEY_TYPE } from "../../../modules/model";
 class Ready extends Main {
   static item = "Ready";
   static description = "Handle playground ready";
-  static icon = "bolt";
+  static icon = "traffic-light";
   static section = "events";
   static name = "Ready";
 
@@ -99,8 +99,8 @@ class Ready extends Main {
             
              <div class="object-footer">
                 <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}</span>    
+                  this.node
+                }</span>    
             </div>
         </div>
       </div>

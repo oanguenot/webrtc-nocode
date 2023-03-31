@@ -37,7 +37,10 @@ class SDPMunging extends Main {
         prop: KEYS.OPERATION,
         label: "Operation",
         type: KEY_TYPE.ENUM,
-        enum: [{ label: "None", value: "none" }, {label: "RRTR", value: "rrtr"}],
+        enum: [
+          { label: "None", value: "none" },
+          { label: "RRTR", value: "rrtr" },
+        ],
         value: "none",
         description: "Choose the operation to apply on the SDP",
       },
@@ -70,7 +73,9 @@ class SDPMunging extends Main {
         </div>
         <div class="box">
         <div class="object-box-line">
-            <i id="operation-color-${this._uuid}" class="fas fa-wrench ${
+            <i id="operation-color-${
+              this._uuid
+            }" class="fas fa-prescription-bottle ${
       this.renderColorIsMissingProp(KEYS.OPERATION) ? "red" : ""
     }"></i><span class="object-details-value ${
       this.renderColorIsMissingProp(KEYS.OPERATION) ? "red" : ""
@@ -78,8 +83,8 @@ class SDPMunging extends Main {
             </div>
             <div class="object-footer">
                 <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}</span>    
+                  this.node
+                }</span>    
             </div>
         </div>
       </div>
