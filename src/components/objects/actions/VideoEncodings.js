@@ -54,6 +54,8 @@ class VideoEncodings extends Main {
         description: "Choose the track to update",
       },
     ];
+    this._sources = [`${KEYS.NAME}:${KEYS.TRACK}@${NODES.TRACK}`];
+    this._targets = [];
   }
 
   renderProp(prop) {
