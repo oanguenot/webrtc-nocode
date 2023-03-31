@@ -425,6 +425,28 @@ const createTurnConfiguration = (turns, peerId) => {
   });
 };
 
+const mungleSDP = (mungleNode, peerNode, offer) => {
+  return new Promise((resolve, reject) => {
+    addLog(
+      "peer",
+      "log",
+      `${peerNode.id} mungle SDP`,
+      null,
+      dispatcher
+    );
+    addEventToTimeline(
+      "mungle",
+      "",
+      nanoid(),
+      Date.now(),
+      `playground`,
+      "point",
+      dispatcher
+    );
+    resolve(offer);
+  });
+}
+
 const call = (callerNode, calleeNode, callNode) => {
   return new Promise(async (resolve, reject) => {
     const waitForIce = (peer, id) => {
@@ -448,9 +470,19 @@ const call = (callerNode, calleeNode, callNode) => {
       reject();
     }
 
+    const munglerNode = callNode.linksInput.find(inputId => {
+      const inputNode =   getNodeById(inputId);
+      return inputNode.node === NODES.MUNGING;
+    });
+
     // to do --> Put in peer event iceconnectionchange: "checking" --> "connected"
     //createTempPeriod("setup-call", callerNode.id, Date.now());
-    const offer = await callerWin.pc.createOffer();
+    let offer = await callerWin.pc.createOffer();
+
+    if(munglerNode) {
+      offer = await mungleSDP(munglerNode, offer);
+    }
+
     await callerWin.pc.setLocalDescription(offer);
     const ices = await waitForIce(callerWin.pc, callerNode.id);
 
