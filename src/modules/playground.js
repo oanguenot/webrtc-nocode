@@ -29,6 +29,7 @@ import {
   startMonitoring,
   stopMonitoring,
 } from "./metrics";
+import {mungle} from "./sdp";
 
 const frames = {};
 let dispatcher = null;
@@ -443,11 +444,14 @@ const mungleSDP = (mungleNode, peerNode, offer) => {
       "point",
       dispatcher
     );
-    resolve(offer);
+
+    const operation = mungleNode.getPropertyValueFor(KEYS.OPERATION);
+    const updatedOffer = mungle(operation, offer);
+    resolve(updatedOffer);
   });
 }
 
-const call = (callerNode, calleeNode, callNode) => {
+const call = (callerNode, calleeNode, callNode, nodes) => {
   return new Promise(async (resolve, reject) => {
     const waitForIce = (peer, id) => {
       return new Promise((resolve, reject) => {
@@ -470,31 +474,38 @@ const call = (callerNode, calleeNode, callNode) => {
       reject();
     }
 
-    const munglerNode = callNode.linksInput.find(inputId => {
-      const inputNode =   getNodeById(inputId);
+    const munglerId = callNode.linksInput.find(inputId => {
+      const inputNode =  getNodeById(inputId, nodes);
       return inputNode.node === NODES.MUNGING;
     });
 
     // to do --> Put in peer event iceconnectionchange: "checking" --> "connected"
     //createTempPeriod("setup-call", callerNode.id, Date.now());
-    let offer = await callerWin.pc.createOffer();
+    let rtcOfferSessionDescription = await callerWin.pc.createOffer();
 
-    if(munglerNode) {
-      offer = await mungleSDP(munglerNode, offer);
+    if(munglerId) {
+      const munglerNode =  getNodeById(munglerId, nodes);
+      rtcOfferSessionDescription.sdp = await mungleSDP(munglerNode, callerNode, rtcOfferSessionDescription.sdp);
     }
 
-    await callerWin.pc.setLocalDescription(offer);
+    await callerWin.pc.setLocalDescription(rtcOfferSessionDescription);
     const ices = await waitForIce(callerWin.pc, callerNode.id);
 
     //createTempPeriod("setup-call", calleeNode.id, Date.now());
-    await calleeWin.pc.setRemoteDescription(offer);
-    const answer = await calleeWin.pc.createAnswer();
-    await calleeWin.pc.setLocalDescription(answer);
+    await calleeWin.pc.setRemoteDescription(rtcOfferSessionDescription);
+    const rtcAnswerSessionDescription = await calleeWin.pc.createAnswer();
+
+    if(munglerId) {
+      const munglerNode =  getNodeById(munglerId, nodes);
+      rtcAnswerSessionDescription.sdp = await mungleSDP(munglerNode, callerNode, rtcAnswerSessionDescription.sdp);
+    }
+
+    await calleeWin.pc.setLocalDescription(rtcAnswerSessionDescription);
 
     const calleeIces = await waitForIce(calleeWin.pc, calleeNode.id);
     ices.forEach((ice) => calleeWin.pc.addIceCandidate(ice));
 
-    await callerWin.pc.setRemoteDescription(answer);
+    await callerWin.pc.setRemoteDescription(rtcAnswerSessionDescription);
     calleeIces.forEach((ice) => callerWin.pc.addIceCandidate(ice));
     resolve();
   });
@@ -789,7 +800,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         );
 
         if (recipientPeer && fromPeer) {
-          promises.push(call(fromPeer, recipientPeer, currentNode));
+          promises.push(call(fromPeer, recipientPeer, currentNode, nodes));
         } else {
           console.warn("[play] can't call - missing callee");
           reject();
