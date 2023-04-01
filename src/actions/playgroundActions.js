@@ -214,3 +214,10 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
     payload: {},
   });
 };
+
+export const checkFileConcistency = (imported) => {
+  const nodes = imported.nodes; // drawflow
+  const objects = imported.objects; // models
+
+  console.log(">>>", nodes, objects);
+};

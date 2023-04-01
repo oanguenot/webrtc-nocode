@@ -29,7 +29,7 @@ import {
   startMonitoring,
   stopMonitoring,
 } from "./metrics";
-import {mungle} from "./sdp";
+import { mungle } from "./sdp";
 
 const frames = {};
 let dispatcher = null;
@@ -428,13 +428,7 @@ const createTurnConfiguration = (turns, peerId) => {
 
 const mungleSDP = (mungleNode, peerNode, offer) => {
   return new Promise((resolve, reject) => {
-    addLog(
-      "peer",
-      "log",
-      `${peerNode.id} mungle SDP`,
-      null,
-      dispatcher
-    );
+    addLog("peer", "log", `${peerNode.id} mungle SDP`, null, dispatcher);
     addEventToTimeline(
       "mungle",
       "",
@@ -449,7 +443,7 @@ const mungleSDP = (mungleNode, peerNode, offer) => {
     const updatedOffer = mungle(operation, offer);
     resolve(updatedOffer);
   });
-}
+};
 
 const call = (callerNode, calleeNode, callNode, nodes) => {
   return new Promise(async (resolve, reject) => {
@@ -474,8 +468,8 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
       reject();
     }
 
-    const munglerId = callNode.linksInput.find(inputId => {
-      const inputNode =  getNodeById(inputId, nodes);
+    const munglerId = callNode.linksInput.find((inputId) => {
+      const inputNode = getNodeById(inputId, nodes);
       return inputNode.node === NODES.MUNGING;
     });
 
@@ -483,9 +477,13 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
     //createTempPeriod("setup-call", callerNode.id, Date.now());
     let rtcOfferSessionDescription = await callerWin.pc.createOffer();
 
-    if(munglerId) {
-      const munglerNode =  getNodeById(munglerId, nodes);
-      rtcOfferSessionDescription.sdp = await mungleSDP(munglerNode, callerNode, rtcOfferSessionDescription.sdp);
+    if (munglerId) {
+      const munglerNode = getNodeById(munglerId, nodes);
+      rtcOfferSessionDescription.sdp = await mungleSDP(
+        munglerNode,
+        callerNode,
+        rtcOfferSessionDescription.sdp
+      );
     }
 
     await callerWin.pc.setLocalDescription(rtcOfferSessionDescription);
@@ -495,9 +493,13 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
     await calleeWin.pc.setRemoteDescription(rtcOfferSessionDescription);
     const rtcAnswerSessionDescription = await calleeWin.pc.createAnswer();
 
-    if(munglerId) {
-      const munglerNode =  getNodeById(munglerId, nodes);
-      rtcAnswerSessionDescription.sdp = await mungleSDP(munglerNode, callerNode, rtcAnswerSessionDescription.sdp);
+    if (munglerId) {
+      const munglerNode = getNodeById(munglerId, nodes);
+      rtcAnswerSessionDescription.sdp = await mungleSDP(
+        munglerNode,
+        callerNode,
+        rtcAnswerSessionDescription.sdp
+      );
     }
 
     await calleeWin.pc.setLocalDescription(rtcAnswerSessionDescription);
@@ -511,7 +513,7 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
   });
 };
 
-const encode = (peerNode, encodeNode, nodes) => {
+const encode = (encodeNode, nodes) => {
   return new Promise((resolve, reject) => {
     const trackNodeId = encodeNode.getPropertyValueFor(KEYS.TRACK);
     const codecMimeType = encodeNode.getPropertyValueFor(KEYS.PREFERENCE);
@@ -521,6 +523,10 @@ const encode = (peerNode, encodeNode, nodes) => {
     const trackLabel = trackNode.getLabelFromPropertySelect(fromProperty);
     const trackKind = trackNode.getInfoValueFor(KEYS.KIND);
     const trackDeviceId = trackNode.getPropertyValueFor(KEYS.FROM);
+
+    // Deduce peer node from track node
+    const peerId = trackNode.linksOutput[0];
+    const peerNode = getNodeById(peerId);
 
     const win = frames[peerNode.id];
     if (!win.pc) {
@@ -569,7 +575,7 @@ const encode = (peerNode, encodeNode, nodes) => {
   });
 };
 
-const adjust = (peerNode, encodeNode, nodes) => {
+const adjust = (encodeNode, nodes) => {
   return new Promise((resolve, reject) => {
     const trackNodeId = encodeNode.getPropertyValueFor(KEYS.TRACK);
     const maxBitrate = encodeNode.getPropertyValueFor(KEYS.MAX_BITRATE);
@@ -581,6 +587,10 @@ const adjust = (peerNode, encodeNode, nodes) => {
     const trackLabel = trackNode.getLabelFromPropertySelect(fromProperty);
     const trackKind = trackNode.getInfoValueFor(KEYS.KIND);
     const trackDeviceId = trackNode.getPropertyValueFor(KEYS.FROM);
+
+    // Deduce peer node from track node
+    const peerId = trackNode.linksOutput[0];
+    const peerNode = getNodeById(peerId);
 
     const win = frames[peerNode.id];
     if (!win.pc) {
@@ -813,19 +823,11 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         break;
       }
       case NODES.ENCODE: {
-        const fromPeer = getNodeById(
-          initialEvent.getPropertyValueFor("peer"),
-          nodes
-        );
-        promises.push(encode(fromPeer, currentNode, nodes));
+        promises.push(encode(currentNode, nodes));
         break;
       }
       case NODES.ADJUST: {
-        const fromPeer = getNodeById(
-          initialEvent.getPropertyValueFor("peer"),
-          nodes
-        );
-        promises.push(adjust(fromPeer, currentNode, nodes));
+        promises.push(adjust(currentNode, nodes));
         break;
       }
       case NODES.RESTARTICE: {

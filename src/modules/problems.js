@@ -7,10 +7,11 @@ export const checkNodesProblems = (nodes) => {
     const properties = node.properties;
     const nodeType = node.getInfoValueFor(KEYS.NODE);
     const propsNotFilled = properties.filter((prop) => prop.value === "none");
+    const name = node.getPropertyValueFor(KEYS.NAME);
     propsNotFilled.forEach((problem) => {
       problems.push({
         label: `Expected property ${problem.prop} to have a value`,
-        node: `${nodeType}.${node.id}`,
+        node: `${name ? name : `${nodeType}.${name || node.id}`}`,
       });
     });
   });

@@ -1,5 +1,9 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { customAlphabet } from "nanoid";
+
+const CUSTOM_ALPHABET = "0123456789abcdef";
+const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class Waiting extends Main {
   static item = "Wait";
@@ -22,6 +26,13 @@ class Waiting extends Main {
       },
     ];
     this._properties = [
+      {
+        prop: KEYS.NAME,
+        label: "Name",
+        type: KEY_TYPE.TEXT,
+        value: `Wait-${nanoid()}`,
+        description: "Name of the Waiter",
+      },
       {
         prop: KEYS.DELAY,
         label: "Delay",
@@ -51,8 +62,12 @@ class Waiting extends Main {
     const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
+      case KEYS.NAME:
+        return property.value;
       case KEYS.DELAY:
-        return `Wait ${label}`;
+        return `${label}`;
+      default:
+        return "";
     }
   }
 
@@ -60,12 +75,17 @@ class Waiting extends Main {
     return `
       <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="delay-${
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
       this._uuid
-    }">${this.renderProp(KEYS.DELAY)}</span>
+    }">${this.renderProp(KEYS.NAME)}</span>
         </div>
         <div class="box">
-             <div class="object-footer">
+            <div class="object-box-line">
+              <i class="fas fa-hourglass-half"></i><span class="object-details-value" id="delay-${
+                this._uuid
+              }">${this.renderProp(KEYS.DELAY)}</span>
+            </div>
+            <div class="object-footer">
                 <span class="object-node object-title-box">${this.node}
                 </span>      
             </div>

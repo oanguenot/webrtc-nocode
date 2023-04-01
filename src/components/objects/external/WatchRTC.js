@@ -24,9 +24,9 @@ class WatchRTC extends Main {
     this._acceptInputs = ["rtc.peer"];
     this._properties = [
       {
-        prop: "name",
+        prop: KEYS.NAME,
         label: "Name",
-        type: "text",
+        type: KEY_TYPE.TEXT,
         value: `WatchRTC SDK`,
         description: "Name of the tool",
       },

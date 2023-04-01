@@ -1,5 +1,9 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { customAlphabet } from "nanoid";
+
+const CUSTOM_ALPHABET = "0123456789abcdef";
+const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class CallP2P extends Main {
   static item = "CallP2P";
@@ -26,8 +30,24 @@ class CallP2P extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Call P2P",
+        value: `Call-${nanoid()}`,
         description: "Action/Name",
+      },
+      {
+        prop: KEYS.CALLER,
+        label: "Caller",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "None", value: "none" }],
+        value: "none",
+        description: "Choose the RTCPeerConnection to call",
+      },
+      {
+        prop: KEYS.RECIPIENT,
+        label: "Recipient",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "None", value: "none" }],
+        value: "none",
+        description: "Choose the RTCPeerConnection to call",
       },
       {
         prop: KEYS.DELAY,
@@ -43,16 +63,11 @@ class CallP2P extends Main {
         value: 0,
         description: "Delay to wait before sending message to recipient",
       },
-      {
-        prop: KEYS.PEER,
-        label: "Recipient",
-        type: KEY_TYPE.ENUM,
-        enum: [{ label: "None", value: "none" }],
-        value: "none",
-        description: "Choose the RTCPeerConnection to call",
-      },
     ];
-    this._sources = [`${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`];
+    this._sources = [
+      `${KEYS.NAME}:${KEYS.CALLER}@${NODES.PEER}`,
+      `${KEYS.NAME}:${KEYS.RECIPIENT}@${NODES.PEER}`,
+    ];
     this._targets = [`${KEYS.NAME}:${KEYS.CALL}@${NODES.RESTARTICE}`];
   }
 
@@ -67,7 +82,12 @@ class CallP2P extends Main {
           : `Latency of ${property.value}`;
       case KEYS.NAME:
         return property.value;
-      case KEYS.PEER:
+      case KEYS.CALLER:
+        if (property.value === "none") {
+          return "No caller";
+        }
+        return label;
+      case KEYS.RECIPIENT:
         if (property.value === "none") {
           return "No recipient";
         }
@@ -87,11 +107,18 @@ class CallP2P extends Main {
         </div>
         <div class="box">
          <div class="object-box-line">
-            <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
-      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+            <i id="caller-color-${this._uuid}" class="fas fa-portrait ${
+      this.renderColorIsMissingProp(KEYS.CALLER) ? "red" : ""
     }"></i><span class="object-details-value ${
-      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
-    }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
+      this.renderColorIsMissingProp(KEYS.CALLER) ? "red" : ""
+    }" id="caller-${this._uuid}">${this.renderProp(KEYS.CALLER)}</span>
+            </div>
+            <div class="object-box-line">
+            <i id="recipient-color-${this._uuid}" class="fas fa-portrait ${
+      this.renderColorIsMissingProp(KEYS.RECIPIENT) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.RECIPIENT) ? "red" : ""
+    }" id="recipient-${this._uuid}">${this.renderProp(KEYS.RECIPIENT)}</span>
             </div>
         <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="delay-${

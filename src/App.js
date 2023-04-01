@@ -12,6 +12,7 @@ import {
 } from "@atlaskit/atlassian-navigation";
 import {
   checkDevicesInNodes,
+  checkFileConcistency,
   exportToFile,
   getFileHandle,
   importFromFile,
@@ -91,6 +92,8 @@ function App() {
 
   const onImport = async () => {
     const imported = await importFromFile();
+
+    checkFileConcistency(imported);
 
     if (imported.nodes) {
       getEditor().import(imported.nodes);

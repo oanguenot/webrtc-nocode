@@ -40,6 +40,8 @@ export const KEYS = {
   TRACK: "track",
   DELAY: "delay",
   PEER: "peer",
+  CALLER: "caller",
+  RECIPIENT: "recipient",
   ICESTATE: "iceState",
   TURN: "turn",
   STUNURL: "stunurl",

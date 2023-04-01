@@ -88,19 +88,21 @@ class PeerConnection extends Main {
     }">${this.renderProp(KEYS.NAME)}</span>
         </div>
         <div class="box">
-        <div class="object-box-line">
-            <i class="fas fa-bezier-curve"></i><span class="object-details-value" id="turn-${
-              this._uuid
-            }">${this.renderProp(KEYS.TURN)}</span>
-            </div>
-            <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="network-${
-              this._uuid
-            }">${this.renderProp(KEYS.NETWORK)}</span>
-             <div class="object-footer">
-                <span class="object-node object-title-box">${
-                  this.node
-                }</span>    
-            </div>
+          <div class="object-box-line">
+              <i class="fas fa-bezier-curve"></i><span class="object-details-value" id="turn-${
+                this._uuid
+              }">${this.renderProp(KEYS.TURN)}</span>
+          </div>
+          <div class="object-box-line">
+              <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="network-${
+                this._uuid
+              }">${this.renderProp(KEYS.NETWORK)}</span>
+          </div>
+          <div class="object-footer">
+                  <span class="object-node object-title-box">${
+                    this.node
+                  }</span>    
+          </div>
         </div>
       </div>
       `;
