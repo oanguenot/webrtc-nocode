@@ -526,7 +526,7 @@ const encode = (encodeNode, nodes) => {
 
     // Deduce peer node from track node
     const peerId = trackNode.linksOutput[0];
-    const peerNode = getNodeById(peerId);
+    const peerNode = getNodeById(peerId, nodes);
 
     const win = frames[peerNode.id];
     if (!win.pc) {
@@ -590,7 +590,7 @@ const adjust = (encodeNode, nodes) => {
 
     // Deduce peer node from track node
     const peerId = trackNode.linksOutput[0];
-    const peerNode = getNodeById(peerId);
+    const peerNode = getNodeById(peerId, nodes);
 
     const win = frames[peerNode.id];
     if (!win.pc) {
@@ -799,15 +799,10 @@ const executeANode = (initialEvent, currentNode, nodes) => {
     const promises = [];
     switch (currentNode.node) {
       case NODES.CALL: {
-        const fromPeer = getNodeById(
-          initialEvent.getPropertyValueFor("peer"),
-          nodes
-        );
-
-        const recipientPeer = getNodeById(
-          currentNode.getPropertyValueFor("peer"),
-          nodes
-        );
+        const callerId = currentNode.getPropertyValueFor(KEYS.CALLER);
+        const fromPeer = getNodeById(callerId, nodes);
+        const recipientId = currentNode.getPropertyValueFor(KEYS.CALLER);
+        const recipientPeer = getNodeById(recipientId, nodes);
 
         if (recipientPeer && fromPeer) {
           promises.push(call(fromPeer, recipientPeer, currentNode, nodes));
