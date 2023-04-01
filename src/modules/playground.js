@@ -801,7 +801,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
       case NODES.CALL: {
         const callerId = currentNode.getPropertyValueFor(KEYS.CALLER);
         const fromPeer = getNodeById(callerId, nodes);
-        const recipientId = currentNode.getPropertyValueFor(KEYS.CALLER);
+        const recipientId = currentNode.getPropertyValueFor(KEYS.RECIPIENT);
         const recipientPeer = getNodeById(recipientId, nodes);
 
         if (recipientPeer && fromPeer) {
