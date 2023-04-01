@@ -665,7 +665,7 @@ const adjust = (encodeNode, nodes) => {
   });
 };
 
-const restartIce = (peerNode, currentNode, nodes) => {
+const restartIce = (peerNode, callNode, currentNode, nodes) => {
   return new Promise((resolve, reject) => {
     const win = frames[peerNode.id];
     if (!win.pc) {
@@ -674,10 +674,8 @@ const restartIce = (peerNode, currentNode, nodes) => {
       return;
     }
 
-    const callNodeId = currentNode.getPropertyValueFor(KEYS.CALL);
-    const callNode = getNodeById(callNodeId, nodes);
-    const calleePeerId = callNode.getPropertyValueFor(KEYS.PEER);
-    const calleeNode = getNodeById(calleePeerId, nodes);
+    const calleeId = callNode.getPropertyValueFor(KEYS.RECIPIENT);
+    const calleeNode = getNodeById(calleeId, nodes);
 
     win.pc.addEventListener(
       "negotiationneeded",
@@ -827,9 +825,10 @@ const executeANode = (initialEvent, currentNode, nodes) => {
       }
       case NODES.RESTARTICE: {
         const peerId = currentNode.getPropertyValueFor(KEYS.PEER);
-        const fromPeer = getNodeById(peerId, nodes);
-
-        promises.push(restartIce(fromPeer, currentNode, nodes));
+        const peerNode = getNodeById(peerId, nodes);
+        const callId = currentNode.getPropertyValueFor(KEYS.CALL);
+        const callNode = getNodeById(callId, nodes);
+        promises.push(restartIce(peerNode, callNode, currentNode, nodes));
         break;
       }
       case NODES.END: {
