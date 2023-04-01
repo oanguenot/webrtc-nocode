@@ -6,8 +6,8 @@ const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class SDPMunging extends Main {
-  static item = "SDPMunging";
-  static description = "Mungle SDP";
+  static item = "SDP Munging";
+  static description = "Modify the SDP prior to use";
   static icon = "vial";
   static section = "builtin";
   static name = "SDPMunging";
