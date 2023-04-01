@@ -32,15 +32,22 @@ class VideoAdjust extends Main {
         description: "Name of the adjustment",
       },
       {
+        prop: KEYS.TRACK,
+        label: "Track",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "No source", value: "none" }],
+        value: "none",
+        description: "Choose the track to update",
+      },
+      {
         prop: KEYS.ACTIVE,
         label: "Active",
         type: KEY_TYPE.ENUM,
         enum: [
-          { label: "Unchanged", value: "unchanged" },
           { label: "Yes", value: "yes" },
           { label: "No", value: "no" },
         ],
-        value: "unchanged",
+        value: "yes",
         description: "Choose if the stream is active",
       },
       {
@@ -48,7 +55,7 @@ class VideoAdjust extends Main {
         label: "Max Bitrate",
         type: KEY_TYPE.ENUM,
         enum: [
-          { label: "Unlimited", value: "unlimited" },
+          { label: "No rate limit", value: -1 },
           { label: "2 Mbps", value: 2000000 },
           { label: "1,5 Mbps", value: 1500000 },
           { label: "1 Mbps", value: 1000000 },
@@ -56,7 +63,7 @@ class VideoAdjust extends Main {
           { label: "250 Kbps", value: 250000 },
           { label: "100 Kbps", value: 100000 },
         ],
-        value: "unlimited",
+        value: -1,
         description: "Choose the maximum bitrate to use",
       },
       {
@@ -64,7 +71,7 @@ class VideoAdjust extends Main {
         label: "Max Framerate",
         type: KEY_TYPE.ENUM,
         enum: [
-          { label: "Unlimited", value: "unlimited" },
+          { label: "No frames limit", value: -1 },
           { label: "60 fps", value: 60 },
           { label: "30 fps", value: 30 },
           { label: "25 fps", value: 25 },
@@ -75,18 +82,12 @@ class VideoAdjust extends Main {
           { label: "5 fps", value: 5 },
           { label: "1 fps", value: 1 },
         ],
-        value: "unlimited",
+        value: -1,
         description: "Choose the maximum framerate to use",
       },
-      {
-        prop: KEYS.TRACK,
-        label: "Track",
-        type: KEY_TYPE.ENUM,
-        enum: [{ label: "None", value: "none" }],
-        value: "none",
-        description: "Choose the track to update",
-      },
     ];
+    this._sources = [`${KEYS.NAME}:${KEYS.TRACK}@${NODES.TRACK}`];
+    this._targets = [];
   }
 
   renderProp(prop) {
@@ -97,17 +98,13 @@ class VideoAdjust extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.ACTIVE:
-        return property.value;
+        return property.value === "yes" ? "Active" : "Inactive";
       case KEYS.MAX_BITRATE:
-        return property.value === "unlimited"
-          ? "no rate limit"
-          : `limited to ${label}`;
+        return property.value === -1 ? label : `Max ${label}`;
       case KEYS.MAX_FRAMERATE:
-        return property.value === "unlimited"
-          ? "no frames limit"
-          : `limited to ${label}`;
+        return property.value === -1 ? label : `Max ${label}`;
       case KEYS.TRACK:
-        return property.value === "none" ? "no track" : `${label}`;
+        return property.value === "none" ? "[no source]" : `[${label}]`;
     }
   }
 

@@ -32,15 +32,22 @@ class AudioAdjust extends Main {
         description: "Name of the adjustment",
       },
       {
+        prop: KEYS.TRACK,
+        label: "Track",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "No source", value: "none" }],
+        value: "none",
+        description: "Choose the track to update",
+      },
+      {
         prop: KEYS.ACTIVE,
         label: "Active",
         type: "enum",
         enum: [
-          { label: "Unchanged", value: "unchanged" },
           { label: "Yes", value: "yes" },
           { label: "No", value: "no" },
         ],
-        value: "unchanged",
+        value: "yes",
         description: "Choose if the track is active",
       },
       {
@@ -48,7 +55,7 @@ class AudioAdjust extends Main {
         label: "Max Bitrate",
         type: KEY_TYPE.ENUM,
         enum: [
-          { label: "Unlimited", value: -1 },
+          { label: "No rate limit", value: -1 },
           { label: "512 Kbps", value: 5120000 },
           { label: "256 Kbps", value: 2560000 },
           { label: "128 Kbps", value: 1280000 },
@@ -58,16 +65,8 @@ class AudioAdjust extends Main {
           { label: "32 Kbps", value: 320000 },
           { label: "16 Kbps", value: 160000 },
         ],
-        value: "unlimited",
+        value: -1,
         description: "Choose the maximum bitrate to use",
-      },
-      {
-        prop: KEYS.TRACK,
-        label: "Track",
-        type: KEY_TYPE.ENUM,
-        enum: [{ label: "None", value: "none" }],
-        value: "none",
-        description: "Choose the track to update",
       },
     ];
     this._sources = [`${KEYS.NAME}:${KEYS.TRACK}@${NODES.TRACK}`];
@@ -82,13 +81,11 @@ class AudioAdjust extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.ACTIVE:
-        return property.value;
+        return property.value === "yes" ? "Active" : "Inactive";
       case KEYS.MAX_BITRATE:
-        return property.value === "unlimited"
-          ? "no rate limit"
-          : `limited to ${label}`;
+        return property.value === -1 ? label : `Max ${label}`;
       case KEYS.TRACK:
-        return property.value === "none" ? "no track" : `${label}`;
+        return property.value === "none" ? "[no source]" : `[${label}]`;
     }
   }
 

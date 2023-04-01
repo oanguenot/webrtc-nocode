@@ -32,6 +32,14 @@ class AudioEncodings extends Main {
         description: "Name of the Encodings",
       },
       {
+        prop: KEYS.TRACK,
+        label: "Track",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "No source", value: "none" }],
+        value: "none",
+        description: "Choose the track to update",
+      },
+      {
         prop: KEYS.PREFERENCE,
         label: "Codec Preferences",
         type: KEY_TYPE.ENUM,
@@ -42,14 +50,6 @@ class AudioEncodings extends Main {
         ],
         value: "unchanged",
         description: "Choose the preferred codec to use",
-      },
-      {
-        prop: KEYS.TRACK,
-        label: "Track",
-        type: KEY_TYPE.ENUM,
-        enum: [{ label: "None", value: "none" }],
-        value: "none",
-        description: "Choose the track to update",
       },
     ];
     this._sources = [`${KEYS.NAME}:${KEYS.TRACK}@${NODES.TRACK}`];
@@ -66,7 +66,7 @@ class AudioEncodings extends Main {
       case KEYS.PREFERENCE:
         return property.value === "unchanged" ? label : `use ${label}`;
       case KEYS.TRACK:
-        return property.value === "none" ? "no track" : `${label}`;
+        return property.value === "none" ? "[no source]" : `[${label}]`;
     }
   }
 
