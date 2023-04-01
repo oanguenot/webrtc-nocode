@@ -91,9 +91,9 @@ function App() {
   };
 
   const onImport = async () => {
-    const imported = await importFromFile();
+    let imported = await importFromFile();
 
-    checkFileConcistency(imported);
+    imported = checkFileConcistency(imported);
 
     if (imported.nodes) {
       getEditor().import(imported.nodes);

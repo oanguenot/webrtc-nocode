@@ -216,8 +216,28 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
 };
 
 export const checkFileConcistency = (imported) => {
-  const nodes = imported.nodes; // drawflow
+  const drawFlow = imported.nodes.drawflow; // drawflow
   const objects = imported.objects; // models
 
-  console.log(">>>", nodes, objects);
+  if (drawFlow) {
+    const nodes = drawFlow.Home.data;
+    const toKeep = [];
+    objects.forEach((object) => {
+      const uuid = object._uuid;
+      const found = Object.keys(nodes).some((nodeId) => {
+        const node = nodes[nodeId];
+        return node.data.id === uuid;
+      });
+
+      if (found) {
+        toKeep.push(object);
+      } else {
+        console.warn(`[import] can't find ${object._uuid} - don't load it!`);
+      }
+    });
+
+    imported.objects = toKeep;
+  }
+
+  return imported;
 };
