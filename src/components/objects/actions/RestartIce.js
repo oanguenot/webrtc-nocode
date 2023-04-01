@@ -37,8 +37,19 @@ class RestartIce extends Main {
         value: "none",
         description: "Choose the call to update",
       },
+      {
+        prop: KEYS.PEER,
+        label: "From",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "None", value: "none" }],
+        value: "none",
+        description: "Choose the Peer to update",
+      },
     ];
-    this._sources = [`${KEYS.NAME}:${KEYS.CALL}@${NODES.CALL}`];
+    this._sources = [
+      `${KEYS.NAME}:${KEYS.CALL}@${NODES.CALL}`,
+      `${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`,
+    ];
     this._targets = [];
   }
 
@@ -50,7 +61,9 @@ class RestartIce extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.CALL:
-        return property.value === "none" ? "no call" : `${label}`;
+        return property.value === "none" ? "no call" : `[${label}]`;
+      case KEYS.PEER:
+        return property.value === "none" ? "no peer" : `[${label}]`;
       default:
         return "";
     }
@@ -71,6 +84,13 @@ class RestartIce extends Main {
     }"></i><span class="object-details-value ${
       this.renderColorIsMissingProp(KEYS.CALL) ? "red" : ""
     }" id="call-${this._uuid}">${this.renderProp(KEYS.CALL)}</span>
+            </div>
+            <div class="object-box-line">
+            <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
             </div>
             <div class="object-footer">
                 <span class="object-node object-title-box">${

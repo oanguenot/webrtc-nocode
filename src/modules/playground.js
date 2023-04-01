@@ -682,7 +682,7 @@ const restartIce = (peerNode, currentNode, nodes) => {
     win.pc.addEventListener(
       "negotiationneeded",
       async () => {
-        await call(peerNode, calleeNode, callNode);
+        await call(peerNode, calleeNode, callNode, nodes);
         resolve();
       },
       { once: true }
@@ -826,10 +826,9 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         break;
       }
       case NODES.RESTARTICE: {
-        const fromPeer = getNodeById(
-          initialEvent.getPropertyValueFor("peer"),
-          nodes
-        );
+        const peerId = currentNode.getPropertyValueFor(KEYS.PEER);
+        const fromPeer = getNodeById(peerId, nodes);
+
         promises.push(restartIce(fromPeer, currentNode, nodes));
         break;
       }
