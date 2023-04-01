@@ -122,7 +122,7 @@ class VideoTrack extends Main {
     return `
      <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="from-${
+           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
       this._uuid
     }">${this.renderProp(KEYS.NAME)}</span>
         </div>
