@@ -86,12 +86,12 @@ class CallP2P extends Main {
         if (property.value === "none") {
           return "No caller";
         }
-        return label;
+        return `[${label}]`;
       case KEYS.RECIPIENT:
         if (property.value === "none") {
           return "No recipient";
         }
-        return label;
+        return `[${label}]`;
       default:
         return "";
     }
