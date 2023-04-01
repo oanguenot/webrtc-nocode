@@ -1,5 +1,5 @@
 import Main from "../Main";
-import { KEYS, NODES } from "../../../modules/model";
+import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 
 class End extends Main {
   static item = "End";
@@ -21,19 +21,43 @@ class End extends Main {
     ];
     this._acceptInputs = ["*"];
     this._acceptOutputs = [];
-    this._properties = [];
+    this._properties = [
+      {
+        prop: KEYS.NAME,
+        label: "Name",
+        type: KEY_TYPE.TEXT,
+        value: "FINISH",
+        description: "Name of the End node",
+      },
+    ];
+  }
+
+  renderProp(prop) {
+    const property = this.getPropertyFor(prop);
+    const label = this.getLabelFromPropertySelect(property);
+
+    switch (prop) {
+      case KEYS.NAME:
+        return property.value;
+      default:
+        return "";
+    }
   }
 
   render() {
     return `
       <div>
         <div class="title-box">
-           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${this._uuid}">FINISH</span>
+          <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
+      this._uuid
+    }">${this.renderProp(KEYS.NAME)}</span>
         </div>
         <div class="box">
             <span class="object-full">Well done! Your scenario is finished and stopped.</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">${this.node}</span>    
+                <span class="object-node object-title-box">${
+                  this.node
+                }</span>    
             </div>
         </div>
       </div>
