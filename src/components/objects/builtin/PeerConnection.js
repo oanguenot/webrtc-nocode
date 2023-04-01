@@ -73,7 +73,7 @@ class PeerConnection extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.TURN:
-        return property.value === "local" ? "Local only" : label;
+        return property.value === "local" ? "Local only" : `[${label}]`;
       default:
         return "";
     }
