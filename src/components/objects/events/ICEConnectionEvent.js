@@ -39,10 +39,18 @@ class ICEConnectionEvent extends Main {
         value: "connected",
         description: "Name of the State",
       },
+      {
+        prop: KEYS.PEER,
+        label: "From",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "None", value: "none" }],
+        value: "none",
+        description: "Choose the Peer to check",
+      },
     ];
     this._acceptOutputs = [NODES.ACTIONS];
     this._acceptInputs = [];
-    this._sources = [];
+    this._sources = [`${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`];
     this._targets = [];
   }
 
@@ -57,6 +65,8 @@ class ICEConnectionEvent extends Main {
         const label = this.getLabelFromPropertySelect(property);
         return `on ${label}`;
       }
+      case KEYS.PEER:
+        return property.value === "none" ? "no peer" : `[${label}]`;
       default:
         return "";
     }
@@ -76,6 +86,13 @@ class ICEConnectionEvent extends Main {
             <span class="object-details-value" id="iceState-${
               this._uuid
             }">${this.renderProp(KEYS.ICESTATE)}</span>
+            </div>
+             <div class="object-box-line">
+            <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
             </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${
