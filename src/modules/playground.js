@@ -13,18 +13,12 @@ import { KEYS, NODES } from "./model";
 import { rehydrateObject } from "./builder";
 import {
   addLog,
-  addGroupToTimeline,
-  resetTimeline,
-  addEventToTimeline,
-  addPeriodToTimeline,
   incrementTaskDone,
   setTaskNumber,
-  addGroupToSubGroup,
-  addGroupsToSubGroup,
-  addEventsToTimeline,
 } from "../actions/DebugActions";
 import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
 import {
+  addCustomEvent,
   monitorPeerConnection,
   startMonitoring,
   stopMonitoring,
@@ -115,7 +109,6 @@ const createPeerConnection = (
 ) => {
   return new Promise(async (resolve, reject) => {
     const win = frames[peerNode.id];
-    let intervalId = null;
     if (win) {
       const turnId = peerNode.getPropertyValueFor(KEYS.TURN);
       const network = peerNode.getPropertyValueFor(KEYS.NETWORK);
@@ -147,78 +140,6 @@ const createPeerConnection = (
       win.ices = [];
       win.pc.addEventListener("iceconnectionstatechange", () => {
         const state = win.pc.iceConnectionState;
-        addLog(
-          "peer",
-          "log",
-          `${peerNode.id} state changed to ${state}`,
-          null,
-          dispatcher
-        );
-        if (state === "connected") {
-          const periodSetup = endTempPeriod(
-            "setup-call",
-            peerNode.id,
-            Date.now()
-          );
-          if (periodSetup) {
-            addPeriodToTimeline(
-              periodSetup.content,
-              nanoid(),
-              periodSetup.start,
-              periodSetup.end,
-              periodSetup.group,
-              "background",
-              dispatcher
-            );
-          }
-          createTempPeriod("in-call", peerNode.id, Date.now());
-          intervalId = setInterval(() => {
-            if (win.pc.iceConnectionState === "closed") {
-              clearInterval(intervalId);
-              const period = endTempPeriod("in-call", peerNode.id, Date.now());
-              addPeriodToTimeline(
-                period.content,
-                nanoid(),
-                period.start,
-                period.end,
-                period.group,
-                "background",
-                dispatcher
-              );
-            }
-          }, 1000);
-        } else if (
-          state === "disconnected" ||
-          state === "failed" ||
-          state === "closed"
-        ) {
-          if (hasPeriodFor("setup-call", peerNode.id)) {
-            const periodSetup = endTempPeriod(
-              "setup-call",
-              peerNode.id,
-              Date.now()
-            );
-            addPeriodToTimeline(
-              periodSetup.content,
-              nanoid(),
-              periodSetup.start,
-              periodSetup.end,
-              periodSetup.group,
-              "background",
-              dispatcher
-            );
-          }
-          const period = endTempPeriod("in-call", peerNode.id, Date.now());
-          addPeriodToTimeline(
-            period.content,
-            nanoid(),
-            period.start,
-            period.end,
-            period.group,
-            "background",
-            dispatcher
-          );
-        }
 
         // Check iceEvents node to initiate actions
         iceEvents.forEach((eventNode) => {
@@ -229,33 +150,9 @@ const createPeerConnection = (
         });
       });
 
-      win.pc.addEventListener("negotiationneeded", (event) => {
-        addLog(
-          "peer",
-          "log",
-          `${peerNode.id} negotiation needed`,
-          null,
-          dispatcher
-        );
-      });
+      win.pc.addEventListener("negotiationneeded", (event) => {});
 
       win.pc.addEventListener("track", (event) => {
-        addLog(
-          "peer",
-          "log",
-          `${peerNode.id} ontrack received ${event.track.kind}`,
-          null,
-          dispatcher
-        );
-        addEventToTimeline(
-          "start-track",
-          "",
-          nanoid(),
-          Date.now(),
-          `${peerNode.id}-${event.ssrc}`,
-          "box",
-          dispatcher
-        );
         createMediaElementInIFrame(
           win,
           event.track.kind,
@@ -269,23 +166,14 @@ const createPeerConnection = (
       });
 
       stream.getTracks().forEach((track) => {
-        addLog(
-          "peer",
-          "log",
-          `${peerNode.id} add track ${track.label} to ${peerNode.id}`,
-          null,
-          dispatcher
-        );
-        addEventToTimeline(
-          "start-track",
-          "",
-          nanoid(),
-          Date.now(),
-          `${peerNode.id}-${track.id}`,
-          "point",
-          dispatcher
-        );
         win.pc.addTrack(track);
+        // win.pc.addTransceiver(track, {
+        //   sendEncodings: [
+        //     { rid: "q", scaleResolutionDownBy: 4.0, scalabilityMode: "L1T3" },
+        //     { rid: "h", scaleResolutionDownBy: 2.0, scalabilityMode: "L1T3" },
+        //     { rid: "f", scalabilityMode: "L1T3" },
+        //   ],
+        // });
       });
     }
     resolve(win.pc);
@@ -428,17 +316,7 @@ const createTurnConfiguration = (turns, peerId) => {
 
 const mungleSDP = (mungleNode, peerNode, offer) => {
   return new Promise((resolve, reject) => {
-    addLog("peer", "log", `${peerNode.id} mungle SDP`, null, dispatcher);
-    addEventToTimeline(
-      "mungle",
-      "",
-      nanoid(),
-      Date.now(),
-      `playground`,
-      "point",
-      dispatcher
-    );
-
+    addCustomEvent(peerNode.id, frames, "mungle", "playground", "", new Date());
     const operation = mungleNode.getPropertyValueFor(KEYS.OPERATION);
     const updatedOffer = mungle(operation, offer);
     resolve(updatedOffer);
@@ -473,8 +351,6 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
       return inputNode.node === NODES.MUNGING;
     });
 
-    // to do --> Put in peer event iceconnectionchange: "checking" --> "connected"
-    //createTempPeriod("setup-call", callerNode.id, Date.now());
     let rtcOfferSessionDescription = await callerWin.pc.createOffer();
 
     if (munglerId) {
@@ -489,7 +365,6 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
     await callerWin.pc.setLocalDescription(rtcOfferSessionDescription);
     const ices = await waitForIce(callerWin.pc, callerNode.id);
 
-    //createTempPeriod("setup-call", calleeNode.id, Date.now());
     await calleeWin.pc.setRemoteDescription(rtcOfferSessionDescription);
     const rtcAnswerSessionDescription = await calleeWin.pc.createAnswer();
 
@@ -555,21 +430,14 @@ const encode = (encodeNode, nodes) => {
     codecs.splice(firstCodecIndex, preferredCodecs.length);
     codecs.unshift(...preferredCodecs);
     transceiver.setCodecPreferences(codecs);
-    addLog(
-      "action",
-      "log",
-      `${encodeNode.id} encode track ${trackLabel} using ${codecMimeType}`,
-      null,
-      dispatcher
-    );
-    addEventToTimeline(
+
+    addCustomEvent(
+      peerNode.id,
+      frames,
       "encode",
-      "",
-      nanoid(),
-      Date.now(),
-      `playground`,
-      "point",
-      dispatcher
+      "playground",
+      `${encodeNode.id} encode track ${trackLabel} using ${codecMimeType}`,
+      new Date()
     );
     resolve();
   });
@@ -594,7 +462,7 @@ const adjust = (encodeNode, nodes) => {
 
     const win = frames[peerNode.id];
     if (!win.pc) {
-      console.log("Can't encode - no peer connection");
+      console.log("Can't adjust - no peer connection");
       resolve();
       return;
     }
@@ -618,7 +486,7 @@ const adjust = (encodeNode, nodes) => {
     const newParameters = { ...parameters };
     const encodings = newParameters.encodings[0];
     if (!encodings) {
-      console.warn("[encode] no encodings found");
+      console.warn("[adjust] no encodings found");
       resolve();
       return;
     }
@@ -640,21 +508,13 @@ const adjust = (encodeNode, nodes) => {
     sender
       .setParameters(newParameters)
       .then(() => {
-        addEventToTimeline(
+        addCustomEvent(
+          peerNode.id,
+          frames,
           "set-parameters",
-          "",
-          nanoid(),
-          Date.now(),
           "playground",
-          "point",
-          dispatcher
-        );
-        addLog(
-          "action",
-          "log",
           `${encodeNode.id} parameterize track with ${parameter}`,
-          null,
-          dispatcher
+          new Date()
         );
         resolve();
       })
@@ -688,14 +548,13 @@ const restartIce = (peerNode, callNode, currentNode, nodes) => {
 
     // Restart ICE
     win.pc.restartIce();
-    addEventToTimeline(
-      "restartIce",
+    addCustomEvent(
+      peerNode.id,
+      frames,
+      "restart-ice",
+      "playground",
       "",
-      nanoid(),
-      Date.now(),
-      `playground`,
-      "point",
-      dispatcher
+      new Date()
     );
   });
 };
@@ -703,7 +562,7 @@ const restartIce = (peerNode, callNode, currentNode, nodes) => {
 const endPlayground = () => {
   return new Promise((resolve, reject) => {
     Object.keys(frames).forEach((key) => {
-      addLog("play", "log", `clean frame ${key}`, null, dispatcher);
+      addCustomEvent(key, frames, "close", "playground", "", new Date());
       const winFrame = frames[key];
       if (winFrame.pc) {
         winFrame.pc.close();
@@ -715,50 +574,26 @@ const endPlayground = () => {
       // Stop monitoring
       const ticket = stopMonitoring(key, frames);
       if (ticket) {
-        const subGroups = [];
-        const events = [];
-        ticket.call.events.forEach((event) => {
-          if (event.category === "quality") {
-            const getValueToDisplay = (name, value) => {
-              switch (name) {
-                case "size-up":
-                  return `&#x2197; ${value}`;
-                case "size-down":
-                  return `&#x2198; ${value}`;
-                case "fps-up":
-                  return `&#x2191; ${value} fps`;
-                case "fps-down":
-                  return `&#x2193; ${value} fps`;
-                case "limitation":
-                default:
-                  return `&#8474; ${value}`;
-              }
-            };
-
-            events.push({
-              content: getValueToDisplay(event.name, event.details.value),
-              title: "",
-              id: nanoid(),
-              start: event.at,
-              group: `${key}-${event.ssrc}`,
-              type: "box",
-            });
-          } else if (event.name === "track-added") {
-            subGroups.push({
-              content: `ssrc_${event.ssrc}_${event.details.kind}-${
-                event.details.direction.includes("in") ? "in" : "out"
-              }`,
-              id: `${key}-${event.ssrc}`,
-              groupId: key,
-            });
-          }
-        });
-
-        addGroupsToSubGroup(subGroups, dispatcher);
-        addEventsToTimeline(events, dispatcher);
+        // ticket.call.events.forEach((event) => {
+        //     const getValueToDisplay = (name, value) => {
+        //       switch (name) {
+        //         case "size-up":
+        //           return `&#x2197; ${value}`;
+        //         case "size-down":
+        //           return `&#x2198; ${value}`;
+        //         case "fps-up":
+        //           return `&#x2191; ${value} fps`;
+        //         case "fps-down":
+        //           return `&#x2193; ${value} fps`;
+        //         case "limitation":
+        //         default:
+        //           return `&#8474; ${value}`;
+        //       }
+        //     };
+        // });
+        console.log(">>>TICKET", ticket);
       }
     });
-
     resolve();
   });
 };
@@ -775,8 +610,7 @@ const executeEventNode = (eventNode, nodes) => {
       "play",
       "log",
       `execute event ${eventNode.node}|${eventNode.id}`,
-      null,
-      dispatcher
+      null
     );
 
     executeANode(eventNode, firstNode, nodes).then(() => {
@@ -790,8 +624,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
     "play",
     "log",
     `execute node ${currentNode.node}|${currentNode.id}`,
-    null,
-    dispatcher
+    null
   );
   return new Promise((resolve, reject) => {
     const promises = [];
@@ -850,8 +683,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           "play",
           "log",
           `go to next node ${nextNode.node}|${nextNode.id}`,
-          null,
-          dispatcher
+          null
         );
       }
       return executeANode(initialEvent, nextNode, nodes).then(() => {
@@ -859,8 +691,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           "play",
           "log",
           `node ${initialEvent.node}|${initialEvent.id} has terminated its flow`,
-          null,
-          dispatcher
+          null
         );
       });
     });
@@ -895,21 +726,8 @@ export const execute = (nodes, dispatch) => {
   return new Promise(async (resolve, reject) => {
     dispatcher = dispatch;
 
-    // Reset Timeline
-    resetTimeline(dispatch);
+    addLog("play", "log", "started...", null);
 
-    addGroupToTimeline("playground", "playground", dispatcher);
-    addEventToTimeline(
-      "start",
-      "",
-      nanoid(),
-      Date.now(),
-      "playground",
-      "point",
-      dispatcher
-    );
-
-    addLog("play", "log", "started...", null, dispatcher);
     // found peer connections for creating iFrame
     const peers = filterNodesByName(NODES.PEER, nodes);
     const iceEvents = filterNodesByName(NODES.ICE, nodes);
@@ -927,12 +745,6 @@ export const execute = (nodes, dispatch) => {
     for (const peer of peers) {
       const win = await createIFrame(peer);
       updateTitleInIFrame(win, peer.id);
-
-      addGroupToTimeline(
-        peer.getPropertyValueFor(KEYS.NAME),
-        peer.id,
-        dispatcher
-      );
 
       // Store iframe window context associated to a peer connection
       frames[peer.id] = win;
@@ -969,13 +781,6 @@ export const execute = (nodes, dispatch) => {
 
     // Check for the ready event and execute it
     if (!readyEvent) {
-      addLog(
-        "play",
-        "warning",
-        "Ready node is missing from the playground",
-        null,
-        dispatcher
-      );
       reject("No ready event");
       return;
     }

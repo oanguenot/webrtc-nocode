@@ -10,23 +10,6 @@ import ProgressBar from "@atlaskit/progress-bar";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { run } from "../../actions/playgroundActions";
 import { useStateWithCallbackLazy } from "use-state-with-callback";
-import Timeline from "react-vis-timeline-2";
-
-let zoomLevel = 1;
-
-const options = {
-  width: "100%",
-  //height: "600px",
-  groupHeightMode: "fixed",
-  editable: false,
-  zoomable: false,
-  verticalScroll: true,
-  min: Date.now(),
-  showCurrentTime: false,
-  //timeAxis: { scale: "second", step: 1 },
-  //zoomMin: 100,
-  //zoomMax: 1000 * 3600,
-};
 
 const getColorFromTag = (tag) => {
   switch (tag) {
@@ -46,60 +29,12 @@ function Debug({ dispatch }) {
   const [progress, setProgress] = useState(0);
   const [isStarted, setIsStarted] = useStateWithCallbackLazy(false);
   const [isReset, setIsReset] = useStateWithCallbackLazy(true);
-  const timelineRef = useRef();
-  const [zoom, setZoom] = useState({ action: null, level: 1 });
 
   useEffect(() => {
     if (appState.nbTasks > 0) {
       setProgress(appState.tasksDone / appState.nbTasks);
     }
   }, [appState.nbTasks, appState.tasksDone]);
-
-  useEffect(() => {}, []);
-
-  useEffect(() => {
-    if (timelineRef && timelineRef.current) {
-      if (zoom && zoom.action && zoom.action === "in") {
-        timelineRef.current.timeline.zoomIn(zoomLevel);
-      } else {
-        timelineRef.current.timeline.zoomOut(zoomLevel);
-      }
-    }
-  }, [zoom]);
-
-  useEffect(() => {
-    if (timelineRef && timelineRef.current && progress === 1) {
-      appState.groups.forEach((latest) => {
-        const group = timelineRef.current.groups.get(latest.id);
-        // check if already exists - crash when duplicated
-        if (!group) {
-          timelineRef.current.groups.add(latest);
-        }
-      });
-
-      appState.subGroups.forEach((latest) => {
-        const group = timelineRef.current.groups.get(latest.groupId);
-        if (group) {
-          if (!group.nestedGroups.includes(latest.id)) {
-            group.nestedGroups.push(latest.id);
-            timelineRef.current.groups.add({
-              id: latest.id,
-              content: latest.content,
-            });
-            timelineRef.current.groups.update(group);
-          }
-        }
-      });
-
-      appState.events.forEach((latest) => {
-        const item = timelineRef.current.items.get(latest.id);
-        if (!item || (item && item.length === 0)) {
-          timelineRef.current.items.add(latest);
-          timelineRef.current.timeline.fit();
-        }
-      });
-    }
-  }, [appState.groups, appState.subGroups, appState.events, progress]);
 
   const onStart = () => {
     setIsStarted(true, () => {
@@ -132,19 +67,6 @@ function Debug({ dispatch }) {
     } else {
       return "Running...";
     }
-  };
-
-  const onZoom = () => {
-    setZoom({ action: "in", level: zoom.level - 0.05 });
-    // zoomLevel = Math.max(0.5, zoomLevel);
-    // timelineRef.current.timeline.zoomIn(zoomLevel);
-  };
-
-  const onUnzoom = () => {
-    setZoom({ action: "out", level: zoom.level + 0.05 });
-    // console.log(">>>ZOOM", zoomLevel);
-    // zoomLevel = Math.min(1, zoomLevel);
-    // timelineRef.current.timeline.zoomOut(zoomLevel);
   };
 
   return (
@@ -180,12 +102,6 @@ function Debug({ dispatch }) {
               {progress === 1 && (
                 <div className="debug-layout">
                   <div className="debug-double-columns">
-                    <div className="timeline-area">
-                      <p className="debug-iframes-title">Timeline</p>
-                      <Timeline ref={timelineRef} options={options} />
-                      <Button onClick={() => onZoom()}>+</Button>
-                      <Button onClick={() => onUnzoom()}>-</Button>
-                    </div>
                     <div className="details-area">
                       <p className="debug-iframes-title">Details</p>
                       <ul className="debug-actions">

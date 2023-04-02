@@ -37,3 +37,21 @@ export const stopMonitoring = (id, frames) => {
   }
   return ticket;
 };
+
+export const addCustomEvent = (
+  id,
+  frames,
+  name,
+  category,
+  message,
+  at,
+  ssrc,
+  data,
+  ended
+) => {
+  const win = frames[id];
+  if (win && win.metrics) {
+    const probe = win.metrics.probes[0];
+    probe.addCustomEvent(name, category, message, at, ssrc, data, ended);
+  }
+};
