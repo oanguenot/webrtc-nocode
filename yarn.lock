@@ -59,20 +59,20 @@
     prop-types "^15.5.10"
     use-memo-one "^1.1.1"
 
-"@atlaskit/atlassian-navigation@2.3.5":
-  version "2.3.5"
-  resolved "https://registry.yarnpkg.com/@atlaskit/atlassian-navigation/-/atlassian-navigation-2.3.5.tgz#b467f22f10be808a24470421fee0e1d81d0d3ed2"
-  integrity sha512-sKbUk6M+1gLcGuzPbXt8NSE55fQ5ZB2ey6yhtVC0E3EhsfskO3K5l5nwDFERadQbwSTJkAMsDNOPxPikPkbHwQ==
+"@atlaskit/atlassian-navigation@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/atlassian-navigation/-/atlassian-navigation-2.4.0.tgz#884a21d20717152ff9439e69e89bab236cf09004"
+  integrity sha512-rkXT/PbnbcW8DaJ/ruezRt98/8aHwBVR0AazATx8hvbpUFHtP2tAVzJWJgv6j3wPK/uB10vllSB6WOdtpSySEw==
   dependencies:
     "@atlaskit/analytics-namespaced-context" "^6.6.0"
-    "@atlaskit/button" "^16.5.0"
+    "@atlaskit/button" "^16.6.0"
     "@atlaskit/ds-lib" "^2.1.0"
     "@atlaskit/icon" "^21.11.0"
     "@atlaskit/logo" "*"
     "@atlaskit/popup" "^1.5.0"
-    "@atlaskit/theme" "^12.2.0"
-    "@atlaskit/tokens" "^1.0.0"
-    "@atlaskit/tooltip" "^17.6.0"
+    "@atlaskit/theme" "^12.3.0"
+    "@atlaskit/tokens" "^1.2.0"
+    "@atlaskit/tooltip" "^17.7.0"
     "@atlaskit/width-detector" "^4.0.0"
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
@@ -88,16 +88,17 @@
     "@atlaskit/ds-explorations" "^2.0.0"
     "@babel/runtime" "^7.0.0"
 
-"@atlaskit/button@16.5.7":
-  version "16.5.7"
-  resolved "https://registry.yarnpkg.com/@atlaskit/button/-/button-16.5.7.tgz#fa46ca1ed7381f36131d60ea13c211a5d698e10f"
-  integrity sha512-g+FLIyDTTsQwn1cAVlG4+exKeHvJ2tYBZgLU+QWYyII6YYASJRcuh7WpXmKJ4U/CUU2TtG8sZKRJAOCAqLyMdw==
+"@atlaskit/button@16.6.0", "@atlaskit/button@^16.6.0":
+  version "16.6.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/button/-/button-16.6.0.tgz#f29d96f0e97104b18f8e3c01f73c12fe1196fde1"
+  integrity sha512-tGOTUdB+Tc70j43+4uneXqzP2tAn40SXJYPeZaOeNLMJWBbeLMekBysZdKou8UdXYcZg0kfsVD/7bmYUB/MiGQ==
   dependencies:
     "@atlaskit/analytics-next" "^9.0.0"
     "@atlaskit/ds-lib" "^2.1.0"
+    "@atlaskit/focus-ring" "^1.0.6"
     "@atlaskit/interaction-context" "^2.0.0"
     "@atlaskit/spinner" "^15.4.0"
-    "@atlaskit/theme" "^12.2.0"
+    "@atlaskit/theme" "^12.3.0"
     "@atlaskit/tokens" "^1.2.0"
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
@@ -153,13 +154,13 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/flag@15.0.12":
-  version "15.0.12"
-  resolved "https://registry.yarnpkg.com/@atlaskit/flag/-/flag-15.0.12.tgz#2c2ba66a1e4d4bba9c3bf72e2f62dd0dbc1e4b1b"
-  integrity sha512-czz22WQlijWN00OpWXEvDCy+kscK6iHk1ZouZBcbFtgrWBXjgqUxXyP7mWavHsJ1eisCE1pkLj5B1t0dDQBNgA==
+"@atlaskit/flag@15.1.0":
+  version "15.1.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/flag/-/flag-15.1.0.tgz#b30518df34c866389af7b33d8513b5d2c3cefdaf"
+  integrity sha512-bFDoA7h/6wbOYNybIODQHeAedOPR6LF2xoEl0wZKvOJWa0paGZs84/b6HsJ63mhaWjeZEQrTzLFQ50sRG8X66g==
   dependencies:
     "@atlaskit/analytics-next" "^9.0.0"
-    "@atlaskit/button" "^16.5.0"
+    "@atlaskit/button" "^16.6.0"
     "@atlaskit/ds-explorations" "^2.0.0"
     "@atlaskit/ds-lib" "^2.1.0"
     "@atlaskit/focus-ring" "^1.2.0"
@@ -170,6 +171,15 @@
     "@atlaskit/theme" "^12.3.0"
     "@atlaskit/tokens" "^1.2.0"
     "@atlaskit/visually-hidden" "^1.1.0"
+    "@babel/runtime" "^7.0.0"
+    "@emotion/react" "^11.7.1"
+
+"@atlaskit/focus-ring@^1.0.6":
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/@atlaskit/focus-ring/-/focus-ring-1.2.6.tgz#bc9ae3c5dccc90e347e3901e2389c8153e3d6e91"
+  integrity sha512-uY7JlsCm1RAnasOOGXKOC8gCbj4VUZMU6q6E7ov6W7DWtrENICJJdrhCu4ZM23oqS5x7Gkko6h5nhiz5B79V5g==
+  dependencies:
+    "@atlaskit/tokens" "^1.2.0"
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
@@ -411,10 +421,10 @@
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
 
-"@atlaskit/select@16.1.7":
-  version "16.1.7"
-  resolved "https://registry.yarnpkg.com/@atlaskit/select/-/select-16.1.7.tgz#ef6952027b5b85a3c976b68111262037dfac4244"
-  integrity sha512-ejZjdydi0pZZE8cgtVVsQaUMzOsOi6UfDyLLugpGnBlgI1IElHmKDHzJT/3R6zkPkkmEAf53inrSBKzi+RXSUg==
+"@atlaskit/select@16.1.8":
+  version "16.1.8"
+  resolved "https://registry.yarnpkg.com/@atlaskit/select/-/select-16.1.8.tgz#6866aa63b9799157ff86f4aaae7f8c56a1a033bc"
+  integrity sha512-pl4faOPSQSGOJqVVIVhc2ErkxgomVFb1yfMVIBYfnZBjaQc7jhDyeFh8hsX57LhQMFQZEBQd1oVTHAwDWmafig==
   dependencies:
     "@atlaskit/analytics-next" "^9.0.0"
     "@atlaskit/icon" "^21.11.0"
@@ -620,18 +630,18 @@
     "@babel/types" "^7.15.0"
     bind-event-listener "^2.1.1"
 
-"@atlaskit/tooltip@^17.6.0":
-  version "17.6.5"
-  resolved "https://registry.yarnpkg.com/@atlaskit/tooltip/-/tooltip-17.6.5.tgz#30b110f8f77169ab0edca8562d3f970fa4eadc9c"
-  integrity sha512-M8NWjwbZR64382nBJ8/LkvE42RiFBmJsvtwDxrnaSNnCPQhLUANxQ8K3mhbNHXxvT/WfO0lCYKct9eNyT2+qhw==
+"@atlaskit/tooltip@^17.7.0":
+  version "17.7.0"
+  resolved "https://registry.yarnpkg.com/@atlaskit/tooltip/-/tooltip-17.7.0.tgz#513ae180262e9d37a608879169001d4d96959926"
+  integrity sha512-CswGrNAeT0KxQg3mCzIzh6UC52BnVZ3nGw7f3tM7de/Md/RlonHtGKOw06oS6rzDJdWjSzBHED2cl1Y8R9cLxg==
   dependencies:
-    "@atlaskit/analytics-next" "^8.2.0"
+    "@atlaskit/analytics-next" "^9.0.0"
     "@atlaskit/ds-lib" "^2.1.0"
     "@atlaskit/motion" "^1.3.0"
     "@atlaskit/popper" "^5.4.0"
     "@atlaskit/portal" "^4.1.0"
     "@atlaskit/theme" "^12.2.0"
-    "@atlaskit/tokens" "^0.13.0"
+    "@atlaskit/tokens" "^1.2.0"
     "@babel/runtime" "^7.0.0"
     "@emotion/react" "^11.7.1"
     bind-event-listener "^2.1.1"
@@ -9959,10 +9969,10 @@ wbuf@^1.1.0, wbuf@^1.7.3:
   dependencies:
     minimalistic-assert "^1.0.0"
 
-web-vitals@3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-3.3.0.tgz#2e14bcbb3acf71d00c49519ab92cc517511476d5"
-  integrity sha512-GZsEmJBNclIpViS/7QVOTr7Kbt4BgLeR7kQ5zCCtJVuiWsA+K6xTXaoEXssvl8yYFICEyNmA2Nr+vgBYTnS4bA==
+web-vitals@3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/web-vitals/-/web-vitals-3.3.1.tgz#f80e4fd01784476c023c8b2c4219075bbe96f64d"
+  integrity sha512-LTfY5GjcY3ngFzNsYFSYL+AmVmlWrzPTUxSMDis2rZbf+SzT7HH3NH4Y/l45XOlrAIunOBeURN9qtBHkRskAiA==
 
 webidl-conversions@^4.0.2:
   version "4.0.2"
