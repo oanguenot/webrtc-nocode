@@ -28,11 +28,8 @@ import { mungle } from "./sdp";
 const frames = {};
 let dispatcher = null;
 
-const CUSTOM_ALPHABET = "0123456789abcdef";
-const nanoid = customAlphabet(CUSTOM_ALPHABET, 6);
-
-const getTransceiver = (transceivers, trackKind, trackDeviceId) => {
-  const transceiver = transceivers.find((transceiver) => {
+const getTransceiver = (transceivers, trackNodeId) => {
+  return transceivers.find((transceiver) => {
     const sender = transceiver.sender;
     if (!sender) {
       return false;
@@ -42,17 +39,8 @@ const getTransceiver = (transceivers, trackKind, trackDeviceId) => {
     if (!track) {
       return false;
     }
-    const constraints = track.getConstraints();
-    const settings = track.getSettings();
-    const capabilities = track.getCapabilities();
-    if (trackDeviceId !== "[default]") {
-      return track.kind === trackKind && constraints.deviceId === trackDeviceId;
-    } else {
-      return track.kind === trackKind;
-    }
+    return track.__wp === trackNodeId;
   });
-
-  return transceiver;
 };
 
 const delayer = (duration) => {
@@ -222,8 +210,12 @@ const createMedia = (peerNode, nodes) => {
           const captured = await win.navigator.mediaDevices.getUserMedia(
             constraints
           );
+
           win.document.querySelector(`#local-${inputId}`).srcObject = captured;
-          captured.getTracks().forEach((track) => win.stream.addTrack(track));
+          captured.getTracks().forEach((track) => {
+            track.__wp = inputId;
+            win.stream.addTrack(track);
+          });
         }
       }
       resolve(win.stream);
@@ -411,7 +403,8 @@ const encode = (encodeNode, nodes) => {
 
     // Get transceiver and sender used
     const transceivers = win.pc.getTransceivers();
-    const transceiver = getTransceiver(transceivers, trackKind, trackDeviceId);
+
+    const transceiver = getTransceiver(transceivers, trackNodeId);
 
     if (!transceiver) {
       resolve();
@@ -452,7 +445,6 @@ const adjust = (encodeNode, nodes) => {
 
     const trackNode = getNodeById(trackNodeId, nodes);
     const fromProperty = trackNode.getPropertyFor(KEYS.FROM);
-    const trackLabel = trackNode.getLabelFromPropertySelect(fromProperty);
     const trackKind = trackNode.getInfoValueFor(KEYS.KIND);
     const trackDeviceId = trackNode.getPropertyValueFor(KEYS.FROM);
 
@@ -469,7 +461,7 @@ const adjust = (encodeNode, nodes) => {
 
     // Get transceiver and sender used
     const transceivers = win.pc.getTransceivers();
-    const transceiver = getTransceiver(transceivers, trackKind, trackDeviceId);
+    const transceiver = getTransceiver(transceivers, trackNodeId);
     if (!transceiver) {
       resolve();
       return;
