@@ -62,6 +62,7 @@ class AudioTrack extends Main {
     this._targets = [
       `${KEYS.NAME}:${KEYS.TRACK}@${NODES.ENCODE}`,
       `${KEYS.NAME}:${KEYS.TRACK}@${NODES.ADJUST}`,
+      `${KEYS.NAME}:${KEYS.TRACK}@${NODES.MUTE}`,
     ];
   }
 

@@ -17,6 +17,7 @@ import AudioAdjust from "../components/objects/actions/AudioAdjust";
 import VideoAdjust from "../components/objects/actions/VideoAdjust";
 import RestartIce from "../components/objects/actions/RestartIce";
 import SDPMunging from "../components/objects/builtin/SDPMunging";
+import AudioMute from "../components/objects/actions/AudioMute";
 
 const ObjectBuilder = {
   Ready: Ready,
@@ -36,6 +37,7 @@ const ObjectBuilder = {
   WatchRTC: WatchRTC,
   CallP2P: CallP2P,
   RestartIce: RestartIce,
+  AudioMute: AudioMute,
   End: End,
 };
 
@@ -54,6 +56,7 @@ const convertNodeNameToClass = (name, kind) => {
     "action.analyze": WebRTCMetrics,
     "action.call": CallP2P,
     "action.restart": RestartIce,
+    "action.mute": kind === "audio" ? AudioMute : AudioMute,
     "action.end": End,
   };
 

@@ -6,6 +6,7 @@ export const NODES = {
   ENCODE: "action.encode",
   ADJUST: "action.adjust",
   CALL: "action.call",
+  MUTE: "action.mute",
   RESTARTICE: "action.restart",
   ANALYZE: "action.analyze", // for WebRTCMetrics
   WATCH: "rtc.watchrtc", // for WatchRTC
@@ -48,6 +49,7 @@ export const KEYS = {
   TURNURL: "turnurl",
   TURNTOKEN: "turntoken",
   OPERATION: "operation",
+  METHOD: "method",
 };
 
 export const KEY_TYPE = {

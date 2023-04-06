@@ -40,6 +40,7 @@ class SDPMunging extends Main {
         enum: [
           { label: "None", value: "none" },
           { label: "RRTR", value: "rrtr" },
+          //{ label: "No Bundle", value: "nobundle" },
         ],
         value: "none",
         description: "Choose the operation to apply on the SDP",
