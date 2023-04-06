@@ -2,6 +2,7 @@ import { OBJECT_ACTIONS } from "../actions/objectActions";
 import { SUPERVISOR_ACTIONS } from "../actions/supervisonActions";
 import {
   filterNodesByName,
+  findTargetsFromSources,
   getNodeById,
   getNodeIndexById,
 } from "../modules/helper";
@@ -10,7 +11,7 @@ import {
   saveModelToStorage,
 } from "../actions/playgroundActions";
 import { DEBUG_ACTIONS } from "../actions/DebugActions";
-import { checkNodesProblems, PROBLEMS } from "../modules/problems";
+import { checkNodesProblems } from "../modules/problems";
 import { KEYS, NODES } from "../modules/model";
 
 export const STATE = {
@@ -81,22 +82,20 @@ const appReducer = (state = initialAppState, action) => {
       const nodeInfo = object.getInfoValueFor(KEYS.NODE);
 
       // Manage all target nodes
-      if (!!object.targets.length) {
-        object.targets.forEach((target) => {
-          const splitTarget = target.split("@");
+      const targets = findTargetsFromSources(
+        nodeInfo,
+        state.objects,
+        object.kind
+      );
+      if (!!targets.length) {
+        targets.forEach(({ node, source }) => {
+          const splitTarget = source.split("@");
           const label = splitTarget[0].split(":")[0];
           const prop = splitTarget[0].split(":")[1];
-          const nodeName = splitTarget[1];
-          // Find all target nodes and add a reference label/prop
-          filterNodesByName(nodeName, state.objects, object.kind).forEach(
-            (obj) => {
-              // only add track to encoding of the same kind
-              obj.addNewOptionToSelect(
-                object.id,
-                object.getPropertyValueFor(label),
-                prop
-              );
-            }
+          node.addNewOptionToSelect(
+            object.id,
+            object.getPropertyValueFor(label),
+            prop
           );
         });
       }

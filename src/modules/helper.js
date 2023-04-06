@@ -59,6 +59,20 @@ export const filterNodesByName = (node, nodes, kind) => {
   return nodes.filter((item) => item.node === node);
 };
 
+export const findTargetsFromSources = (node, nodes, kind) => {
+  const targets = [];
+  nodes.forEach((nodeItem) => {
+    const source = nodeItem.sources.find((source) =>
+      source.includes(`@${node}`)
+    );
+
+    if (source && (!kind || nodeItem.kind === kind)) {
+      targets.push({ node: nodeItem, source });
+    }
+  });
+  return targets;
+};
+
 export const findNodeByName = (node, nodes) => {
   return nodes.find((item) => item.node === node);
 };
