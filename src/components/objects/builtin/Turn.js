@@ -52,7 +52,6 @@ class Turn extends Main {
       },
     ];
     this._sources = [];
-    this._targets = [`${KEYS.NAME}:${KEYS.TURN}@${NODES.PEER}`];
   }
 
   renderProp(prop) {

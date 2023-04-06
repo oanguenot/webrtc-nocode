@@ -82,6 +82,7 @@ class WebRTCMetrics extends Main {
         description: "Choose where to store the metrics",
       },
     ];
+    this._sources = [];
   }
 
   renderProp(prop) {

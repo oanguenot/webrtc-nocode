@@ -47,7 +47,6 @@ class SDPMunging extends Main {
       },
     ];
     this._sources = [];
-    this._targets = [];
   }
 
   renderProp(prop) {

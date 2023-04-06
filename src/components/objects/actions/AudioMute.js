@@ -57,7 +57,6 @@ class AudioMute extends Main {
       },
     ];
     this._sources = [`${KEYS.NAME}:${KEYS.TRACK}@${NODES.TRACK}`];
-    this._targets = [];
   }
 
   renderProp(prop) {

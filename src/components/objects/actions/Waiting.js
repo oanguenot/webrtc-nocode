@@ -55,6 +55,7 @@ class Waiting extends Main {
         description: "Choose the period to wait",
       },
     ];
+    this._sources = [];
   }
 
   renderProp(prop) {

@@ -76,10 +76,6 @@ class VideoTrack extends Main {
       },
     ];
     this._sources = [];
-    this._targets = [
-      `${KEYS.NAME}:${KEYS.TRACK}@${NODES.ENCODE}`,
-      `${KEYS.NAME}:${KEYS.TRACK}@${NODES.ADJUST}`,
-    ];
   }
 
   addDevices(list) {

@@ -27,6 +27,7 @@ class Step extends Main {
         description: "Name of the Step",
       },
     ];
+    this._sources = [];
   }
 
   render() {

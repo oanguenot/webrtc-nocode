@@ -24,6 +24,7 @@ class Goto extends Main {
         description: "Select the next step",
       },
     ];
+    this._sources = [];
   }
 
   render() {

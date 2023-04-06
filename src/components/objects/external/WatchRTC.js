@@ -56,6 +56,7 @@ class WatchRTC extends Main {
         description: "Name of the room",
       },
     ];
+    this._sources = [];
   }
 
   renderProp(prop) {

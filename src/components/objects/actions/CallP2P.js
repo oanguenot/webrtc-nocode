@@ -68,7 +68,6 @@ class CallP2P extends Main {
       `${KEYS.NAME}:${KEYS.CALLER}@${NODES.PEER}`,
       `${KEYS.NAME}:${KEYS.RECIPIENT}@${NODES.PEER}`,
     ];
-    this._targets = [`${KEYS.NAME}:${KEYS.CALL}@${NODES.RESTARTICE}`];
   }
 
   renderProp(prop) {

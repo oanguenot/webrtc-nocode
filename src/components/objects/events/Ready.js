@@ -31,7 +31,6 @@ class Ready extends Main {
     this._acceptOutputs = [NODES.ACTIONS];
     this._acceptInputs = [];
     this._sources = [];
-    this._targets = [];
   }
 
   renderProp(prop) {

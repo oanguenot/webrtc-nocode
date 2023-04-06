@@ -50,7 +50,6 @@ class RestartIce extends Main {
       `${KEYS.NAME}:${KEYS.CALL}@${NODES.CALL}`,
       `${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`,
     ];
-    this._targets = [];
   }
 
   renderProp(prop) {

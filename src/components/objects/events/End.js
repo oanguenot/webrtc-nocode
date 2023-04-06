@@ -30,6 +30,7 @@ class End extends Main {
         description: "Name of the End node",
       },
     ];
+    this._sources = [];
   }
 
   renderProp(prop) {
