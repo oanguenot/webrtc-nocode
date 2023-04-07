@@ -3,6 +3,7 @@ import Main from "../Main";
 import "../Main.css";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
+import { getNodeById, getTURNCredentials } from "../../../modules/helper";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
@@ -72,6 +73,89 @@ class PeerConnection extends Main {
       default:
         return "";
     }
+  }
+
+  execute(
+    win,
+    peerNode,
+    stream,
+    iceEvents,
+    turnsConfiguration,
+    nodes,
+    callback,
+    createMediaElementInIFrame
+  ) {
+    return new Promise((resolve, reject) => {
+      if (win) {
+        const turnId = peerNode.getPropertyValueFor(KEYS.TURN);
+        const network = peerNode.getPropertyValueFor(KEYS.NETWORK);
+        const configuration = turnsConfiguration
+          ? turnsConfiguration[turnId]
+          : null;
+        if (configuration) {
+          const turnNode = getNodeById(turnId, nodes);
+          const turnToken = turnNode.getPropertyValueFor(KEYS.TURNTOKEN);
+          const { username, credential } = getTURNCredentials(
+            `user#${peerNode.id}`,
+            turnToken
+          );
+
+          configuration.iceServers.forEach((server) => {
+            if ("username" in server) {
+              server.username = username;
+              server.credential = credential;
+            }
+          });
+
+          if (network === "relay") {
+            configuration.iceTransportPolicy = "relay";
+          }
+          win.pc = new win.RTCPeerConnection(configuration);
+        } else {
+          win.pc = new win.RTCPeerConnection();
+        }
+        win.ices = [];
+        win.pc.addEventListener("iceconnectionstatechange", () => {
+          const state = win.pc.iceConnectionState;
+
+          // Check iceEvents node to initiate actions
+          iceEvents.forEach((eventNode) => {
+            const eventState = eventNode.getPropertyValueFor(KEYS.ICESTATE);
+            if (eventState === state) {
+              //executeEventNode(eventNode, nodes);
+              callback(eventNode, nodes);
+            }
+          });
+        });
+
+        win.pc.addEventListener("negotiationneeded", (event) => {});
+
+        win.pc.addEventListener("track", (event) => {
+          createMediaElementInIFrame(
+            win,
+            event.track.kind,
+            event.track.id,
+            false
+          );
+          const captured = new win.MediaStream();
+          captured.addTrack(event.track);
+          win.document.querySelector(`#remote-${event.track.id}`).srcObject =
+            captured;
+        });
+
+        stream.getTracks().forEach((track) => {
+          win.pc.addTrack(track);
+          // win.pc.addTransceiver(track, {
+          //   sendEncodings: [
+          //     { rid: "q", scaleResolutionDownBy: 4.0, scalabilityMode: "L1T3" },
+          //     { rid: "h", scaleResolutionDownBy: 2.0, scalabilityMode: "L1T3" },
+          //     { rid: "f", scalabilityMode: "L1T3" },
+          //   ],
+          // });
+        });
+      }
+      resolve();
+    });
   }
 
   render() {
