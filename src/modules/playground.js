@@ -150,34 +150,19 @@ const createMedia = (peerNode, nodes) => {
 };
 
 const createWatchRTC = (peerNode, nodes) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     try {
       const win = frames[peerNode.id];
       const outputNodes = getNodesFromIds(peerNode.linksOutput, nodes);
       const watchNode = findNodeByName(NODES.WATCH, outputNodes);
+      const rtcPeerId = peerNode.getPropertyValueFor("name");
 
       if (!watchNode) {
         resolve();
         return;
       }
 
-      // Don't activate watchRTC if paused
-      const active = watchNode.getPropertyValueFor("active");
-      if (active === "no") {
-        resolve();
-        return;
-      }
-
-      const rtcApiKey = watchNode.getPropertyValueFor("apiKey");
-      const rtcRoomId = watchNode.getPropertyValueFor("roomId");
-      // Use the property name from peer as the peerId
-      const rtcPeerId = peerNode.getPropertyValueFor("name");
-
-      win.watchRTC.init({
-        rtcApiKey,
-        rtcRoomId,
-        rtcPeerId,
-      });
+      await watchNode.execute(win, rtcPeerId);
       resolve();
     } catch (err) {
       reject(err);

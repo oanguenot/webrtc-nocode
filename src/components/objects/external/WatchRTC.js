@@ -1,6 +1,7 @@
 import Main from "../Main";
-import { KEY_TYPE, KEYS } from "../../../modules/model";
+import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { nanoid } from "nanoid";
+import { findNodeByName, getNodesFromIds } from "../../../modules/helper";
 
 class WatchRTC extends Main {
   static item = "WatchRTC";
@@ -72,6 +73,31 @@ class WatchRTC extends Main {
       case "roomId":
         return property.value ? property.value : "no ID for room";
     }
+  }
+
+  execute(win, rtcPeerId) {
+    return new Promise((resolve, reject) => {
+      try {
+        // Don't activate watchRTC if paused
+        const active = this.getPropertyValueFor("active");
+        if (active === "no") {
+          resolve();
+          return;
+        }
+
+        const rtcApiKey = this.getPropertyValueFor("apiKey");
+        const rtcRoomId = this.getPropertyValueFor("roomId");
+
+        win.watchRTC.init({
+          rtcApiKey,
+          rtcRoomId,
+          rtcPeerId,
+        });
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 
   render() {
