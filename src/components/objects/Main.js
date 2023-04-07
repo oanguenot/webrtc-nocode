@@ -268,6 +268,12 @@ class Main {
     return "";
   }
 
+  execute() {
+    return new Promise((resolve, _reject) => {
+      resolve();
+    });
+  }
+
   rehydrate(fromNode) {
     this._uuid = fromNode._uuid;
     this._linksOutputs = fromNode._linksOutputs;

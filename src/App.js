@@ -39,13 +39,13 @@ function App() {
   const [flags, setFlags] = useState([]);
 
   useEffect(() => {
-    getListOfDevices(dispatch);
+    //getListOfDevices(dispatch);
   }, []);
 
   useEffect(() => {
-    if (appState.loadedCheckDevices) {
-      checkDevicesInNodes(appState.devices, appState.objects, dispatch);
-    }
+    // if (appState.loadedCheckDevices) {
+    //   checkDevicesInNodes(appState.devices, appState.objects, dispatch);
+    // }
   }, [appState.loadedCheckDevices]);
 
   const addFlag = (fileName) => {

@@ -7,7 +7,7 @@ const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class VideoTrack extends Main {
   static item = "Video Track";
-  static description = "Add a video source from a webcam";
+  static description = "Add a video source from a fake device";
   static icon = "video";
   static section = "builtin";
   static name = "VideoTrack";
@@ -39,45 +39,18 @@ class VideoTrack extends Main {
         label: "From",
         type: KEY_TYPE.ENUM,
         enum: [
-          { label: "[Default]", value: "[default]" },
           { label: "None", value: "none" },
-          { label: "Fake", value: "fake" },
+          { label: "Fake", value: "[fake]" },
         ],
-        value: "[default]",
+        value: "[fake]",
         description: "Choose the preferred camera",
-      },
-      {
-        prop: KEYS.FRAMERATE,
-        label: "Framerate",
-        type: KEY_TYPE.ENUM,
-        enum: [
-          { label: "1 fps", value: 1 },
-          { label: "6 fps", value: 5 },
-          { label: "12 fps", value: 12 },
-          { label: "24 fps", value: 24 },
-          { label: "30 fps", value: 30 },
-          { label: "60 fps", value: 60 },
-        ],
-        value: 30,
-        description: "Number of frames per second",
-      },
-      {
-        prop: KEYS.RESOLUTION,
-        label: "Resolution",
-        type: KEY_TYPE.ENUM,
-        enum: [
-          { label: "480p", value: "480p" },
-          { label: "HD", value: "720p" },
-          { label: "Full HD", value: "1080p" },
-          { label: "4K", value: "4k" },
-        ],
-        value: "720p",
-        description: "Choose a resolution",
       },
     ];
     this._sources = [];
   }
 
+  // Don't use real devices
+  // This function has been desactivated
   addDevices(list) {
     const prop = this._properties.find((property) => property.prop === "from");
     const existingDevices = prop.enum;
@@ -104,14 +77,48 @@ class VideoTrack extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.FROM:
-        return label;
-      case KEYS.FRAMERATE:
-        return `${label}`;
-      case KEYS.RESOLUTION:
-        return `${label}`;
+        return property.value !== "none" ? `[${label}]` : label;
       default:
         return "";
     }
+  }
+
+  execute(win) {
+    return new Promise((resolve, reject) => {
+      const getVideoTrack = (width, height, r, g, b) => {
+        const canvas = Object.assign(win.document.createElement("canvas"), {
+          width,
+          height,
+        });
+
+        const ctx = canvas.getContext("2d");
+        ctx.fillRect(0, 0, width, height);
+        const p = ctx.getImageData(0, 0, width, height);
+        const draw = () => {
+          for (let i = 0; i < p.data.length; i++) {
+            const color = Math.random() * 255;
+            p.data[i++] = color * r;
+            p.data[i++] = color * g;
+            p.data[i++] = color * b;
+          }
+          ctx.putImageData(p, 0, 0);
+          requestAnimationFrame(draw);
+        };
+        requestAnimationFrame(draw);
+        const videoStream = canvas.captureStream();
+        return videoStream.getVideoTracks()[0];
+      };
+
+      try {
+        const videoTrack = getVideoTrack(96, 64, 0, 1, 0);
+        const stream = new win.MediaStream();
+        stream.addTrack(videoTrack);
+        resolve(stream);
+      } catch (err) {
+        console.log(`[IFRAME] :: error got stream ${err.toString()}`);
+        reject(null);
+      }
+    });
   }
 
   render() {
@@ -128,19 +135,11 @@ class VideoTrack extends Main {
                   this._uuid
                 }">${this.renderProp(KEYS.FROM)}</span>
             </div>
-          <div class="object-box-line">
-            <i class="fas fa-ruler-combined"></i><span class="object-details-value" id="resolution-${
-              this._uuid
-            }">${this.renderProp(KEYS.RESOLUTION)}</span>
-          </div>
-          <div class="object-box-line">
-            <i class="fas fa-tachometer-alt"></i><span class="object-details-value" id="framerate-${
-              this._uuid
-            }">${this.renderProp(KEYS.FRAMERATE)}</span>
-          </div>
-          <div class="object-footer">
-            <span class="object-node object-title-box">${this.node}</span>    
-          </div>
+            <div class="object-footer">
+                <span class="object-node object-title-box">${
+                  this.node
+                }</span>    
+            </div>
         </div>
       </div>
       `;

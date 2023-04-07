@@ -33,7 +33,7 @@ const initialAppState = {
   selected: null,
   link: null,
   devices: [],
-  state: STATE.NOT_INITIALIZED,
+  state: STATE.READY,
   debug: [],
   events: [],
   groups: [],
@@ -122,9 +122,9 @@ const appReducer = (state = initialAppState, action) => {
         });
       }
 
-      if (nodeInfo === NODES.TRACK) {
-        object.addDevices(state.devices);
-      }
+      // if (nodeInfo === NODES.TRACK) {
+      //   object.addDevices(state.devices);
+      // }
 
       const newObjects = [...state.objects, object];
       saveModelToStorage(newObjects);

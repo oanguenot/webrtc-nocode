@@ -175,47 +175,24 @@ const createMedia = (peerNode, nodes) => {
       win.stream = new win.MediaStream();
 
       for (const inputId of peerNode.linksInput) {
-        const constraints = { audio: false, video: false };
         let input = getNodeById(inputId, nodes);
         if (input) {
           const kind = input.getInfoValueFor("kind");
           const deviceId = input.getPropertyValueFor("from");
-          if (kind === "audio") {
-            const channelCount = input.getPropertyValueFor("channelCount");
-            if (deviceId !== "none") {
-              constraints.audio = {
-                channelCount,
-              };
-              if (deviceId !== "[default]") {
-                constraints.audio.deviceId = { exact: deviceId };
-              }
-            }
-          } else {
-            const framerate = input.getPropertyValueFor("framerate");
-            const resolution = input.getPropertyValueFor("resolution");
-            const dimension = getDimensionFromResolution(resolution);
-            if (deviceId !== "none") {
-              constraints.video = {
-                framerate,
-                width: dimension.width,
-                height: dimension.height,
-              };
-              if (deviceId !== "[default]") {
-                constraints.video.deviceId = { exact: deviceId };
-              }
-            }
-          }
-          // Create media element in IFrame
-          createMediaElementInIFrame(win, kind, inputId);
-          const captured = await win.navigator.mediaDevices.getUserMedia(
-            constraints
-          );
+          if (deviceId !== "none") {
+            // Create media element in IFrame
+            createMediaElementInIFrame(win, kind, inputId);
 
-          win.document.querySelector(`#local-${inputId}`).srcObject = captured;
-          captured.getTracks().forEach((track) => {
-            track.__wp = inputId;
-            win.stream.addTrack(track);
-          });
+            // Execute track node to get the media
+            const captured = await input.execute(win);
+
+            win.document.querySelector(`#local-${inputId}`).srcObject =
+              captured;
+            captured.getTracks().forEach((track) => {
+              track.__wp = inputId;
+              win.stream.addTrack(track);
+            });
+          }
         }
       }
       resolve(win.stream);
