@@ -200,40 +200,6 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
   });
 };
 
-const restartIce = (peerNode, callNode, currentNode, nodes) => {
-  return new Promise((resolve, reject) => {
-    const win = frames[peerNode.id];
-    if (!win.pc) {
-      console.log("Can't restartIce - no peer connection");
-      resolve();
-      return;
-    }
-
-    const calleeId = callNode.getPropertyValueFor(KEYS.RECIPIENT);
-    const calleeNode = getNodeById(calleeId, nodes);
-
-    win.pc.addEventListener(
-      "negotiationneeded",
-      async () => {
-        await call(peerNode, calleeNode, callNode, nodes);
-        resolve();
-      },
-      { once: true }
-    );
-
-    // Restart ICE
-    win.pc.restartIce();
-    addCustomEvent(
-      peerNode.id,
-      frames,
-      "restart-ice",
-      "playground",
-      "",
-      new Date()
-    );
-  });
-};
-
 const endPlayground = () => {
   return new Promise((resolve, reject) => {
     Object.keys(frames).forEach((key) => {
@@ -331,11 +297,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         break;
       }
       case NODES.RESTARTICE: {
-        const peerId = currentNode.getPropertyValueFor(KEYS.PEER);
-        const peerNode = getNodeById(peerId, nodes);
-        const callId = currentNode.getPropertyValueFor(KEYS.CALL);
-        const callNode = getNodeById(callId, nodes);
-        promises.push(restartIce(peerNode, callNode, currentNode, nodes));
+        promises.push(currentNode.execute(nodes, frames, call));
         break;
       }
       case NODES.END: {

@@ -1,5 +1,7 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { getNodeById } from "../../../modules/helper";
+import { addCustomEvent } from "../../../modules/metrics";
 
 class RestartIce extends Main {
   static item = "RestartIce";
@@ -66,6 +68,45 @@ class RestartIce extends Main {
       default:
         return "";
     }
+  }
+
+  execute(nodes, frames, callback) {
+    return new Promise((resolve, reject) => {
+      const peerId = this.getPropertyValueFor(KEYS.PEER);
+      const peerNode = getNodeById(peerId, nodes);
+
+      const win = frames[peerId];
+      if (!win.pc) {
+        console.log("Can't restartIce - no peer connection");
+        resolve();
+        return;
+      }
+
+      const callId = this.getPropertyValueFor(KEYS.CALL);
+      const callNode = getNodeById(callId, nodes);
+      const calleeId = callNode.getPropertyValueFor(KEYS.RECIPIENT);
+      const calleeNode = getNodeById(calleeId, nodes);
+
+      win.pc.addEventListener(
+        "negotiationneeded",
+        async () => {
+          await callback(peerNode, calleeNode, callNode, nodes);
+          resolve();
+        },
+        { once: true }
+      );
+
+      // Restart ICE
+      win.pc.restartIce();
+      addCustomEvent(
+        peerNode.id,
+        frames,
+        "restart-ice",
+        "playground",
+        "",
+        new Date()
+      );
+    });
   }
 
   render() {
