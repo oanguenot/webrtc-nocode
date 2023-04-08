@@ -32,6 +32,13 @@ class WatchRTC extends Main {
         description: "Name of the tool",
       },
       {
+        prop: "apiKey",
+        label: "API Key",
+        type: "text",
+        value: "",
+        description: "API Key to use",
+      },
+      {
         prop: KEYS.ACTIVE,
         label: "Active",
         type: KEY_TYPE.ENUM,
@@ -41,13 +48,6 @@ class WatchRTC extends Main {
         ],
         value: "yes",
         description: "Choose if watchRTC is active or not",
-      },
-      {
-        prop: "apiKey",
-        label: "API Key",
-        type: "text",
-        value: "",
-        description: "API Key to use",
       },
       {
         prop: "roomId",

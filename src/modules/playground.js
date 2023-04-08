@@ -213,87 +213,6 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
   });
 };
 
-const adjust = (encodeNode, nodes) => {
-  return new Promise((resolve, reject) => {
-    const trackNodeId = encodeNode.getPropertyValueFor(KEYS.TRACK);
-    const maxBitrate = encodeNode.getPropertyValueFor(KEYS.MAX_BITRATE);
-    const maxFramerate = encodeNode.getPropertyValueFor(KEYS.MAX_FRAMERATE);
-    const active = encodeNode.getPropertyValueFor(KEYS.ACTIVE);
-
-    const trackNode = getNodeById(trackNodeId, nodes);
-    const fromProperty = trackNode.getPropertyFor(KEYS.FROM);
-    const trackKind = trackNode.getInfoValueFor(KEYS.KIND);
-    const trackDeviceId = trackNode.getPropertyValueFor(KEYS.FROM);
-
-    // Deduce peer node from track node
-    const peerId = trackNode.linksOutput[0];
-    const peerNode = getNodeById(peerId, nodes);
-
-    const win = frames[peerNode.id];
-    if (!win.pc) {
-      console.log("Can't adjust - no peer connection");
-      resolve();
-      return;
-    }
-
-    // Get transceiver and sender used
-    const transceivers = win.pc.getTransceivers();
-    const transceiver = getTransceiver(transceivers, trackNodeId);
-    if (!transceiver) {
-      resolve();
-      return;
-    }
-
-    // Change active flags
-    const sender = transceiver.sender;
-    if (!sender) {
-      resolve();
-      return;
-    }
-    const parameters = sender.getParameters();
-
-    const newParameters = { ...parameters };
-    const encodings = newParameters.encodings[0];
-    if (!encodings) {
-      console.warn("[adjust] no encodings found");
-      resolve();
-      return;
-    }
-
-    let parameter = ``;
-    if (active !== "unchanged") {
-      encodings.active = active === "yes";
-      parameter += `encoding=${active}`;
-    }
-    if (maxBitrate > -1) {
-      encodings.maxBitrate = maxBitrate;
-      parameter += `,maxbitrate=${maxBitrate}`;
-    }
-    if (maxFramerate > -1) {
-      encodings.maxFramerate = maxFramerate;
-      parameter += `,maxframerate=${maxFramerate}`;
-    }
-
-    sender
-      .setParameters(newParameters)
-      .then(() => {
-        addCustomEvent(
-          peerNode.id,
-          frames,
-          "set-parameters",
-          "playground",
-          `${encodeNode.id} parameterize track with ${parameter}`,
-          new Date()
-        );
-        resolve();
-      })
-      .catch((err) => {
-        console.warn("[encode] error", err);
-        resolve();
-      });
-  });
-};
-
 const restartIce = (peerNode, callNode, currentNode, nodes) => {
   return new Promise((resolve, reject) => {
     const win = frames[peerNode.id];
@@ -421,7 +340,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         break;
       }
       case NODES.ADJUST: {
-        promises.push(adjust(currentNode, nodes));
+        promises.push(currentNode.execute(nodes, frames));
         break;
       }
       case NODES.RESTARTICE: {
@@ -437,6 +356,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         break;
       }
       default:
+        console.warn(`[play] can't execute ${currentNode.node} - not found`);
         break;
     }
 

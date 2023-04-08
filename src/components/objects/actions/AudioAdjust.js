@@ -1,5 +1,7 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
+import { getNodeById, getTransceiver } from "../../../modules/helper";
+import { addCustomEvent } from "../../../modules/metrics";
 
 class AudioAdjust extends Main {
   static item = "Adjust Audio Parameters";
@@ -86,6 +88,82 @@ class AudioAdjust extends Main {
       case KEYS.TRACK:
         return property.value === "none" ? "[no source]" : `[${label}]`;
     }
+  }
+
+  execute(nodes, frames) {
+    return new Promise((resolve, reject) => {
+      const trackNodeId = this.getPropertyValueFor(KEYS.TRACK);
+      const maxBitrate = this.getPropertyValueFor(KEYS.MAX_BITRATE);
+      const maxFramerate = this.getPropertyValueFor(KEYS.MAX_FRAMERATE);
+      const active = this.getPropertyValueFor(KEYS.ACTIVE);
+
+      const trackNode = getNodeById(trackNodeId, nodes);
+
+      // Deduce peer node from track node
+      const peerId = trackNode.linksOutput[0];
+      const peerNode = getNodeById(peerId, nodes);
+
+      const win = frames[peerNode.id];
+      if (!win.pc) {
+        console.log("Can't adjust - no peer connection");
+        resolve();
+        return;
+      }
+
+      // Get transceiver and sender used
+      const transceivers = win.pc.getTransceivers();
+      const transceiver = getTransceiver(transceivers, trackNodeId);
+      if (!transceiver) {
+        resolve();
+        return;
+      }
+
+      // Change active flags
+      const sender = transceiver.sender;
+      if (!sender) {
+        resolve();
+        return;
+      }
+      const parameters = sender.getParameters();
+
+      const newParameters = { ...parameters };
+      const encodings = newParameters.encodings[0];
+      if (!encodings) {
+        console.warn("[adjust] no encodings found");
+        resolve();
+        return;
+      }
+
+      let parameter = ``;
+      encodings.active = active === "yes";
+      parameter += `encoding=${active === "yes"}`;
+      if (maxBitrate > -1) {
+        encodings.maxBitrate = maxBitrate;
+        parameter += `,maxbitrate=${maxBitrate}`;
+      }
+      if (maxFramerate > -1) {
+        encodings.maxFramerate = maxFramerate;
+        parameter += `,maxframerate=${maxFramerate}`;
+      }
+
+      sender
+        .setParameters(newParameters)
+        .then(() => {
+          addCustomEvent(
+            peerNode.id,
+            frames,
+            "set-parameters",
+            "playground",
+            `${this._uuid} parameterize track with ${parameter}`,
+            new Date()
+          );
+          resolve();
+        })
+        .catch((err) => {
+          console.warn("[encode] error", err);
+          resolve();
+        });
+    });
   }
 
   render() {

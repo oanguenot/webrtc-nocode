@@ -97,7 +97,6 @@ class PeerConnection extends Main {
           }
         }
 
-        console.log(">>>", configuration);
         if (configuration) {
           win.pc = new win.RTCPeerConnection(configuration);
         } else {
