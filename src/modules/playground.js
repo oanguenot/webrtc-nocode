@@ -88,13 +88,7 @@ const createMediaElementInIFrame = (win, kind, id, isLocal = true) => {
   localElt.appendChild(elt);
 };
 
-const createPeerConnection = (
-  peerNode,
-  stream,
-  iceEvents,
-  turnsConfiguration,
-  nodes
-) => {
+const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
   return new Promise(async (resolve, _reject) => {
     const win = frames[peerNode.id];
 
@@ -103,7 +97,6 @@ const createPeerConnection = (
       peerNode,
       stream,
       iceEvents,
-      turnsConfiguration,
       nodes,
       (eventNode, nodes) => {
         executeEventNode(eventNode, nodes);
@@ -167,51 +160,6 @@ const createWatchRTC = (peerNode, nodes) => {
     } catch (err) {
       reject(err);
     }
-  });
-};
-
-const createTurnConfiguration = (turns, peerId) => {
-  return new Promise((resolve, reject) => {
-    if (!turns.length) {
-      resolve();
-      return;
-    }
-
-    const turnsConfiguration = {};
-
-    turns.forEach((turnNode) => {
-      const stunUrl = turnNode.getPropertyValueFor(KEYS.STUNURL);
-      const turnUrl = turnNode.getPropertyValueFor(KEYS.TURNURL);
-
-      const configuration = {
-        iceServers: [],
-        iceTransportPolicy: "all",
-      };
-
-      // Add all stun urls
-      const urlsForStun = stunUrl.split(";");
-      urlsForStun.forEach((url) => {
-        if (url) {
-          configuration.iceServers.push({ urls: url });
-        }
-      });
-
-      const urlsForTurn = turnUrl.split(";");
-      urlsForTurn.forEach((url) => {
-        if (url) {
-          configuration.iceServers.push({
-            urls: url,
-            username: null,
-            credential: null,
-          });
-        }
-      });
-
-      // Store each Turn configuration
-      turnsConfiguration[turnNode.id] = configuration;
-    });
-
-    resolve(turnsConfiguration);
   });
 };
 
@@ -633,14 +581,10 @@ export const execute = (nodes, dispatch) => {
     const peers = filterNodesByName(NODES.PEER, nodes);
     const iceEvents = filterNodesByName(NODES.ICE, nodes);
     const readyEvent = findNodeByName(NODES.READY, nodes);
-    const turns = filterNodesByName(NODES.TURN, nodes);
 
     // Estimate the number of task to do
     const numberOfTasks = estimateTasks(peers, iceEvents, readyEvent, nodes);
     setTaskNumber(numberOfTasks, dispatch);
-
-    // Create Turn Configuration
-    const turnsConfiguration = await createTurnConfiguration(turns);
 
     // Initialize Peer Connections
     for (const peer of peers) {
@@ -663,7 +607,6 @@ export const execute = (nodes, dispatch) => {
         peer,
         stream,
         iceEventsForPeer,
-        turnsConfiguration,
         nodes
       );
 

@@ -80,36 +80,25 @@ class PeerConnection extends Main {
     peerNode,
     stream,
     iceEvents,
-    turnsConfiguration,
     nodes,
     callback,
     createMediaElementInIFrame
   ) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       if (win) {
         const turnId = peerNode.getPropertyValueFor(KEYS.TURN);
         const network = peerNode.getPropertyValueFor(KEYS.NETWORK);
-        const configuration = turnsConfiguration
-          ? turnsConfiguration[turnId]
-          : null;
-        if (configuration) {
+        let configuration = null;
+        if (turnId !== "local") {
           const turnNode = getNodeById(turnId, nodes);
-          const turnToken = turnNode.getPropertyValueFor(KEYS.TURNTOKEN);
-          const { username, credential } = getTURNCredentials(
-            `user#${peerNode.id}`,
-            turnToken
-          );
-
-          configuration.iceServers.forEach((server) => {
-            if ("username" in server) {
-              server.username = username;
-              server.credential = credential;
-            }
-          });
-
+          configuration = await turnNode.execute(peerNode.id);
           if (network === "relay") {
             configuration.iceTransportPolicy = "relay";
           }
+        }
+
+        console.log(">>>", configuration);
+        if (configuration) {
           win.pc = new win.RTCPeerConnection(configuration);
         } else {
           win.pc = new win.RTCPeerConnection();
