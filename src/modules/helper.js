@@ -109,3 +109,18 @@ export const getTURNCredentials = (
     credential: "",
   };
 };
+
+export const getTransceiver = (transceivers, trackNodeId) => {
+  return transceivers.find((transceiver) => {
+    const sender = transceiver.sender;
+    if (!sender) {
+      return false;
+    }
+
+    const track = sender.track;
+    if (!track) {
+      return false;
+    }
+    return track.__wp === trackNodeId;
+  });
+};

@@ -7,7 +7,7 @@ import {
   getNodeById,
   getNodeInfoValue,
   getNodesFromIds,
-  getTURNCredentials,
+  getTransceiver,
 } from "./helper";
 import { KEYS, NODES } from "./model";
 import { rehydrateObject } from "./builder";
@@ -27,21 +27,6 @@ import { mungle } from "./sdp";
 
 const frames = {};
 let dispatcher = null;
-
-const getTransceiver = (transceivers, trackNodeId) => {
-  return transceivers.find((transceiver) => {
-    const sender = transceiver.sender;
-    if (!sender) {
-      return false;
-    }
-
-    const track = sender.track;
-    if (!track) {
-      return false;
-    }
-    return track.__wp === trackNodeId;
-  });
-};
 
 const delayer = (duration) => {
   return new Promise((resolve, __reject) => {
@@ -233,62 +218,6 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
 
     await callerWin.pc.setRemoteDescription(rtcAnswerSessionDescription);
     calleeIces.forEach((ice) => callerWin.pc.addIceCandidate(ice));
-    resolve();
-  });
-};
-
-const encode = (encodeNode, nodes) => {
-  return new Promise((resolve, reject) => {
-    const trackNodeId = encodeNode.getPropertyValueFor(KEYS.TRACK);
-    const codecMimeType = encodeNode.getPropertyValueFor(KEYS.PREFERENCE);
-
-    const trackNode = getNodeById(trackNodeId, nodes);
-    const fromProperty = trackNode.getPropertyFor(KEYS.FROM);
-    const trackLabel = trackNode.getLabelFromPropertySelect(fromProperty);
-    const trackKind = trackNode.getInfoValueFor(KEYS.KIND);
-    const trackDeviceId = trackNode.getPropertyValueFor(KEYS.FROM);
-
-    // Deduce peer node from track node
-    const peerId = trackNode.linksOutput[0];
-    const peerNode = getNodeById(peerId, nodes);
-
-    const win = frames[peerNode.id];
-    if (!win.pc) {
-      resolve();
-      return;
-    }
-
-    // Get transceiver and sender used
-    const transceivers = win.pc.getTransceivers();
-
-    const transceiver = getTransceiver(transceivers, trackNodeId);
-
-    if (!transceiver) {
-      resolve();
-      return;
-    }
-
-    // Update codecs
-    const { codecs } = RTCRtpSender.getCapabilities("video");
-    const preferredCodecs = codecs.filter((codec) =>
-      codec.mimeType.toLowerCase().includes(codecMimeType.toLowerCase())
-    );
-    const firstCodecIndex = codecs.findIndex((codec) =>
-      codec.mimeType.toLowerCase().includes(codecMimeType.toLowerCase())
-    );
-
-    codecs.splice(firstCodecIndex, preferredCodecs.length);
-    codecs.unshift(...preferredCodecs);
-    transceiver.setCodecPreferences(codecs);
-
-    addCustomEvent(
-      peerNode.id,
-      frames,
-      "encode",
-      "playground",
-      `${encodeNode.id} encode track ${trackLabel} using ${codecMimeType}`,
-      new Date()
-    );
     resolve();
   });
 };
@@ -493,12 +422,11 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         break;
       }
       case NODES.WAIT: {
-        const delay = currentNode.getPropertyValueFor(KEYS.DELAY);
-        promises.push(delayer(delay));
+        promises.push(currentNode.execute());
         break;
       }
       case NODES.ENCODE: {
-        promises.push(encode(currentNode, nodes));
+        promises.push(currentNode.execute(nodes, frames));
         break;
       }
       case NODES.ADJUST: {

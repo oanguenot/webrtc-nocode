@@ -1,5 +1,7 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
+import { getNodeById, getTransceiver } from "../../../modules/helper";
+import { addCustomEvent } from "../../../modules/metrics";
 
 class VideoEncodings extends Main {
   static item = "Set Video Codec";
@@ -69,6 +71,60 @@ class VideoEncodings extends Main {
       case KEYS.TRACK:
         return property.value === "none" ? "[no source]" : `[${label}]`;
     }
+  }
+
+  execute(nodes, frames) {
+    return new Promise((resolve, reject) => {
+      const trackNodeId = this.getPropertyValueFor(KEYS.TRACK);
+      const codecMimeType = this.getPropertyValueFor(KEYS.PREFERENCE);
+
+      const trackNode = getNodeById(trackNodeId, nodes);
+      const fromProperty = trackNode.getPropertyFor(KEYS.FROM);
+      const trackLabel = trackNode.getLabelFromPropertySelect(fromProperty);
+
+      // Deduce peer node from track node
+      const peerId = trackNode.linksOutput[0];
+      const peerNode = getNodeById(peerId, nodes);
+
+      const win = frames[peerNode.id];
+      if (!win.pc) {
+        resolve();
+        return;
+      }
+
+      // Get transceiver and sender used
+      const transceivers = win.pc.getTransceivers();
+
+      const transceiver = getTransceiver(transceivers, trackNodeId);
+
+      if (!transceiver) {
+        resolve();
+        return;
+      }
+
+      // Update codecs
+      const { codecs } = RTCRtpSender.getCapabilities("video");
+      const preferredCodecs = codecs.filter((codec) =>
+        codec.mimeType.toLowerCase().includes(codecMimeType.toLowerCase())
+      );
+      const firstCodecIndex = codecs.findIndex((codec) =>
+        codec.mimeType.toLowerCase().includes(codecMimeType.toLowerCase())
+      );
+
+      codecs.splice(firstCodecIndex, preferredCodecs.length);
+      codecs.unshift(...preferredCodecs);
+      transceiver.setCodecPreferences(codecs);
+
+      addCustomEvent(
+        peerNode.id,
+        frames,
+        "encode",
+        "playground",
+        `${this._uuid} encode track ${trackLabel} using ${codecMimeType}`,
+        new Date()
+      );
+      resolve();
+    });
   }
 
   render() {

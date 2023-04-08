@@ -38,20 +38,20 @@ class Waiting extends Main {
         label: "Delay",
         type: KEY_TYPE.ENUM,
         enum: [
-          { label: "1 second", value: "1000" },
-          { label: "3 seconds", value: "3000" },
-          { label: "5 seconds", value: "5000" },
-          { label: "10 seconds", value: "10000" },
-          { label: "15 seconds", value: "15000" },
-          { label: "20 seconds", value: "20000" },
-          { label: "30 seconds", value: "30000" },
-          { label: "45 seconds", value: "45000" },
-          { label: "60 seconds", value: "60000" },
-          { label: "90 seconds", value: "90000" },
-          { label: "180 seconds", value: "180000" },
-          { label: "300 seconds", value: "300000" },
+          { label: "1 second", value: 1000 },
+          { label: "3 seconds", value: 3000 },
+          { label: "5 seconds", value: 5000 },
+          { label: "10 seconds", value: 10000 },
+          { label: "15 seconds", value: 15000 },
+          { label: "20 seconds", value: 20000 },
+          { label: "30 seconds", value: 30000 },
+          { label: "45 seconds", value: 45000 },
+          { label: "60 seconds", value: 60000 },
+          { label: "90 seconds", value: 90000 },
+          { label: "180 seconds", value: 180000 },
+          { label: "300 seconds", value: 300000 },
         ],
-        value: "10000",
+        value: 15000,
         description: "Choose the period to wait",
       },
     ];
@@ -70,6 +70,15 @@ class Waiting extends Main {
       default:
         return "";
     }
+  }
+
+  execute() {
+    return new Promise((resolve, _reject) => {
+      const delay = this.getPropertyValueFor(KEYS.DELAY);
+      setTimeout(() => {
+        resolve();
+      }, delay);
+    });
   }
 
   render() {
