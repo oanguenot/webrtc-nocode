@@ -200,45 +200,6 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
   });
 };
 
-const endPlayground = () => {
-  return new Promise((resolve, reject) => {
-    Object.keys(frames).forEach((key) => {
-      addCustomEvent(key, frames, "close", "playground", "", new Date());
-      const winFrame = frames[key];
-      if (winFrame.pc) {
-        winFrame.pc.close();
-      }
-      if (winFrame.stream) {
-        winFrame.stream.getTracks().forEach((track) => track.stop());
-      }
-
-      // Stop monitoring
-      const ticket = stopMonitoring(key, frames);
-      if (ticket) {
-        // ticket.call.events.forEach((event) => {
-        //     const getValueToDisplay = (name, value) => {
-        //       switch (name) {
-        //         case "size-up":
-        //           return `&#x2197; ${value}`;
-        //         case "size-down":
-        //           return `&#x2198; ${value}`;
-        //         case "fps-up":
-        //           return `&#x2191; ${value} fps`;
-        //         case "fps-down":
-        //           return `&#x2193; ${value} fps`;
-        //         case "limitation":
-        //         default:
-        //           return `&#8474; ${value}`;
-        //       }
-        //     };
-        // });
-        console.log(">>>TICKET", ticket);
-      }
-    });
-    resolve();
-  });
-};
-
 const executeEventNode = (eventNode, nodes) => {
   return new Promise((resolve, reject) => {
     const firstNode = getNodeById(eventNode.linksOutput[0], nodes);
@@ -271,17 +232,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
     const promises = [];
     switch (currentNode.node) {
       case NODES.CALL: {
-        const callerId = currentNode.getPropertyValueFor(KEYS.CALLER);
-        const fromPeer = getNodeById(callerId, nodes);
-        const recipientId = currentNode.getPropertyValueFor(KEYS.RECIPIENT);
-        const recipientPeer = getNodeById(recipientId, nodes);
-
-        if (recipientPeer && fromPeer) {
-          promises.push(call(fromPeer, recipientPeer, currentNode, nodes));
-        } else {
-          console.warn("[play] can't call - missing callee");
-          reject();
-        }
+        promises.push(currentNode.execute(nodes, frames));
         break;
       }
       case NODES.WAIT: {
@@ -301,7 +252,11 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         break;
       }
       case NODES.END: {
-        promises.push(endPlayground());
+        promises.push(
+          currentNode.execute(nodes, frames, (tickets) => {
+            console.log(">>>TICKETS", tickets);
+          })
+        );
         break;
       }
       default:

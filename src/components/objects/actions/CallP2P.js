@@ -1,6 +1,7 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
+import { getNodeById } from "../../../modules/helper";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
@@ -94,6 +95,82 @@ class CallP2P extends Main {
       default:
         return "";
     }
+  }
+
+  execute(nodes, frames) {
+    return new Promise(async (resolve, reject) => {
+      const waitForIce = (peer, id) => {
+        return new Promise((resolve, reject) => {
+          const ices = [];
+
+          peer.addEventListener("icecandidate", (event) => {
+            if (event.candidate) {
+              ices.push(event.candidate);
+            } else {
+              resolve(ices);
+            }
+          });
+        });
+      };
+
+      const callerId = this.getPropertyValueFor(KEYS.CALLER);
+      const callerNode = getNodeById(callerId, nodes);
+      const recipientId = this.getPropertyValueFor(KEYS.RECIPIENT);
+      const calleeNode = getNodeById(recipientId, nodes);
+
+      if (!callerNode || !calleeNode) {
+        console.warn("Can't call - no caller or callee");
+        reject();
+        return;
+      }
+
+      const callerWin = frames[callerNode.id];
+      const calleeWin = frames[calleeNode.id];
+      if (!callerWin || !calleeWin || !callerWin.pc || !calleeWin.pc) {
+        console.warn("Can't call - can't find frames or pc");
+        reject();
+      }
+
+      const munglerId = this.linksInput.find((inputId) => {
+        const inputNode = getNodeById(inputId, nodes);
+        return inputNode.node === NODES.MUNGING;
+      });
+
+      let rtcOfferSessionDescription = await callerWin.pc.createOffer();
+
+      if (munglerId) {
+        const munglerNode = getNodeById(munglerId, nodes);
+        munglerNode.execute(
+          callerNode.id,
+          frames,
+          rtcOfferSessionDescription.sdp
+        );
+      }
+
+      await callerWin.pc.setLocalDescription(rtcOfferSessionDescription);
+      const ices = await waitForIce(callerWin.pc, callerNode.id);
+
+      await calleeWin.pc.setRemoteDescription(rtcOfferSessionDescription);
+      const rtcAnswerSessionDescription = await calleeWin.pc.createAnswer();
+
+      if (munglerId) {
+        const munglerNode = getNodeById(munglerId, nodes);
+        munglerNode.execute(
+          calleeNode.id,
+          frames,
+          rtcAnswerSessionDescription.sdp
+        );
+      }
+
+      await calleeWin.pc.setLocalDescription(rtcAnswerSessionDescription);
+
+      const calleeIces = await waitForIce(calleeWin.pc, calleeNode.id);
+      ices.forEach((ice) => calleeWin.pc.addIceCandidate(ice));
+
+      await callerWin.pc.setRemoteDescription(rtcAnswerSessionDescription);
+      calleeIces.forEach((ice) => callerWin.pc.addIceCandidate(ice));
+      resolve();
+    });
   }
 
   render() {

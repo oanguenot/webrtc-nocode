@@ -1,5 +1,6 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { addCustomEvent, stopMonitoring } from "../../../modules/metrics";
 
 class End extends Main {
   static item = "End";
@@ -42,6 +43,33 @@ class End extends Main {
       default:
         return "";
     }
+  }
+
+  execute(nodes, frames, callback) {
+    return new Promise((resolve, reject) => {
+      const tickets = [];
+      Object.keys(frames).forEach((key) => {
+        addCustomEvent(key, frames, "close", "playground", "", new Date());
+        const winFrame = frames[key];
+        if (winFrame && winFrame.pc) {
+          winFrame.pc.close();
+        }
+        if (winFrame && winFrame.stream) {
+          winFrame.stream.getTracks().forEach((track) => track.stop());
+        }
+
+        let ticket = null;
+        if (winFrame && winFrame.metrics && winFrame.metrics.running) {
+          winFrame.metrics.stopAllProbes();
+          winFrame.metrics.probes.forEach((probe) => {
+            ticket = probe.getTicket();
+          });
+        }
+        tickets.push(ticket);
+      });
+      callback(tickets);
+      resolve();
+    });
   }
 
   render() {
