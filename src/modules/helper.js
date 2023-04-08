@@ -62,12 +62,14 @@ export const filterNodesByName = (node, nodes, kind) => {
 export const findTargetsFromSources = (node, nodes, kind) => {
   const targets = [];
   nodes.forEach((nodeItem) => {
-    const source = nodeItem.sources.find((source) =>
+    const sources = nodeItem.sources.filter((source) =>
       source.includes(`@${node}`)
     );
 
-    if (source && (!kind || nodeItem.kind === kind)) {
-      targets.push({ node: nodeItem, source });
+    if (!!sources.length && (!kind || nodeItem.kind === kind)) {
+      sources.forEach((source) => {
+        targets.push({ node: nodeItem, source });
+      });
     }
   });
   return targets;

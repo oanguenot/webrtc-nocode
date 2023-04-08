@@ -5,7 +5,6 @@ import {
   findTargetsFromSources,
   getNodeById,
   getNodeIndexById,
-  getNodeInfoValue,
 } from "../modules/helper";
 import {
   PLAYGROUND_ACTIONS,
@@ -13,7 +12,7 @@ import {
 } from "../actions/playgroundActions";
 import { DEBUG_ACTIONS } from "../actions/DebugActions";
 import { checkNodesProblems } from "../modules/problems";
-import { KEYS, NODES } from "../modules/model";
+import { KEYS } from "../modules/model";
 
 export const STATE = {
   NOT_INITIALIZED: "NOT_INITIALIZED",
@@ -122,10 +121,6 @@ const appReducer = (state = initialAppState, action) => {
         });
       }
 
-      // if (nodeInfo === NODES.TRACK) {
-      //   object.addDevices(state.devices);
-      // }
-
       const newObjects = [...state.objects, object];
       saveModelToStorage(newObjects);
       const problems = checkNodesProblems(newObjects);
@@ -200,52 +195,20 @@ const appReducer = (state = initialAppState, action) => {
       );
 
       const object = getNodeById(objectId, objects);
-      // Update all goto nodes when step name changed
-      // if (object.getInfoValueFor("node") === "step") {
-      //   const relatedGoto = filterObjectsWithNode("goto", objects);
-      //   relatedGoto.forEach((obj) =>
-      //     obj.updateLabelInSelect(object.id, value, "step")
-      //   );
-      // }
+      const nodeInfo = object.getInfoValueFor(KEYS.NODE);
 
-      if (
-        object.getInfoValueFor(KEYS.NODE) === NODES.PEER &&
-        name === KEYS.NAME
-      ) {
-        // Update all ready nodes when peer name changed
-        const relatedReady = filterNodesByName(NODES.READY, objects);
-        relatedReady.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, KEYS.PEER)
-        );
-
-        const relatedIce = filterNodesByName(NODES.ICE, objects);
-        relatedIce.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, KEYS.PEER)
-        );
-
-        // Update all callP2P nodes when peer name changed
-        const relatedP2P = filterNodesByName(NODES.CALL, objects);
-        relatedP2P.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, KEYS.PEER)
-        );
-      } else if (
-        object.getInfoValueFor(KEYS.NODE) === NODES.TURN &&
-        name === KEYS.NAME
-      ) {
-        // Update all ready peer when turn name changed
-        const relatedPeers = filterNodesByName(NODES.PEER, objects);
-        relatedPeers.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, KEYS.TURN)
-        );
-      } else if (
-        object.getInfoValueFor(KEYS.NODE) === NODES.CALL &&
-        name === KEYS.NAME
-      ) {
-        // Update all restartIce when call name changed
-        const relatedRestartIce = filterNodesByName(NODES.RESTARTICE, objects);
-        relatedRestartIce.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, KEYS.CALL)
-        );
+      // Manage all target nodes
+      const targets = findTargetsFromSources(
+        nodeInfo,
+        state.objects,
+        object.kind
+      );
+      if (!!targets.length && name === KEYS.NAME) {
+        targets.forEach(({ node, source }) => {
+          const splitTarget = source.split("@");
+          const prop = splitTarget[0].split(":")[1];
+          node.updateLabelInSelect(object.id, value, prop);
+        });
       }
 
       saveModelToStorage(objects);
