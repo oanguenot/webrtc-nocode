@@ -10,6 +10,8 @@ export const getDimensionFromResolution = (resolution) => {
       return { width: { ideal: 1920 }, height: { ideal: 1080 } };
     case "4k":
       return { width: { ideal: 3840 }, height: { ideal: 2160 } };
+    default:
+      return { width: { ideal: 640 }, height: { ideal: 480 } };
   }
 };
 

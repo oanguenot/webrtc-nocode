@@ -3,7 +3,7 @@ import Main from "../Main";
 import "../Main.css";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
-import { getNodeById, getTURNCredentials } from "../../../modules/helper";
+import { getNodeById } from "../../../modules/helper";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);

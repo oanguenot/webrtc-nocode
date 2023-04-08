@@ -1,6 +1,5 @@
-import { useState, useContext, useEffect } from "react";
+import { useContext } from "react";
 import AppContext from "../../contexts/appContext";
-import EmptyState from "@atlaskit/empty-state";
 import "./Properties.css";
 import Property from "./Property";
 import Lozenge from "@atlaskit/lozenge";

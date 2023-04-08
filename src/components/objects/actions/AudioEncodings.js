@@ -72,6 +72,8 @@ class AudioEncodings extends Main {
         return property.value === "unchanged" ? label : `use ${label}`;
       case KEYS.TRACK:
         return property.value === "none" ? "[no source]" : `[${label}]`;
+      default:
+        return "";
     }
   }
 

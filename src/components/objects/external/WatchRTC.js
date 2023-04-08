@@ -1,7 +1,6 @@
 import Main from "../Main";
-import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { KEY_TYPE, KEYS } from "../../../modules/model";
 import { nanoid } from "nanoid";
-import { findNodeByName, getNodesFromIds } from "../../../modules/helper";
 
 class WatchRTC extends Main {
   static item = "WatchRTC";
@@ -72,6 +71,8 @@ class WatchRTC extends Main {
         return property.value ? "*****" : "none";
       case "roomId":
         return property.value ? property.value : "no ID for room";
+      default:
+        return "";
     }
   }
 

@@ -4,7 +4,6 @@ import { useEffect, useState, useReducer, useCallback } from "react";
 import AppContext from "./contexts/appContext";
 import { appReducer, initialAppState } from "./reducers/appReducer";
 import { getEditor } from "./modules/editor";
-import { getListOfDevices, resetDevices } from "./actions/supervisonActions";
 import {
   AtlassianNavigation,
   CustomProductHome,
@@ -37,16 +36,6 @@ function App() {
   const [appState, dispatch] = useReducer(appReducer, initialAppState);
   const [selected, setSelected] = useState(0);
   const [flags, setFlags] = useState([]);
-
-  useEffect(() => {
-    //getListOfDevices(dispatch);
-  }, []);
-
-  useEffect(() => {
-    // if (appState.loadedCheckDevices) {
-    //   checkDevicesInNodes(appState.devices, appState.objects, dispatch);
-    // }
-  }, [appState.loadedCheckDevices]);
 
   const addFlag = (fileName) => {
     const newFlagId = flags.length + 1;

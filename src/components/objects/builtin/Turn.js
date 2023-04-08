@@ -57,7 +57,6 @@ class Turn extends Main {
 
   renderProp(prop) {
     const property = this.getPropertyFor(prop);
-    const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
       case KEYS.NAME:
@@ -72,6 +71,8 @@ class Turn extends Main {
           : "no TURN Url";
       case KEYS.TURNTOKEN:
         return !!property.value.length ? "*****" : "no token";
+      default:
+        return "";
     }
   }
 

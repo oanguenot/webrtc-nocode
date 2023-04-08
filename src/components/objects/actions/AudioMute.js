@@ -70,6 +70,8 @@ class AudioMute extends Main {
         return label;
       case KEYS.TRACK:
         return property.value === "none" ? "[no source]" : `[${label}]`;
+      default:
+        return "";
     }
   }
 

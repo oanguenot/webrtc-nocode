@@ -106,6 +106,8 @@ class VideoAdjust extends Main {
         return property.value === -1 ? label : `Max ${label}`;
       case KEYS.TRACK:
         return property.value === "none" ? "[no source]" : `[${label}]`;
+      default:
+        return "";
     }
   }
 

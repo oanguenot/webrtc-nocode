@@ -35,7 +35,6 @@ class End extends Main {
 
   renderProp(prop) {
     const property = this.getPropertyFor(prop);
-    const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
       case KEYS.NAME:

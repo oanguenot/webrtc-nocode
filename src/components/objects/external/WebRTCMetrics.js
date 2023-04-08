@@ -102,6 +102,8 @@ class WebRTCMetrics extends Main {
           : `${label.toLowerCase()}`;
       case "exporter":
         return `saved in ${label.toLowerCase()}`;
+      default:
+        return "";
     }
   }
 
