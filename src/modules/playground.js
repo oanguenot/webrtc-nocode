@@ -28,15 +28,6 @@ import { mungle } from "./sdp";
 const frames = {};
 let dispatcher = null;
 
-const delayer = (duration) => {
-  return new Promise((resolve, __reject) => {
-    console.log(`${new Date().toJSON()} [play] execute delay of ${duration}ms`);
-    setTimeout(() => {
-      resolve();
-    }, duration);
-  });
-};
-
 const createIFrame = (peerNode) => {
   return new Promise((resolve, reject) => {
     const iframesElt = document.querySelector("#frames");
@@ -189,9 +180,9 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
 
     if (munglerId) {
       const munglerNode = getNodeById(munglerId, nodes);
-      rtcOfferSessionDescription.sdp = await mungleSDP(
-        munglerNode,
-        callerNode,
+      munglerNode.execute(
+        callerNode.id,
+        frames,
         rtcOfferSessionDescription.sdp
       );
     }
@@ -204,9 +195,9 @@ const call = (callerNode, calleeNode, callNode, nodes) => {
 
     if (munglerId) {
       const munglerNode = getNodeById(munglerId, nodes);
-      rtcAnswerSessionDescription.sdp = await mungleSDP(
-        munglerNode,
-        callerNode,
+      munglerNode.execute(
+        calleeNode.id,
+        frames,
         rtcAnswerSessionDescription.sdp
       );
     }

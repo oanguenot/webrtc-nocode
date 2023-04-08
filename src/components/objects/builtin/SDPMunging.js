@@ -1,6 +1,8 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
+import { addCustomEvent } from "../../../modules/metrics";
+import { mungle } from "../../../modules/sdp";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
@@ -61,6 +63,15 @@ class SDPMunging extends Main {
       default:
         return "";
     }
+  }
+
+  execute(peerId, frames, offer) {
+    return new Promise((resolve, reject) => {
+      addCustomEvent(peerId, frames, "mungle", "playground", "", new Date());
+      const operation = this.getPropertyValueFor(KEYS.OPERATION);
+      const updatedOffer = mungle(operation, offer);
+      resolve(updatedOffer);
+    });
   }
 
   render() {
