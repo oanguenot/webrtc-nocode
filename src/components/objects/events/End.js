@@ -5,7 +5,7 @@ class End extends Main {
   static item = "End";
   static description = "Terminate the scenario";
   static icon = "flag-checkered";
-  static section = "actions";
+  static section = "events";
   static name = "End";
 
   constructor(x, y) {
