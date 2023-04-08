@@ -139,15 +139,6 @@ const createWatchRTC = (peerNode, nodes) => {
   });
 };
 
-const mungleSDP = (mungleNode, peerNode, offer) => {
-  return new Promise((resolve, reject) => {
-    addCustomEvent(peerNode.id, frames, "mungle", "playground", "", new Date());
-    const operation = mungleNode.getPropertyValueFor(KEYS.OPERATION);
-    const updatedOffer = mungle(operation, offer);
-    resolve(updatedOffer);
-  });
-};
-
 const call = (callerNode, calleeNode, callNode, nodes) => {
   return new Promise(async (resolve, reject) => {
     const waitForIce = (peer, id) => {
