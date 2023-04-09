@@ -33,20 +33,14 @@ export const run = (nodes, dispatch) => {
     payload: {},
   });
 
-  execute(nodes, dispatch)
-    .then(() => {
-      console.log(">>> AFTER EXECUTE");
-      dispatch({
-        type: PLAYGROUND_ACTIONS.PLAYGROUND_RUN_SUCCESS,
-        payload: {},
-      });
-    })
-    .catch((err) => {
-      dispatch({
-        type: PLAYGROUND_ACTIONS.PLAYGROUND_RUN_FAILED,
-        payload: {},
-      });
-    });
+  execute(nodes, dispatch);
+};
+
+export const terminate = (tickets, dispatch) => {
+  dispatch({
+    type: PLAYGROUND_ACTIONS.PLAYGROUND_RUN_SUCCESS,
+    payload: { tickets },
+  });
 };
 
 export const load = (nodes, dispatch) => {

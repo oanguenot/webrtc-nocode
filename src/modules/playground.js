@@ -14,6 +14,7 @@ import {
   setTaskNumber,
 } from "../actions/DebugActions";
 import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
+import { terminate } from "../actions/playgroundActions";
 
 const frames = {};
 let dispatcher = null;
@@ -65,11 +66,8 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
       stream,
       iceEvents,
       nodes,
-      (eventNode, nodes) => {
-        executeANode(eventNode, eventNode, nodes).then(() => {
-          console.log(">>>(4) ice event ended", endReached);
-        });
-        //executeEventNode(eventNode, nodes);
+      async (eventNode, nodes) => {
+        return executeANode(eventNode, eventNode, nodes);
       },
       createMediaElementInIFrame
     );
@@ -140,10 +138,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
     null
   );
   return new Promise((resolve, reject) => {
-    currentNode.execute(nodes, frames).then((results) => {
-      if (results) {
-        console.log(">>> RESULTS", results);
-      }
+    currentNode.execute(nodes, frames).then(async (results) => {
       incrementTaskDone(dispatcher);
 
       const nextNode = getNodeById(currentNode.linksOutput[0], nodes);
@@ -155,6 +150,11 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           null
         );
         console.log(">>> (1) ended", endReached);
+
+        if (currentNode.node === NODES.END) {
+          endReached = true;
+          terminate(results, dispatcher);
+        }
         resolve();
       } else {
         addLog(
@@ -163,9 +163,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           `go to next node ${nextNode.node}|${nextNode.id}`,
           null
         );
-        executeANode(initialEvent, nextNode, nodes).then(() => {
-          resolve();
-        });
+        return executeANode(initialEvent, nextNode, nodes);
       }
     });
   });
@@ -211,7 +209,6 @@ export const execute = (nodes, dispatch) => {
 
     // Estimate the number of task to do
     const numberOfTasks = estimateTasks(peers, iceEvents, readyEvent, nodes);
-    console.log(">>>TASK", numberOfTasks);
     setTaskNumber(numberOfTasks, dispatch);
 
     // Initialize Peer Connections
@@ -244,13 +241,8 @@ export const execute = (nodes, dispatch) => {
     }
 
     // Start ready node in playground
-    executeANode(readyEvent, readyEvent, nodes).then(() => {
-      console.log(">>>(3) ready ended", endReached);
-    });
-    // executeEventNode(readyEvent, nodes).then(() => {
-    //   console.log(">>> (3) ended", endReached);
-    //   //resolve();
-    // });
+    await executeANode(readyEvent, readyEvent, nodes);
+    resolve();
   });
 };
 
