@@ -313,6 +313,16 @@ const appReducer = (state = initialAppState, action) => {
         problems,
       };
     }
+    case PLAYGROUND_ACTIONS.PLAYGROUND_RUN_SUCCESS:
+      console.log(">>> SUCCESS!!!");
+      return {
+        ...state,
+      };
+    case PLAYGROUND_ACTIONS.PLAYGROUND_RUN_FAILED:
+      console.log(">>> FAILED!!!");
+      return {
+        ...state,
+      };
     case PLAYGROUND_ACTIONS.PLAYGROUND_DEVICES_CHECKED_SUCCESS:
       return {
         ...state,
@@ -342,41 +352,6 @@ const appReducer = (state = initialAppState, action) => {
         debug: [...state.debug, log],
       };
     }
-    case DEBUG_ACTIONS.ADD_EVENTS_TO_TIMELINE:
-      const events = action.payload;
-      return {
-        ...state,
-        events: [...state.events, ...events],
-      };
-    case DEBUG_ACTIONS.ADD_EVENT_TO_TIMELINE:
-    case DEBUG_ACTIONS.ADD_PERIOD_TO_TIMELINE: {
-      const event = action.payload;
-      return {
-        ...state,
-        events: [...state.events, event],
-      };
-    }
-    case DEBUG_ACTIONS.ADD_GROUP_TO_TIMELINE: {
-      const group = action.payload;
-      return {
-        ...state,
-        groups: [...state.groups, group],
-      };
-    }
-    case DEBUG_ACTIONS.ADD_SUBGROUPS_TO_TIMELINE: {
-      const subGroups = action.payload;
-      return {
-        ...state,
-        subGroups: [...state.subGroups, ...subGroups],
-      };
-    }
-    case DEBUG_ACTIONS.ADD_SUBGROUP_TO_TIMELINE: {
-      const subGroups = action.payload;
-      return {
-        ...state,
-        subGroups: [...state.subGroups, subGroups],
-      };
-    }
     case DEBUG_ACTIONS.SET_TASK_NUMBER: {
       return {
         ...state,
@@ -389,9 +364,9 @@ const appReducer = (state = initialAppState, action) => {
       if (playState === PLAY_STATE.IDLE) {
         playState = PLAY_STATE.RUNNING;
       }
-      if (state.tasksDone + 1 === state.nbTasks) {
-        playState = PLAY_STATE.ENDED;
-      }
+      // if (state.tasksDone + 1 === state.nbTasks) {
+      //   playState = PLAY_STATE.ENDED;
+      // }
 
       return {
         ...state,

@@ -1,4 +1,4 @@
-const configuration = {
+export const configuration = {
   refreshEvery: 750, // Optional. Refresh every 3 seconds
   startAfter: 10, // Optional. Start collecting stats after 5 seconds
   verbose: false, // Optional. Display verbose logs or not.

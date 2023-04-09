@@ -10,6 +10,7 @@ import ProgressBar from "@atlaskit/progress-bar";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { run } from "../../actions/playgroundActions";
 import { useStateWithCallbackLazy } from "use-state-with-callback";
+import { PLAY_STATE } from "../../reducers/appReducer";
 
 const getColorFromTag = (tag) => {
   switch (tag) {
@@ -84,7 +85,8 @@ function Debug({ dispatch }) {
           )}
           {!isReset && (
             <>
-              {isStarted && progress !== 1 && (
+              {(appState.playState === PLAY_STATE.RUNNING ||
+                appState.playState === PLAY_STATE.IDLE) && (
                 <div className="debug-progress">
                   <p className="debug-progress-title">
                     Progress: {getProgressStatus()}
@@ -99,7 +101,8 @@ function Debug({ dispatch }) {
                   </div>
                 </div>
               )}
-              {progress === 1 && (
+              {(appState.playState === PLAY_STATE.ENDED ||
+                appState.playState === PLAY_STATE.FAILED) && (
                 <div className="debug-layout">
                   <div className="debug-double-columns">
                     <div className="details-area">

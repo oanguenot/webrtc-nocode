@@ -35,6 +35,7 @@ export const run = (nodes, dispatch) => {
 
   execute(nodes, dispatch)
     .then(() => {
+      console.log(">>> AFTER EXECUTE");
       dispatch({
         type: PLAYGROUND_ACTIONS.PLAYGROUND_RUN_SUCCESS,
         payload: {},

@@ -45,7 +45,7 @@ class End extends Main {
     }
   }
 
-  execute(nodes, frames, callback) {
+  execute(nodes, frames) {
     return new Promise((resolve, reject) => {
       const tickets = [];
       Object.keys(frames).forEach((key) => {
@@ -67,8 +67,7 @@ class End extends Main {
         }
         tickets.push(ticket);
       });
-      callback(tickets);
-      resolve();
+      resolve(tickets);
     });
   }
 

@@ -1,5 +1,7 @@
 import Main from "../Main";
 import { NODES, KEYS, KEY_TYPE } from "../../../modules/model";
+import { configuration } from "../../../modules/metrics";
+import { getNodeById } from "../../../modules/helper";
 
 class Ready extends Main {
   static item = "Ready";
@@ -42,6 +44,30 @@ class Ready extends Main {
       default:
         return "";
     }
+  }
+
+  execute(nodes, frames) {
+    return new Promise((resolve, reject) => {
+      Object.keys(frames).forEach((id) => {
+        const win = frames[id];
+
+        const peerNode = getNodeById(id, nodes);
+
+        if (win && win.WebRTCMetrics) {
+          win.metrics = new win.WebRTCMetrics(configuration);
+          win.metrics.createProbe(win.pc, {
+            pname: peerNode.getPropertyValueFor(KEYS.NAME),
+            uid: id,
+            ticket: true,
+            record: false,
+          });
+
+          win.metrics.startAllProbes();
+        }
+      });
+
+      resolve();
+    });
   }
 
   render() {

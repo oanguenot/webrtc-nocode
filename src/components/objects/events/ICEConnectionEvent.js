@@ -71,6 +71,12 @@ class ICEConnectionEvent extends Main {
     }
   }
 
+  execute() {
+    return new Promise((resolve, _reject) => {
+      resolve();
+    });
+  }
+
   render() {
     return `
       <div>

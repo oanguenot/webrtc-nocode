@@ -14,15 +14,10 @@ import {
   setTaskNumber,
 } from "../actions/DebugActions";
 import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
-import {
-  addCustomEvent,
-  monitorPeerConnection,
-  startMonitoring,
-  stopMonitoring,
-} from "./metrics";
 
 const frames = {};
 let dispatcher = null;
+let endReached = false;
 
 const createIFrame = (peerNode) => {
   return new Promise((resolve, reject) => {
@@ -71,12 +66,14 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
       iceEvents,
       nodes,
       (eventNode, nodes) => {
-        executeEventNode(eventNode, nodes);
+        executeANode(eventNode, eventNode, nodes).then(() => {
+          console.log(">>>(4) ice event ended", endReached);
+        });
+        //executeEventNode(eventNode, nodes);
       },
       createMediaElementInIFrame
     );
-
-    resolve(win.pc);
+    resolve();
   });
 };
 
@@ -135,27 +132,6 @@ const createWatchRTC = (peerNode, nodes) => {
   });
 };
 
-const executeEventNode = (eventNode, nodes) => {
-  return new Promise((resolve, reject) => {
-    const firstNode = getNodeById(eventNode.linksOutput[0], nodes);
-    if (!firstNode) {
-      resolve();
-      return;
-    }
-
-    addLog(
-      "play",
-      "log",
-      `execute event ${eventNode.node}|${eventNode.id}`,
-      null
-    );
-
-    executeANode(eventNode, firstNode, nodes).then(() => {
-      resolve();
-    });
-  });
-};
-
 const executeANode = (initialEvent, currentNode, nodes) => {
   addLog(
     "play",
@@ -164,47 +140,22 @@ const executeANode = (initialEvent, currentNode, nodes) => {
     null
   );
   return new Promise((resolve, reject) => {
-    const promises = [];
-    switch (currentNode.node) {
-      case NODES.CALL: {
-        promises.push(currentNode.execute(nodes, frames));
-        break;
+    currentNode.execute(nodes, frames).then((results) => {
+      if (results) {
+        console.log(">>> RESULTS", results);
       }
-      case NODES.WAIT: {
-        promises.push(currentNode.execute());
-        break;
-      }
-      case NODES.ENCODE: {
-        promises.push(currentNode.execute(nodes, frames));
-        break;
-      }
-      case NODES.ADJUST: {
-        promises.push(currentNode.execute(nodes, frames));
-        break;
-      }
-      case NODES.RESTARTICE: {
-        promises.push(currentNode.execute(nodes, frames));
-        break;
-      }
-      case NODES.END: {
-        promises.push(
-          currentNode.execute(nodes, frames, (tickets) => {
-            console.log(">>>TICKETS", tickets);
-          })
-        );
-        break;
-      }
-      default:
-        console.warn(`[play] can't execute ${currentNode.node} - not found`);
-        break;
-    }
-
-    Promise.all(promises).then(() => {
       incrementTaskDone(dispatcher);
+
       const nextNode = getNodeById(currentNode.linksOutput[0], nodes);
       if (!nextNode) {
+        addLog(
+          "play",
+          "log",
+          `node ${initialEvent.node}|${initialEvent.id} has terminated its flow`,
+          null
+        );
+        console.log(">>> (1) ended", endReached);
         resolve();
-        return;
       } else {
         addLog(
           "play",
@@ -212,15 +163,10 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           `go to next node ${nextNode.node}|${nextNode.id}`,
           null
         );
+        executeANode(initialEvent, nextNode, nodes).then(() => {
+          resolve();
+        });
       }
-      return executeANode(initialEvent, nextNode, nodes).then(() => {
-        addLog(
-          "play",
-          "log",
-          `node ${initialEvent.node}|${initialEvent.id} has terminated its flow`,
-          null
-        );
-      });
     });
   });
 };
@@ -230,6 +176,7 @@ const estimateTasks = (peers, iceEvents, readyEvent, nodes) => {
 
   // Count nodes for the ready Nodes
   if (readyEvent) {
+    nbTasks += 1;
     let currentNode = readyEvent.getNextNode(nodes);
     while (currentNode) {
       nbTasks += 1;
@@ -239,6 +186,7 @@ const estimateTasks = (peers, iceEvents, readyEvent, nodes) => {
 
   // Count nodes for the ice Events Nodes
   iceEvents.forEach((iceEvent) => {
+    nbTasks += 1;
     let currentNode = iceEvent.getNextNode(nodes);
     while (currentNode) {
       nbTasks += 1;
@@ -252,6 +200,7 @@ const estimateTasks = (peers, iceEvents, readyEvent, nodes) => {
 export const execute = (nodes, dispatch) => {
   return new Promise(async (resolve, reject) => {
     dispatcher = dispatch;
+    let endReached = false;
 
     addLog("play", "log", "started...", null);
 
@@ -262,6 +211,7 @@ export const execute = (nodes, dispatch) => {
 
     // Estimate the number of task to do
     const numberOfTasks = estimateTasks(peers, iceEvents, readyEvent, nodes);
+    console.log(">>>TASK", numberOfTasks);
     setTaskNumber(numberOfTasks, dispatch);
 
     // Initialize Peer Connections
@@ -281,22 +231,8 @@ export const execute = (nodes, dispatch) => {
         iceEvents,
         KEYS.PEER
       );
-      const rtcPC = await createPeerConnection(
-        peer,
-        stream,
-        iceEventsForPeer,
-        nodes
-      );
 
-      monitorPeerConnection(
-        rtcPC,
-        peer.id,
-        peer.getPropertyValueFor(KEYS.NAME),
-        frames
-      );
-
-      // start Monitoring
-      startMonitoring(peer.id, frames);
+      await createPeerConnection(peer, stream, iceEventsForPeer, nodes);
 
       incrementTaskDone(dispatch);
     }
@@ -308,9 +244,13 @@ export const execute = (nodes, dispatch) => {
     }
 
     // Start ready node in playground
-    executeEventNode(readyEvent, nodes).then(() => {
-      resolve();
+    executeANode(readyEvent, readyEvent, nodes).then(() => {
+      console.log(">>>(3) ready ended", endReached);
     });
+    // executeEventNode(readyEvent, nodes).then(() => {
+    //   console.log(">>> (3) ended", endReached);
+    //   //resolve();
+    // });
   });
 };
 

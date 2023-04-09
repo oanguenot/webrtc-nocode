@@ -110,7 +110,6 @@ class PeerConnection extends Main {
           iceEvents.forEach((eventNode) => {
             const eventState = eventNode.getPropertyValueFor(KEYS.ICESTATE);
             if (eventState === state) {
-              //executeEventNode(eventNode, nodes);
               callback(eventNode, nodes);
             }
           });
