@@ -135,71 +135,6 @@ const createWatchRTC = (peerNode, nodes) => {
   });
 };
 
-const call = (callerNode, calleeNode, callNode, nodes) => {
-  return new Promise(async (resolve, reject) => {
-    const waitForIce = (peer, id) => {
-      return new Promise((resolve, reject) => {
-        const ices = [];
-
-        peer.addEventListener("icecandidate", (event) => {
-          if (event.candidate) {
-            ices.push(event.candidate);
-          } else {
-            resolve(ices);
-          }
-        });
-      });
-    };
-
-    const callerWin = frames[callerNode.id];
-    const calleeWin = frames[calleeNode.id];
-    if (!callerWin || !calleeWin || !callerWin.pc || !calleeWin.pc) {
-      console.warn("Can't call - can't find frames or pc");
-      reject();
-    }
-
-    const munglerId = callNode.linksInput.find((inputId) => {
-      const inputNode = getNodeById(inputId, nodes);
-      return inputNode.node === NODES.MUNGING;
-    });
-
-    let rtcOfferSessionDescription = await callerWin.pc.createOffer();
-
-    if (munglerId) {
-      const munglerNode = getNodeById(munglerId, nodes);
-      munglerNode.execute(
-        callerNode.id,
-        frames,
-        rtcOfferSessionDescription.sdp
-      );
-    }
-
-    await callerWin.pc.setLocalDescription(rtcOfferSessionDescription);
-    const ices = await waitForIce(callerWin.pc, callerNode.id);
-
-    await calleeWin.pc.setRemoteDescription(rtcOfferSessionDescription);
-    const rtcAnswerSessionDescription = await calleeWin.pc.createAnswer();
-
-    if (munglerId) {
-      const munglerNode = getNodeById(munglerId, nodes);
-      munglerNode.execute(
-        calleeNode.id,
-        frames,
-        rtcAnswerSessionDescription.sdp
-      );
-    }
-
-    await calleeWin.pc.setLocalDescription(rtcAnswerSessionDescription);
-
-    const calleeIces = await waitForIce(calleeWin.pc, calleeNode.id);
-    ices.forEach((ice) => calleeWin.pc.addIceCandidate(ice));
-
-    await callerWin.pc.setRemoteDescription(rtcAnswerSessionDescription);
-    calleeIces.forEach((ice) => callerWin.pc.addIceCandidate(ice));
-    resolve();
-  });
-};
-
 const executeEventNode = (eventNode, nodes) => {
   return new Promise((resolve, reject) => {
     const firstNode = getNodeById(eventNode.linksOutput[0], nodes);
@@ -248,7 +183,7 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         break;
       }
       case NODES.RESTARTICE: {
-        promises.push(currentNode.execute(nodes, frames, call));
+        promises.push(currentNode.execute(nodes, frames));
         break;
       }
       case NODES.END: {

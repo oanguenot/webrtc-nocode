@@ -97,7 +97,7 @@ class CallP2P extends Main {
     }
   }
 
-  execute(nodes, frames) {
+  execute(nodes, frames, invertedCall = false) {
     return new Promise(async (resolve, reject) => {
       const waitForIce = (peer, id) => {
         return new Promise((resolve, reject) => {
@@ -114,14 +114,21 @@ class CallP2P extends Main {
       };
 
       const callerId = this.getPropertyValueFor(KEYS.CALLER);
-      const callerNode = getNodeById(callerId, nodes);
+      let callerNode = getNodeById(callerId, nodes);
       const recipientId = this.getPropertyValueFor(KEYS.RECIPIENT);
-      const calleeNode = getNodeById(recipientId, nodes);
+      let calleeNode = getNodeById(recipientId, nodes);
 
       if (!callerNode || !calleeNode) {
         console.warn("Can't call - no caller or callee");
         reject();
         return;
+      }
+
+      if (invertedCall) {
+        console.warn("inversed call - due to restart Ice done in recipient");
+        const tmpNode = callerNode;
+        callerNode = calleeNode;
+        calleeNode = tmpNode;
       }
 
       const callerWin = frames[callerNode.id];

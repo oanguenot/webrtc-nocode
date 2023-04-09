@@ -70,7 +70,7 @@ class RestartIce extends Main {
     }
   }
 
-  execute(nodes, frames, callback) {
+  execute(nodes, frames) {
     return new Promise((resolve, reject) => {
       const peerId = this.getPropertyValueFor(KEYS.PEER);
       const peerNode = getNodeById(peerId, nodes);
@@ -85,12 +85,15 @@ class RestartIce extends Main {
       const callId = this.getPropertyValueFor(KEYS.CALL);
       const callNode = getNodeById(callId, nodes);
       const calleeId = callNode.getPropertyValueFor(KEYS.RECIPIENT);
-      const calleeNode = getNodeById(calleeId, nodes);
+      let invertedCall = false;
+      if (calleeId === peerId) {
+        invertedCall = true;
+      }
 
       win.pc.addEventListener(
         "negotiationneeded",
         async () => {
-          await callback(peerNode, calleeNode, callNode, nodes);
+          await callNode.execute(nodes, frames, invertedCall);
           resolve();
         },
         { once: true }
