@@ -11,17 +11,22 @@ import Button, { ButtonGroup } from "@atlaskit/button";
 import { run } from "../../actions/playgroundActions";
 import { useStateWithCallbackLazy } from "use-state-with-callback";
 import { PLAY_STATE } from "../../reducers/appReducer";
+import { stringify } from "../../modules/helper";
 
 const getColorFromTag = (tag) => {
   switch (tag) {
-    case "play":
+    case "playground":
       return "blue";
-    case "peer":
+    case "call":
       return "yellow";
-    case "action":
+    case "signal":
       return "tealLight";
+    case "ssrc":
+      return "redLight";
+    case "name":
+      return "greenLight";
     default:
-      return "standard";
+      return "grey";
   }
 };
 
@@ -107,18 +112,57 @@ function Debug({ dispatch }) {
                   <div className="debug-double-columns">
                     <div className="details-area">
                       <p className="debug-iframes-title">Details</p>
-                      <ul className="debug-actions">
-                        {appState.debug.map((log, key) => (
-                          <li key={key}>
-                            <Tag text={log.timestamp}></Tag>{" "}
-                            <Tag
-                              text={log.tag}
-                              color={getColorFromTag(log.tag)}
-                            ></Tag>{" "}
-                            {log.message}
-                          </li>
+                      <div className="debug-actions">
+                        {appState.tickets.map((ticket, key1) => (
+                          <div className="debug-ticket" key={key1}>
+                            <p>{ticket.ua.pname}</p>
+                            <ul key={key1}>
+                              {ticket.call.events.map((log, key2) => (
+                                <li key={key2}>
+                                  <div>
+                                    <Tag text={log.at}></Tag>{" "}
+                                    <Tag
+                                      text={log.category}
+                                      color={getColorFromTag(log.category)}
+                                    ></Tag>{" "}
+                                    <Tag
+                                      text={log.name}
+                                      color="greenLight"
+                                    ></Tag>{" "}
+                                    {log.ssrc && (
+                                      <Tag
+                                        text={log.ssrc}
+                                        color={getColorFromTag("ssrc")}
+                                      ></Tag>
+                                    )}
+                                    <span
+                                      style={{
+                                        color: "#999",
+                                        fontSize: "14px",
+                                      }}
+                                    >
+                                      {log.details.message}{" "}
+                                    </span>
+                                  </div>
+                                  <div
+                                    style={{
+                                      marginLeft: "190px",
+                                      fontSize: "12px",
+                                      padding: "4px",
+                                    }}
+                                  >
+                                    {log.details.value && (
+                                      <span>
+                                        {stringify(log.details.value)}
+                                      </span>
+                                    )}
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
                         ))}
-                      </ul>
+                      </div>
                     </div>
                   </div>
                 </div>

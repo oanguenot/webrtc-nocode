@@ -128,3 +128,14 @@ export const getTransceiver = (transceivers, trackNodeId) => {
     return track.__wp === trackNodeId;
   });
 };
+
+export const stringify = (data) => {
+  switch (data.constructor.name) {
+    case "MediaStreamTrack":
+      return `{${data.label}:${data.kind}, readyState=${data.readyState}, muted=${data.muted}, enabled=${data.enabled}}`;
+    case "String":
+      return `{${data}}`;
+    default:
+      return `${JSON.stringify(data)}`;
+  }
+};

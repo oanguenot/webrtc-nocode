@@ -1,6 +1,6 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import { addCustomEvent, stopMonitoring } from "../../../modules/metrics";
+import { addCustomEvent } from "../../../modules/metrics";
 
 class End extends Main {
   static item = "End";
@@ -61,12 +61,11 @@ class End extends Main {
         let ticket = null;
         if (winFrame && winFrame.metrics && winFrame.metrics.running) {
           winFrame.metrics.stopAllProbes();
-          winFrame.metrics.probes.forEach((probe) => {
-            ticket = probe.getTicket();
-          });
+          ticket = winFrame.probe.getTicket();
         }
         tickets.push(ticket);
       });
+      console.log(">>>TIK", tickets);
       resolve(tickets);
     });
   }

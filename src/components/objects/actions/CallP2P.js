@@ -145,6 +145,15 @@ class CallP2P extends Main {
 
       let rtcOfferSessionDescription = await callerWin.pc.createOffer();
 
+      callerWin.probe.addCustomEvent(
+        "createOffer",
+        "api",
+        "Create the local offer",
+        new Date(),
+        null,
+        rtcOfferSessionDescription.sdp
+      );
+
       if (munglerId) {
         const munglerNode = getNodeById(munglerId, nodes);
         munglerNode.execute(
@@ -155,10 +164,39 @@ class CallP2P extends Main {
       }
 
       await callerWin.pc.setLocalDescription(rtcOfferSessionDescription);
-      const ices = await waitForIce(callerWin.pc, callerNode.id);
+
+      callerWin.probe.addCustomEvent(
+        "setLocalDescription",
+        "api",
+        "Set the local offer to the local RTCPeerConnection",
+        new Date(),
+        null,
+        rtcOfferSessionDescription.sdp
+      );
+
+      const callerIces = await waitForIce(callerWin.pc, callerNode.id);
 
       await calleeWin.pc.setRemoteDescription(rtcOfferSessionDescription);
+
+      calleeWin.probe.addCustomEvent(
+        "setRemoteDescription",
+        "api",
+        "Set the local offer to the remote RTCPeerConnection",
+        new Date(),
+        null,
+        rtcOfferSessionDescription.sdp
+      );
+
       const rtcAnswerSessionDescription = await calleeWin.pc.createAnswer();
+
+      calleeWin.probe.addCustomEvent(
+        "createAnswer",
+        "api",
+        "Create the remote answer",
+        new Date(),
+        null,
+        rtcOfferSessionDescription.sdp
+      );
 
       if (munglerId) {
         const munglerNode = getNodeById(munglerId, nodes);
@@ -171,11 +209,53 @@ class CallP2P extends Main {
 
       await calleeWin.pc.setLocalDescription(rtcAnswerSessionDescription);
 
+      calleeWin.probe.addCustomEvent(
+        "setLocalDescription",
+        "api",
+        "Set the remote answer to the remote RTCPeerConnection",
+        new Date(),
+        null,
+        rtcOfferSessionDescription.sdp
+      );
+
       const calleeIces = await waitForIce(calleeWin.pc, calleeNode.id);
-      ices.forEach((ice) => calleeWin.pc.addIceCandidate(ice));
+
+      callerIces.forEach((ice) => {
+        calleeWin.pc.addIceCandidate(ice);
+
+        calleeWin.probe.addCustomEvent(
+          "addIceCandidate",
+          "api",
+          "Add a local candidate to the remote RTCPeerConnection",
+          new Date(),
+          null,
+          ice
+        );
+      });
 
       await callerWin.pc.setRemoteDescription(rtcAnswerSessionDescription);
-      calleeIces.forEach((ice) => callerWin.pc.addIceCandidate(ice));
+
+      callerWin.probe.addCustomEvent(
+        "setRemoteDescription",
+        "api",
+        "Set the remote answer to the local RTCPeerConnection",
+        new Date(),
+        null,
+        rtcOfferSessionDescription.sdp
+      );
+
+      calleeIces.forEach((ice) => {
+        callerWin.pc.addIceCandidate(ice);
+
+        callerWin.probe.addCustomEvent(
+          "addIceCandidate",
+          "api",
+          "Add a remote candidate to the local RTCPeerConnection",
+          new Date(),
+          null,
+          ice
+        );
+      });
       resolve();
     });
   }

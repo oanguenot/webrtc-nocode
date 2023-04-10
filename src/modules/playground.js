@@ -18,7 +18,6 @@ import { terminate } from "../actions/playgroundActions";
 
 const frames = {};
 let dispatcher = null;
-let endReached = false;
 
 const createIFrame = (peerNode) => {
   return new Promise((resolve, reject) => {
@@ -151,7 +150,6 @@ const executeANode = (initialEvent, currentNode, nodes) => {
         );
 
         if (currentNode.node === NODES.END) {
-          endReached = true;
           terminate(results, dispatcher);
         }
         resolve();
@@ -197,7 +195,6 @@ const estimateTasks = (peers, iceEvents, readyEvent, nodes) => {
 export const execute = (nodes, dispatch) => {
   return new Promise(async (resolve, reject) => {
     dispatcher = dispatch;
-    let endReached = false;
 
     addLog("play", "log", "started...", null);
 

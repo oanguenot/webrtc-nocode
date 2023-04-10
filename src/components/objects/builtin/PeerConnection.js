@@ -3,7 +3,8 @@ import Main from "../Main";
 import "../Main.css";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
-import { getNodeById } from "../../../modules/helper";
+import { getNodeById, stringify } from "../../../modules/helper";
+import { addCustomEvent, configuration } from "../../../modules/metrics";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
@@ -102,6 +103,26 @@ class PeerConnection extends Main {
         } else {
           win.pc = new win.RTCPeerConnection();
         }
+
+        win.metrics = new win.WebRTCMetrics(configuration);
+        win.probe = win.metrics.createProbe(win.pc, {
+          pname: peerNode.getPropertyValueFor(KEYS.NAME),
+          uid: peerNode.id,
+          ticket: true,
+          record: false,
+        });
+
+        win.metrics.startAllProbes();
+
+        win.probe.addCustomEvent(
+          "RTCPeerConnection",
+          "api",
+          "Create the new RTCPeerConnection",
+          new Date(),
+          null,
+          { configuration }
+        );
+
         win.ices = [];
         win.pc.addEventListener("iceconnectionstatechange", () => {
           const state = win.pc.iceConnectionState;
@@ -114,8 +135,6 @@ class PeerConnection extends Main {
             }
           });
         });
-
-        win.pc.addEventListener("negotiationneeded", (event) => {});
 
         win.pc.addEventListener("track", (event) => {
           createMediaElementInIFrame(
@@ -131,6 +150,15 @@ class PeerConnection extends Main {
         });
 
         stream.getTracks().forEach((track) => {
+          win.probe.addCustomEvent(
+            "addTrack",
+            "api",
+            "Add Track to RTCPeerConnection",
+            new Date(),
+            null,
+            track
+          );
+
           win.pc.addTrack(track);
           // win.pc.addTransceiver(track, {
           //   sendEncodings: [
