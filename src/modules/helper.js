@@ -131,8 +131,9 @@ export const getTransceiver = (transceivers, trackNodeId) => {
 
 export const stringify = (data) => {
   switch (data.constructor.name) {
+    case "CanvasCaptureMediaStreamTrack":
     case "MediaStreamTrack":
-      return `{${data.label}:${data.kind}, readyState=${data.readyState}, muted=${data.muted}, enabled=${data.enabled}}`;
+      return `{${data.label}:${data.kind}, readyState=${data.readyState}, muted=${data.muted}, enabled=${data.enabled}, __private=${data.__wp}`;
     case "String":
       return `{${data}}`;
     default:

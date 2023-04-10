@@ -4,7 +4,7 @@ import EmptyState from "@atlaskit/empty-state";
 import { SimpleTag as Tag } from "@atlaskit/tag";
 
 import "./Debug.css";
-import { Main } from "@atlaskit/page-layout";
+import { Content, Main } from "@atlaskit/page-layout";
 import PageHeader from "@atlaskit/page-header";
 import ProgressBar from "@atlaskit/progress-bar";
 import Button, { ButtonGroup } from "@atlaskit/button";
@@ -12,6 +12,7 @@ import { run } from "../../actions/playgroundActions";
 import { useStateWithCallbackLazy } from "use-state-with-callback";
 import { PLAY_STATE } from "../../reducers/appReducer";
 import { stringify } from "../../modules/helper";
+import { useWindowSize } from "../../modules/hooks";
 
 const getColorFromTag = (tag) => {
   switch (tag) {
@@ -35,6 +36,7 @@ function Debug({ dispatch }) {
   const [progress, setProgress] = useState(0);
   const [isStarted, setIsStarted] = useStateWithCallbackLazy(false);
   const [isReset, setIsReset] = useStateWithCallbackLazy(true);
+  const size = useWindowSize();
 
   useEffect(() => {
     if (appState.nbTasks > 0) {
@@ -108,64 +110,59 @@ function Debug({ dispatch }) {
               )}
               {(appState.playState === PLAY_STATE.ENDED ||
                 appState.playState === PLAY_STATE.FAILED) && (
-                <div className="debug-layout">
-                  <div className="debug-double-columns">
-                    <div className="details-area">
-                      <p className="debug-iframes-title">Details</p>
-                      <div className="debug-actions">
-                        {appState.tickets.map((ticket, key1) => (
-                          <div className="debug-ticket" key={key1}>
-                            <p>{ticket.ua.pname}</p>
-                            <ul key={key1}>
-                              {ticket.call.events.map((log, key2) => (
-                                <li key={key2}>
-                                  <div>
-                                    <Tag text={log.at}></Tag>{" "}
-                                    <Tag
-                                      text={log.category}
-                                      color={getColorFromTag(log.category)}
-                                    ></Tag>{" "}
-                                    <Tag
-                                      text={log.name}
-                                      color="greenLight"
-                                    ></Tag>{" "}
-                                    {log.ssrc && (
-                                      <Tag
-                                        text={log.ssrc}
-                                        color={getColorFromTag("ssrc")}
-                                      ></Tag>
-                                    )}
-                                    <span
-                                      style={{
-                                        color: "#999",
-                                        fontSize: "14px",
-                                      }}
-                                    >
-                                      {log.details.message}{" "}
-                                    </span>
-                                  </div>
-                                  <div
-                                    style={{
-                                      marginLeft: "190px",
-                                      fontSize: "12px",
-                                      padding: "4px",
-                                    }}
-                                  >
-                                    {log.details.value && (
-                                      <span>
-                                        {stringify(log.details.value)}
-                                      </span>
-                                    )}
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
+                <Content testId="content">
+                  <div
+                    style={{
+                      height: (size.height || window.innerHeight) - 184,
+                      overflow: "scroll",
+                    }}
+                  >
+                    {appState.tickets.map((ticket, key1) => (
+                      <div key={key1}>
+                        <p>{ticket.ua.pname}</p>
+                        <ul key={key1}>
+                          {ticket.call.events.map((log, key2) => (
+                            <li key={key2}>
+                              <div>
+                                <Tag text={log.at}></Tag>{" "}
+                                <Tag
+                                  text={log.category}
+                                  color={getColorFromTag(log.category)}
+                                ></Tag>{" "}
+                                <Tag text={log.name} color="greenLight"></Tag>{" "}
+                                {log.ssrc && (
+                                  <Tag
+                                    text={log.ssrc}
+                                    color={getColorFromTag("ssrc")}
+                                  ></Tag>
+                                )}
+                                <span
+                                  style={{
+                                    color: "#999",
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  {log.details.message}{" "}
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  marginLeft: "190px",
+                                  fontSize: "12px",
+                                  padding: "4px",
+                                }}
+                              >
+                                {log.details.value && (
+                                  <span>{stringify(log.details.value)}</span>
+                                )}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                    </div>
+                    ))}
                   </div>
-                </div>
+                </Content>
               )}
             </>
           )}

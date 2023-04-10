@@ -156,7 +156,7 @@ class PeerConnection extends Main {
             "Add Track to RTCPeerConnection",
             new Date(),
             null,
-            track
+            stringify(track)
           );
 
           win.pc.addTrack(track);
