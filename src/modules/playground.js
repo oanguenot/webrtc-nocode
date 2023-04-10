@@ -149,7 +149,6 @@ const executeANode = (initialEvent, currentNode, nodes) => {
           `node ${initialEvent.node}|${initialEvent.id} has terminated its flow`,
           null
         );
-        console.log(">>> (1) ended", endReached);
 
         if (currentNode.node === NODES.END) {
           endReached = true;

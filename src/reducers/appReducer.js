@@ -314,14 +314,14 @@ const appReducer = (state = initialAppState, action) => {
       };
     }
     case PLAYGROUND_ACTIONS.PLAYGROUND_RUN_SUCCESS:
-      console.log(">>> SUCCESS!!!");
       return {
         ...state,
+        playState: PLAY_STATE.ENDED,
       };
     case PLAYGROUND_ACTIONS.PLAYGROUND_RUN_FAILED:
-      console.log(">>> FAILED!!!");
       return {
         ...state,
+        playState: PLAY_STATE.FAILED,
       };
     case PLAYGROUND_ACTIONS.PLAYGROUND_DEVICES_CHECKED_SUCCESS:
       return {
@@ -364,10 +364,6 @@ const appReducer = (state = initialAppState, action) => {
       if (playState === PLAY_STATE.IDLE) {
         playState = PLAY_STATE.RUNNING;
       }
-      // if (state.tasksDone + 1 === state.nbTasks) {
-      //   playState = PLAY_STATE.ENDED;
-      // }
-
       return {
         ...state,
         tasksDone: state.tasksDone + 1,
