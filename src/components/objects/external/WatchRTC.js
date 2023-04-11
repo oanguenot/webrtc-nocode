@@ -24,11 +24,18 @@ class WatchRTC extends Main {
     this._acceptInputs = ["rtc.peer"];
     this._properties = [
       {
-        prop: "name",
+        prop: KEYS.NAME,
         label: "Name",
-        type: "text",
+        type: KEY_TYPE.TEXT,
         value: `WatchRTC SDK`,
         description: "Name of the tool",
+      },
+      {
+        prop: "apiKey",
+        label: "API Key",
+        type: "text",
+        value: "",
+        description: "API Key to use",
       },
       {
         prop: KEYS.ACTIVE,
@@ -42,13 +49,6 @@ class WatchRTC extends Main {
         description: "Choose if watchRTC is active or not",
       },
       {
-        prop: "apiKey",
-        label: "API Key",
-        type: "text",
-        value: "",
-        description: "API Key to use",
-      },
-      {
         prop: "roomId",
         label: "Room ID",
         type: "text",
@@ -56,6 +56,7 @@ class WatchRTC extends Main {
         description: "Name of the room",
       },
     ];
+    this._sources = [];
   }
 
   renderProp(prop) {
@@ -70,7 +71,34 @@ class WatchRTC extends Main {
         return property.value ? "*****" : "none";
       case "roomId":
         return property.value ? property.value : "no ID for room";
+      default:
+        return "";
     }
+  }
+
+  execute(win, rtcPeerId) {
+    return new Promise((resolve, reject) => {
+      try {
+        // Don't activate watchRTC if paused
+        const active = this.getPropertyValueFor("active");
+        if (active === "no") {
+          resolve();
+          return;
+        }
+
+        const rtcApiKey = this.getPropertyValueFor("apiKey");
+        const rtcRoomId = this.getPropertyValueFor("roomId");
+
+        win.watchRTC.init({
+          rtcApiKey,
+          rtcRoomId,
+          rtcPeerId,
+        });
+        resolve();
+      } catch (err) {
+        reject(err);
+      }
+    });
   }
 
   render() {
@@ -98,9 +126,7 @@ class WatchRTC extends Main {
             }">${this.renderProp("active")}</span>
             </div>
              <div class="object-footer">
-                <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}
+                <span class="object-node object-title-box">${this.node}
                 </span>
             </div>
         </div>

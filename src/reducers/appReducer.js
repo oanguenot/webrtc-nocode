@@ -2,6 +2,7 @@ import { OBJECT_ACTIONS } from "../actions/objectActions";
 import { SUPERVISOR_ACTIONS } from "../actions/supervisonActions";
 import {
   filterNodesByName,
+  findTargetsFromSources,
   getNodeById,
   getNodeIndexById,
 } from "../modules/helper";
@@ -10,8 +11,8 @@ import {
   saveModelToStorage,
 } from "../actions/playgroundActions";
 import { DEBUG_ACTIONS } from "../actions/DebugActions";
-import { checkNodesProblems, PROBLEMS } from "../modules/problems";
-import { KEYS, NODES } from "../modules/model";
+import { checkNodesProblems } from "../modules/problems";
+import { KEYS } from "../modules/model";
 
 export const STATE = {
   NOT_INITIALIZED: "NOT_INITIALIZED",
@@ -31,11 +32,9 @@ const initialAppState = {
   selected: null,
   link: null,
   devices: [],
-  state: STATE.NOT_INITIALIZED,
-  debug: [],
+  state: STATE.READY,
+  tickets: [],
   events: [],
-  groups: [],
-  subGroups: [],
   playState: PLAY_STATE.IDLE,
   nbTasks: 0,
   tasksDone: 0,
@@ -81,22 +80,20 @@ const appReducer = (state = initialAppState, action) => {
       const nodeInfo = object.getInfoValueFor(KEYS.NODE);
 
       // Manage all target nodes
-      if (!!object.targets.length) {
-        object.targets.forEach((target) => {
-          const splitTarget = target.split("@");
+      const targets = findTargetsFromSources(
+        nodeInfo,
+        state.objects,
+        object.kind
+      );
+      if (!!targets.length) {
+        targets.forEach(({ node, source }) => {
+          const splitTarget = source.split("@");
           const label = splitTarget[0].split(":")[0];
           const prop = splitTarget[0].split(":")[1];
-          const nodeName = splitTarget[1];
-          // Find all target nodes and add a reference label/prop
-          filterNodesByName(nodeName, state.objects, object.kind).forEach(
-            (obj) => {
-              // only add track to encoding of the same kind
-              obj.addNewOptionToSelect(
-                object.id,
-                object.getPropertyValueFor(label),
-                prop
-              );
-            }
+          node.addNewOptionToSelect(
+            object.id,
+            object.getPropertyValueFor(label),
+            prop
           );
         });
       }
@@ -122,10 +119,6 @@ const appReducer = (state = initialAppState, action) => {
         });
       }
 
-      if (nodeInfo === NODES.TRACK) {
-        object.addDevices(state.devices);
-      }
-
       const newObjects = [...state.objects, object];
       saveModelToStorage(newObjects);
       const problems = checkNodesProblems(newObjects);
@@ -140,20 +133,17 @@ const appReducer = (state = initialAppState, action) => {
     case OBJECT_ACTIONS.REMOVE_OBJECT_SUCCESS: {
       if (state.selected) {
         // Remove selected from all targets
-        if (!!state.selected.targets) {
-          state.selected.targets.forEach((target) => {
-            const splitTarget = target.split("@");
+        const nodeInfo = state.selected.getInfoValueFor(KEYS.NODE);
+        const targets = findTargetsFromSources(
+          nodeInfo,
+          state.objects,
+          state.selected.kind
+        );
+        if (!!targets.length) {
+          targets.forEach(({ node, source }) => {
+            const splitTarget = source.split("@");
             const prop = splitTarget[0].split(":")[1];
-            const nodeName = splitTarget[1];
-
-            filterNodesByName(
-              nodeName,
-              state.objects,
-              state.selected.kind
-            ).forEach((obj) => {
-              // only add track to encoding of the same kind
-              obj.removeOptionFromSelect(state.selected.id, prop);
-            });
+            node.removeOptionFromSelect(state.selected.id, prop);
           });
         }
 
@@ -203,52 +193,20 @@ const appReducer = (state = initialAppState, action) => {
       );
 
       const object = getNodeById(objectId, objects);
-      // Update all goto nodes when step name changed
-      // if (object.getInfoValueFor("node") === "step") {
-      //   const relatedGoto = filterObjectsWithNode("goto", objects);
-      //   relatedGoto.forEach((obj) =>
-      //     obj.updateLabelInSelect(object.id, value, "step")
-      //   );
-      // }
+      const nodeInfo = object.getInfoValueFor(KEYS.NODE);
 
-      if (
-        object.getInfoValueFor(KEYS.NODE) === NODES.PEER &&
-        name === KEYS.NAME
-      ) {
-        // Update all ready nodes when peer name changed
-        const relatedReady = filterNodesByName(NODES.READY, objects);
-        relatedReady.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, KEYS.PEER)
-        );
-
-        const relatedIce = filterNodesByName(NODES.ICE, objects);
-        relatedIce.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, KEYS.PEER)
-        );
-
-        // Update all callP2P nodes when peer name changed
-        const relatedP2P = filterNodesByName(NODES.CALL, objects);
-        relatedP2P.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, KEYS.PEER)
-        );
-      } else if (
-        object.getInfoValueFor(KEYS.NODE) === NODES.TURN &&
-        name === KEYS.NAME
-      ) {
-        // Update all ready peer when turn name changed
-        const relatedPeers = filterNodesByName(NODES.PEER, objects);
-        relatedPeers.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, KEYS.TURN)
-        );
-      } else if (
-        object.getInfoValueFor(KEYS.NODE) === NODES.CALL &&
-        name === KEYS.NAME
-      ) {
-        // Update all restartIce when call name changed
-        const relatedRestartIce = filterNodesByName(NODES.RESTARTICE, objects);
-        relatedRestartIce.forEach((obj) =>
-          obj.updateLabelInSelect(object.id, value, KEYS.CALL)
-        );
+      // Manage all target nodes
+      const targets = findTargetsFromSources(
+        nodeInfo,
+        state.objects,
+        object.kind
+      );
+      if (!!targets.length && name === KEYS.NAME) {
+        targets.forEach(({ node, source }) => {
+          const splitTarget = source.split("@");
+          const prop = splitTarget[0].split(":")[1];
+          node.updateLabelInSelect(object.id, value, prop);
+        });
       }
 
       saveModelToStorage(objects);
@@ -353,6 +311,17 @@ const appReducer = (state = initialAppState, action) => {
         problems,
       };
     }
+    case PLAYGROUND_ACTIONS.PLAYGROUND_RUN_SUCCESS:
+      return {
+        ...state,
+        playState: PLAY_STATE.ENDED,
+        tickets: action.payload.tickets,
+      };
+    case PLAYGROUND_ACTIONS.PLAYGROUND_RUN_FAILED:
+      return {
+        ...state,
+        playState: PLAY_STATE.FAILED,
+      };
     case PLAYGROUND_ACTIONS.PLAYGROUND_DEVICES_CHECKED_SUCCESS:
       return {
         ...state,
@@ -370,7 +339,7 @@ const appReducer = (state = initialAppState, action) => {
         lastAdded: null,
         selected: null,
         link: null,
-        debug: [],
+        tickets: [],
         nbTasks: 0,
         tasksDone: 0,
         problems: [],
@@ -379,42 +348,7 @@ const appReducer = (state = initialAppState, action) => {
       const log = action.payload;
       return {
         ...state,
-        debug: [...state.debug, log],
-      };
-    }
-    case DEBUG_ACTIONS.ADD_EVENTS_TO_TIMELINE:
-      const events = action.payload;
-      return {
-        ...state,
-        events: [...state.events, ...events],
-      };
-    case DEBUG_ACTIONS.ADD_EVENT_TO_TIMELINE:
-    case DEBUG_ACTIONS.ADD_PERIOD_TO_TIMELINE: {
-      const event = action.payload;
-      return {
-        ...state,
-        events: [...state.events, event],
-      };
-    }
-    case DEBUG_ACTIONS.ADD_GROUP_TO_TIMELINE: {
-      const group = action.payload;
-      return {
-        ...state,
-        groups: [...state.groups, group],
-      };
-    }
-    case DEBUG_ACTIONS.ADD_SUBGROUPS_TO_TIMELINE: {
-      const subGroups = action.payload;
-      return {
-        ...state,
-        subGroups: [...state.subGroups, ...subGroups],
-      };
-    }
-    case DEBUG_ACTIONS.ADD_SUBGROUP_TO_TIMELINE: {
-      const subGroups = action.payload;
-      return {
-        ...state,
-        subGroups: [...state.subGroups, subGroups],
+        tickets: [...state.tickets, log],
       };
     }
     case DEBUG_ACTIONS.SET_TASK_NUMBER: {
@@ -429,10 +363,6 @@ const appReducer = (state = initialAppState, action) => {
       if (playState === PLAY_STATE.IDLE) {
         playState = PLAY_STATE.RUNNING;
       }
-      if (state.tasksDone + 1 === state.nbTasks) {
-        playState = PLAY_STATE.ENDED;
-      }
-
       return {
         ...state,
         tasksDone: state.tasksDone + 1,

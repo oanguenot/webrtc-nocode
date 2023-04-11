@@ -25,7 +25,6 @@ class Main {
     this._acceptInputs = [];
     this._acceptOutputs = [];
     this._sources = []; // Import data from these nodes
-    this._targets = []; // Export data to these nodes (format: label:prop@node)
   }
 
   get inputs() {
@@ -92,10 +91,6 @@ class Main {
 
   get sources() {
     return this._sources;
-  }
-
-  get targets() {
-    return this._targets;
   }
 
   getInfoValueFor(name) {
@@ -271,6 +266,12 @@ class Main {
 
   render() {
     return "";
+  }
+
+  execute() {
+    return new Promise((resolve, _reject) => {
+      resolve();
+    });
   }
 
   rehydrate(fromNode) {

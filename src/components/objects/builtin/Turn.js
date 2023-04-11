@@ -1,5 +1,6 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { getTURNCredentials } from "../../../modules/helper";
 
 class Turn extends Main {
   static item = "Turn Server";
@@ -52,12 +53,10 @@ class Turn extends Main {
       },
     ];
     this._sources = [];
-    this._targets = [`${KEYS.NAME}:${KEYS.TURN}@${NODES.PEER}`];
   }
 
   renderProp(prop) {
     const property = this.getPropertyFor(prop);
-    const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
       case KEYS.NAME:
@@ -72,7 +71,46 @@ class Turn extends Main {
           : "no TURN Url";
       case KEYS.TURNTOKEN:
         return !!property.value.length ? "*****" : "no token";
+      default:
+        return "";
     }
+  }
+
+  execute(userId) {
+    return new Promise((resolve, reject) => {
+      const stunUrl = this.getPropertyValueFor(KEYS.STUNURL);
+      const turnUrl = this.getPropertyValueFor(KEYS.TURNURL);
+      const turnToken = this.getPropertyValueFor(KEYS.TURNTOKEN);
+      const { username, credential } = getTURNCredentials(
+        `user#${userId}`,
+        turnToken
+      );
+
+      const configuration = {
+        iceServers: [],
+        iceTransportPolicy: "all",
+      };
+
+      // Add all stun urls
+      const urlsForStun = stunUrl.split(";");
+      urlsForStun.forEach((url) => {
+        if (url) {
+          configuration.iceServers.push({ urls: url });
+        }
+      });
+
+      const urlsForTurn = turnUrl.split(";");
+      urlsForTurn.forEach((url) => {
+        if (url) {
+          configuration.iceServers.push({
+            urls: url,
+            username: username,
+            credential: credential,
+          });
+        }
+      });
+      resolve(configuration);
+    });
   }
 
   render() {
@@ -100,9 +138,7 @@ class Turn extends Main {
             }">${this.renderProp(KEYS.TURNTOKEN)}</span>
             </div>
              <div class="object-footer">
-                <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}
+                <span class="object-node object-title-box">${this.node}
                 </span>    
             </div>
         </div>

@@ -33,19 +33,14 @@ export const run = (nodes, dispatch) => {
     payload: {},
   });
 
-  execute(nodes, dispatch)
-    .then(() => {
-      dispatch({
-        type: PLAYGROUND_ACTIONS.PLAYGROUND_RUN_SUCCESS,
-        payload: {},
-      });
-    })
-    .catch((err) => {
-      dispatch({
-        type: PLAYGROUND_ACTIONS.PLAYGROUND_RUN_FAILED,
-        payload: {},
-      });
-    });
+  execute(nodes, dispatch);
+};
+
+export const terminate = (tickets, dispatch) => {
+  dispatch({
+    type: PLAYGROUND_ACTIONS.PLAYGROUND_RUN_SUCCESS,
+    payload: { tickets },
+  });
 };
 
 export const load = (nodes, dispatch) => {
@@ -213,4 +208,31 @@ export const checkDevicesInNodes = (devices, nodes, dispatch) => {
       : PLAYGROUND_ACTIONS.PLAYGROUND_DEVICES_CHECKED_SUCCESS,
     payload: {},
   });
+};
+
+export const checkFileConcistency = (imported) => {
+  const drawFlow = imported.nodes.drawflow; // drawflow
+  const objects = imported.objects; // models
+
+  if (drawFlow) {
+    const nodes = drawFlow.Home.data;
+    const toKeep = [];
+    objects.forEach((object) => {
+      const uuid = object._uuid;
+      const found = Object.keys(nodes).some((nodeId) => {
+        const node = nodes[nodeId];
+        return node.data.id === uuid;
+      });
+
+      if (found) {
+        toKeep.push(object);
+      } else {
+        console.warn(`[import] can't find ${object._uuid} - don't load it!`);
+      }
+    });
+
+    imported.objects = toKeep;
+  }
+
+  return imported;
 };

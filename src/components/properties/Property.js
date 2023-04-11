@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Textfield from "@atlaskit/textfield";
 import { updateProperty } from "../../actions/objectActions";
 import InlineEdit from "@atlaskit/inline-edit";

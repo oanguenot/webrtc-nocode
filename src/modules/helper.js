@@ -10,6 +10,8 @@ export const getDimensionFromResolution = (resolution) => {
       return { width: { ideal: 1920 }, height: { ideal: 1080 } };
     case "4k":
       return { width: { ideal: 3840 }, height: { ideal: 2160 } };
+    default:
+      return { width: { ideal: 640 }, height: { ideal: 480 } };
   }
 };
 
@@ -59,6 +61,22 @@ export const filterNodesByName = (node, nodes, kind) => {
   return nodes.filter((item) => item.node === node);
 };
 
+export const findTargetsFromSources = (node, nodes, kind) => {
+  const targets = [];
+  nodes.forEach((nodeItem) => {
+    const sources = nodeItem.sources.filter((source) =>
+      source.includes(`@${node}`)
+    );
+
+    if (!!sources.length && (!kind || nodeItem.kind === kind)) {
+      sources.forEach((source) => {
+        targets.push({ node: nodeItem, source });
+      });
+    }
+  });
+  return targets;
+};
+
 export const findNodeByName = (node, nodes) => {
   return nodes.find((item) => item.node === node);
 };
@@ -94,4 +112,31 @@ export const getTURNCredentials = (
     username: "",
     credential: "",
   };
+};
+
+export const getTransceiver = (transceivers, trackNodeId) => {
+  return transceivers.find((transceiver) => {
+    const sender = transceiver.sender;
+    if (!sender) {
+      return false;
+    }
+
+    const track = sender.track;
+    if (!track) {
+      return false;
+    }
+    return track.__wp === trackNodeId;
+  });
+};
+
+export const stringify = (data) => {
+  switch (data.constructor.name) {
+    case "CanvasCaptureMediaStreamTrack":
+    case "MediaStreamTrack":
+      return `{${data.label}:${data.kind}, readyState=${data.readyState}, muted=${data.muted}, enabled=${data.enabled}, __private=${data.__wp}`;
+    case "String":
+      return `{${data}}`;
+    default:
+      return `${JSON.stringify(data)}`;
+  }
 };

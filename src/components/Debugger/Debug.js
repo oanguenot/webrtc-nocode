@@ -1,43 +1,33 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import AppContext from "../../contexts/appContext";
 import EmptyState from "@atlaskit/empty-state";
 import { SimpleTag as Tag } from "@atlaskit/tag";
 
 import "./Debug.css";
-import { Main } from "@atlaskit/page-layout";
+import { Content, Main } from "@atlaskit/page-layout";
 import PageHeader from "@atlaskit/page-header";
 import ProgressBar from "@atlaskit/progress-bar";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { run } from "../../actions/playgroundActions";
 import { useStateWithCallbackLazy } from "use-state-with-callback";
-import Timeline from "react-vis-timeline-2";
-
-let zoomLevel = 1;
-
-const options = {
-  width: "100%",
-  //height: "600px",
-  groupHeightMode: "fixed",
-  editable: false,
-  zoomable: false,
-  verticalScroll: true,
-  min: Date.now(),
-  showCurrentTime: false,
-  //timeAxis: { scale: "second", step: 1 },
-  //zoomMin: 100,
-  //zoomMax: 1000 * 3600,
-};
+import { PLAY_STATE } from "../../reducers/appReducer";
+import { stringify } from "../../modules/helper";
+import { useWindowSize } from "../../modules/hooks";
 
 const getColorFromTag = (tag) => {
   switch (tag) {
-    case "play":
+    case "playground":
       return "blue";
-    case "peer":
+    case "call":
       return "yellow";
-    case "action":
+    case "signal":
       return "tealLight";
+    case "ssrc":
+      return "redLight";
+    case "name":
+      return "greenLight";
     default:
-      return "standard";
+      return "grey";
   }
 };
 
@@ -46,60 +36,13 @@ function Debug({ dispatch }) {
   const [progress, setProgress] = useState(0);
   const [isStarted, setIsStarted] = useStateWithCallbackLazy(false);
   const [isReset, setIsReset] = useStateWithCallbackLazy(true);
-  const timelineRef = useRef();
-  const [zoom, setZoom] = useState({ action: null, level: 1 });
+  const size = useWindowSize();
 
   useEffect(() => {
     if (appState.nbTasks > 0) {
       setProgress(appState.tasksDone / appState.nbTasks);
     }
   }, [appState.nbTasks, appState.tasksDone]);
-
-  useEffect(() => {}, []);
-
-  useEffect(() => {
-    if (timelineRef && timelineRef.current) {
-      if (zoom && zoom.action && zoom.action === "in") {
-        timelineRef.current.timeline.zoomIn(zoomLevel);
-      } else {
-        timelineRef.current.timeline.zoomOut(zoomLevel);
-      }
-    }
-  }, [zoom]);
-
-  useEffect(() => {
-    if (timelineRef && timelineRef.current && progress === 1) {
-      appState.groups.forEach((latest) => {
-        const group = timelineRef.current.groups.get(latest.id);
-        // check if already exists - crash when duplicated
-        if (!group) {
-          timelineRef.current.groups.add(latest);
-        }
-      });
-
-      appState.subGroups.forEach((latest) => {
-        const group = timelineRef.current.groups.get(latest.groupId);
-        if (group) {
-          if (!group.nestedGroups.includes(latest.id)) {
-            group.nestedGroups.push(latest.id);
-            timelineRef.current.groups.add({
-              id: latest.id,
-              content: latest.content,
-            });
-            timelineRef.current.groups.update(group);
-          }
-        }
-      });
-
-      appState.events.forEach((latest) => {
-        const item = timelineRef.current.items.get(latest.id);
-        if (!item || (item && item.length === 0)) {
-          timelineRef.current.items.add(latest);
-          timelineRef.current.timeline.fit();
-        }
-      });
-    }
-  }, [appState.groups, appState.subGroups, appState.events, progress]);
 
   const onStart = () => {
     setIsStarted(true, () => {
@@ -134,19 +77,6 @@ function Debug({ dispatch }) {
     }
   };
 
-  const onZoom = () => {
-    setZoom({ action: "in", level: zoom.level - 0.05 });
-    // zoomLevel = Math.max(0.5, zoomLevel);
-    // timelineRef.current.timeline.zoomIn(zoomLevel);
-  };
-
-  const onUnzoom = () => {
-    setZoom({ action: "out", level: zoom.level + 0.05 });
-    // console.log(">>>ZOOM", zoomLevel);
-    // zoomLevel = Math.min(1, zoomLevel);
-    // timelineRef.current.timeline.zoomOut(zoomLevel);
-  };
-
   return (
     <>
       <Main id="debug-main-content" skipLinkTitle="Debug Content">
@@ -162,7 +92,8 @@ function Debug({ dispatch }) {
           )}
           {!isReset && (
             <>
-              {isStarted && progress !== 1 && (
+              {(appState.playState === PLAY_STATE.RUNNING ||
+                appState.playState === PLAY_STATE.IDLE) && (
                 <div className="debug-progress">
                   <p className="debug-progress-title">
                     Progress: {getProgressStatus()}
@@ -177,32 +108,61 @@ function Debug({ dispatch }) {
                   </div>
                 </div>
               )}
-              {progress === 1 && (
-                <div className="debug-layout">
-                  <div className="debug-double-columns">
-                    <div className="timeline-area">
-                      <p className="debug-iframes-title">Timeline</p>
-                      <Timeline ref={timelineRef} options={options} />
-                      <Button onClick={() => onZoom()}>+</Button>
-                      <Button onClick={() => onUnzoom()}>-</Button>
-                    </div>
-                    <div className="details-area">
-                      <p className="debug-iframes-title">Details</p>
-                      <ul className="debug-actions">
-                        {appState.debug.map((log, key) => (
-                          <li key={key}>
-                            <Tag text={log.timestamp}></Tag>{" "}
-                            <Tag
-                              text={log.tag}
-                              color={getColorFromTag(log.tag)}
-                            ></Tag>{" "}
-                            {log.message}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+              {(appState.playState === PLAY_STATE.ENDED ||
+                appState.playState === PLAY_STATE.FAILED) && (
+                <Content testId="content">
+                  <div
+                    style={{
+                      height: (size.height || window.innerHeight) - 184,
+                      overflow: "scroll",
+                    }}
+                  >
+                    {appState.tickets.map((ticket, key1) => (
+                      <div key={key1}>
+                        <p>{ticket.ua.pname}</p>
+                        <ul key={key1}>
+                          {ticket.call.events.map((log, key2) => (
+                            <li key={key2}>
+                              <div>
+                                <Tag text={log.at}></Tag>{" "}
+                                <Tag
+                                  text={log.category}
+                                  color={getColorFromTag(log.category)}
+                                ></Tag>{" "}
+                                <Tag text={log.name} color="greenLight"></Tag>{" "}
+                                {log.ssrc && (
+                                  <Tag
+                                    text={log.ssrc}
+                                    color={getColorFromTag("ssrc")}
+                                  ></Tag>
+                                )}
+                                <span
+                                  style={{
+                                    color: "#999",
+                                    fontSize: "14px",
+                                  }}
+                                >
+                                  {log.details.message}{" "}
+                                </span>
+                              </div>
+                              <div
+                                style={{
+                                  marginLeft: "190px",
+                                  fontSize: "12px",
+                                  padding: "4px",
+                                }}
+                              >
+                                {log.details.value && (
+                                  <span>{stringify(log.details.value)}</span>
+                                )}
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                   </div>
-                </div>
+                </Content>
               )}
             </>
           )}

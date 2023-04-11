@@ -7,7 +7,7 @@ const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class AudioTrack extends Main {
   static item = "Audio Track";
-  static description = "Add an audio source from a microphone";
+  static description = "Add an audio source from a fake device";
   static icon = "microphone";
   static section = "builtin";
   static name = "AudioTrack";
@@ -23,7 +23,7 @@ class AudioTrack extends Main {
       { key: KEYS.KIND, value: KIND.AUDIO },
       {
         key: KEYS.INFO,
-        value: "Get the MediaStreamTrack instance from the selected device",
+        value: "Get the MediaStreamTrack instance from the fake device",
       },
     ];
     this._properties = [
@@ -39,32 +39,18 @@ class AudioTrack extends Main {
         label: "From",
         type: KEY_TYPE.ENUM,
         enum: [
-          { label: "[Default]", value: "[default]" },
           { label: "None", value: "none" },
-          { label: "Fake", value: "fake" },
+          { label: "Fake", value: "[fake]" },
         ],
-        value: "[default]",
+        value: "[fake]",
         description: "Choose the preferred microphone",
-      },
-      {
-        prop: KEYS.CHANNEL_COUNT,
-        label: "Channels Count",
-        type: KEY_TYPE.ENUM,
-        enum: [
-          { label: "Mono", value: 1 },
-          { label: "Stereo", value: 2 },
-        ],
-        value: 1,
-        description: "Number of Channels (mono or stereo)",
       },
     ];
     this._sources = [];
-    this._targets = [
-      `${KEYS.NAME}:${KEYS.TRACK}@${NODES.ENCODE}`,
-      `${KEYS.NAME}:${KEYS.TRACK}@${NODES.ADJUST}`,
-    ];
   }
 
+  // Don't use real devices
+  // This function has been desactivated
   addDevices(list) {
     const prop = this._properties.find(
       (property) => property.prop === KEYS.FROM
@@ -93,12 +79,36 @@ class AudioTrack extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.FROM:
-        return label;
-      case KEYS.CHANNEL_COUNT:
-        return `${label}`;
+        return property.value !== "none" ? `[${label}]` : label;
       default:
         return "";
     }
+  }
+
+  execute(win) {
+    return new Promise((resolve, reject) => {
+      const getAudioTrack = () => {
+        const context = new win.AudioContext();
+        const audio = new win.Audio("./outfoxing.mp3");
+        const track = context.createMediaElementSource(audio);
+        const gainNode = context.createGain();
+        gainNode.gain.value = 0.2;
+        const mediaStreamDestination = context.createMediaStreamDestination();
+        track.connect(gainNode).connect(mediaStreamDestination);
+        const mediaStream = mediaStreamDestination.stream;
+        return mediaStream.getAudioTracks()[0];
+      };
+
+      try {
+        const audioTrack = getAudioTrack();
+        const stream = new win.MediaStream();
+        stream.addTrack(audioTrack);
+        resolve(stream);
+      } catch (err) {
+        console.log(`[IFRAME] :: error got stream ${err.toString()}`);
+        reject(null);
+      }
+    });
   }
 
   render() {
@@ -115,16 +125,10 @@ class AudioTrack extends Main {
                   this._uuid
                 }">${this.renderProp(KEYS.FROM)}</span>
             </div>
-            <div class="object-box-line">
-                <i class="fas fa-headphones"></i><span class="object-details-value" id="channelCount-${
-                  this._uuid
-                }">${this.renderProp(KEYS.CHANNEL_COUNT)}</span>
-            </div>
-            
             <div class="object-footer">
                 <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}</span>    
+                  this.node
+                }</span>    
             </div>
         </div>
         </div>

@@ -21,6 +21,13 @@ class ICEConnectionEvent extends Main {
     ];
     this._properties = [
       {
+        prop: KEYS.NAME,
+        label: "Name",
+        type: KEY_TYPE.TEXT,
+        value: `ON ICE STATE CHANGE`,
+        description: "Action/Name",
+      },
+      {
         prop: KEYS.ICESTATE,
         label: "State",
         type: KEY_TYPE.ENUM,
@@ -34,17 +41,16 @@ class ICEConnectionEvent extends Main {
       },
       {
         prop: KEYS.PEER,
-        label: "Peer",
+        label: "From",
         type: KEY_TYPE.ENUM,
         enum: [{ label: "None", value: "none" }],
         value: "none",
-        description: "Choose the RTCPeerConnection to execute an action",
+        description: "Choose the Peer to check",
       },
     ];
     this._acceptOutputs = [NODES.ACTIONS];
     this._acceptInputs = [];
     this._sources = [`${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`];
-    this._targets = [];
   }
 
   renderProp(prop) {
@@ -52,19 +58,23 @@ class ICEConnectionEvent extends Main {
     const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
+      case KEYS.NAME:
+        return property.value;
       case KEYS.ICESTATE: {
         const label = this.getLabelFromPropertySelect(property);
         return `on ${label}`;
       }
-      case KEYS.PEER: {
-        if (property.value === "none") {
-          return "No peer";
-        }
-        return `${label}`;
-      }
+      case KEYS.PEER:
+        return property.value === "none" ? "no peer" : `[${label}]`;
       default:
         return "";
     }
+  }
+
+  execute() {
+    return new Promise((resolve, _reject) => {
+      resolve();
+    });
   }
 
   render() {
@@ -73,27 +83,26 @@ class ICEConnectionEvent extends Main {
         <div class="title-box">
            <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
       this._uuid
-    }">ON ICE STATE CHANGE</span>
+    }">${this.renderProp(KEYS.NAME)}</span>
         </div>
         <div class="box">
-            <div class="object-box-line">
-           <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
-      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
-    }"></i><span class="object-details-value ${
-      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
-    }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
-          </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i>
             <span class="object-details-value" id="iceState-${
               this._uuid
             }">${this.renderProp(KEYS.ICESTATE)}</span>
             </div>
-            
+             <div class="object-box-line">
+            <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
+            </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}</span>    
+                  this.node
+                }</span>    
             </div>
         </div>
       </div>

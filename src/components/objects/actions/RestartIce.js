@@ -1,5 +1,7 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { getNodeById } from "../../../modules/helper";
+import { addCustomEvent } from "../../../modules/metrics";
 
 class RestartIce extends Main {
   static item = "RestartIce";
@@ -37,9 +39,19 @@ class RestartIce extends Main {
         value: "none",
         description: "Choose the call to update",
       },
+      {
+        prop: KEYS.PEER,
+        label: "From",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "None", value: "none" }],
+        value: "none",
+        description: "Choose the Peer to update",
+      },
     ];
-    this._sources = [`${KEYS.NAME}:${KEYS.CALL}@${NODES.CALL}`];
-    this._targets = [];
+    this._sources = [
+      `${KEYS.NAME}:${KEYS.CALL}@${NODES.CALL}`,
+      `${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`,
+    ];
   }
 
   renderProp(prop) {
@@ -50,10 +62,54 @@ class RestartIce extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.CALL:
-        return property.value === "none" ? "no call" : `${label}`;
+        return property.value === "none" ? "no call" : `[${label}]`;
+      case KEYS.PEER:
+        return property.value === "none" ? "no peer" : `[${label}]`;
       default:
         return "";
     }
+  }
+
+  execute(nodes, frames) {
+    return new Promise((resolve, reject) => {
+      const peerId = this.getPropertyValueFor(KEYS.PEER);
+      const peerNode = getNodeById(peerId, nodes);
+
+      const win = frames[peerId];
+      if (!win.pc) {
+        console.log("Can't restartIce - no peer connection");
+        resolve();
+        return;
+      }
+
+      const callId = this.getPropertyValueFor(KEYS.CALL);
+      const callNode = getNodeById(callId, nodes);
+      const calleeId = callNode.getPropertyValueFor(KEYS.RECIPIENT);
+      let invertedCall = false;
+      if (calleeId === peerId) {
+        invertedCall = true;
+      }
+
+      win.pc.addEventListener(
+        "negotiationneeded",
+        async () => {
+          await callNode.execute(nodes, frames, invertedCall);
+          resolve();
+        },
+        { once: true }
+      );
+
+      // Restart ICE
+      win.pc.restartIce();
+      addCustomEvent(
+        peerNode.id,
+        frames,
+        "restart-ice",
+        "playground",
+        "",
+        new Date()
+      );
+    });
   }
 
   render() {
@@ -72,10 +128,17 @@ class RestartIce extends Main {
       this.renderColorIsMissingProp(KEYS.CALL) ? "red" : ""
     }" id="call-${this._uuid}">${this.renderProp(KEYS.CALL)}</span>
             </div>
+            <div class="object-box-line">
+            <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
+    }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
+            </div>
             <div class="object-footer">
                 <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}</span>    
+                  this.node
+                }</span>    
             </div>
         </div>
       </div>

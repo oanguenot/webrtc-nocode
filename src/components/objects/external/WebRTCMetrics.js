@@ -82,6 +82,7 @@ class WebRTCMetrics extends Main {
         description: "Choose where to store the metrics",
       },
     ];
+    this._sources = [];
   }
 
   renderProp(prop) {
@@ -101,6 +102,8 @@ class WebRTCMetrics extends Main {
           : `${label.toLowerCase()}`;
       case "exporter":
         return `saved in ${label.toLowerCase()}`;
+      default:
+        return "";
     }
   }
 
@@ -134,9 +137,7 @@ class WebRTCMetrics extends Main {
             }">${this.renderProp("exporter")}</span>
             </div>
              <div class="object-footer">
-                <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}
+                <span class="object-node object-title-box">${this.node}
                 </span>    
             </div>
         </div>

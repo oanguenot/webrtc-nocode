@@ -1,13 +1,15 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
+import { addCustomEvent } from "../../../modules/metrics";
+import { mungle } from "../../../modules/sdp";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class SDPMunging extends Main {
-  static item = "SDPMunging";
-  static description = "Mungle SDP";
+  static item = "SDP Munging";
+  static description = "Modify the SDP prior to use";
   static icon = "vial";
   static section = "builtin";
   static name = "SDPMunging";
@@ -37,13 +39,16 @@ class SDPMunging extends Main {
         prop: KEYS.OPERATION,
         label: "Operation",
         type: KEY_TYPE.ENUM,
-        enum: [{ label: "None", value: "none" }, {label: "RRTR", value: "rrtr"}],
+        enum: [
+          { label: "None", value: "none" },
+          { label: "RRTR", value: "rrtr" },
+          //{ label: "No Bundle", value: "nobundle" },
+        ],
         value: "none",
         description: "Choose the operation to apply on the SDP",
       },
     ];
     this._sources = [];
-    this._targets = [];
   }
 
   renderProp(prop) {
@@ -60,6 +65,15 @@ class SDPMunging extends Main {
     }
   }
 
+  execute(peerId, frames, offer) {
+    return new Promise((resolve, reject) => {
+      addCustomEvent(peerId, frames, "mungle", "playground", "", new Date());
+      const operation = this.getPropertyValueFor(KEYS.OPERATION);
+      const updatedOffer = mungle(operation, offer);
+      resolve(updatedOffer);
+    });
+  }
+
   render() {
     return `
       <div>
@@ -70,7 +84,9 @@ class SDPMunging extends Main {
         </div>
         <div class="box">
         <div class="object-box-line">
-            <i id="operation-color-${this._uuid}" class="fas fa-wrench ${
+            <i id="operation-color-${
+              this._uuid
+            }" class="fas fa-prescription-bottle ${
       this.renderColorIsMissingProp(KEYS.OPERATION) ? "red" : ""
     }"></i><span class="object-details-value ${
       this.renderColorIsMissingProp(KEYS.OPERATION) ? "red" : ""
@@ -78,8 +94,8 @@ class SDPMunging extends Main {
             </div>
             <div class="object-footer">
                 <span class="object-node object-title-box">${
-                  this._info[0].value
-                }.${this._uuid}</span>    
+                  this.node
+                }</span>    
             </div>
         </div>
       </div>

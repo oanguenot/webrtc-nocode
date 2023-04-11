@@ -24,6 +24,7 @@ class Goto extends Main {
         description: "Select the next step",
       },
     ];
+    this._sources = [];
   }
 
   render() {
@@ -38,7 +39,7 @@ class Goto extends Main {
         <div class="box">
             <span class="object-full">Select the next step to execute. Once this line is completed, the next step will be executed.</span>
              <div class="object-footer">
-                <span class="object-node object-title-box">${this.constructor.name}</span>    
+                <span class="object-node object-title-box">${this.node}</span>    
             </div>
         </div>
       </div>

@@ -7,8 +7,6 @@ import CallP2P from "../components/objects/actions/CallP2P";
 import WebRTCMetrics from "../components/objects/external/WebRTCMetrics";
 import Ready from "../components/objects/events/Ready";
 import End from "../components/objects/events/End";
-import Step from "../components/objects/events/Step";
-import Goto from "../components/objects/events/Goto";
 import AudioEncodings from "../components/objects/actions/AudioEncodings";
 import Waiting from "../components/objects/actions/Waiting";
 import ICEConnectionEvent from "../components/objects/events/ICEConnectionEvent";
@@ -17,6 +15,7 @@ import AudioAdjust from "../components/objects/actions/AudioAdjust";
 import VideoAdjust from "../components/objects/actions/VideoAdjust";
 import RestartIce from "../components/objects/actions/RestartIce";
 import SDPMunging from "../components/objects/builtin/SDPMunging";
+import AudioMute from "../components/objects/actions/AudioMute";
 
 const ObjectBuilder = {
   Ready: Ready,
@@ -36,6 +35,7 @@ const ObjectBuilder = {
   WatchRTC: WatchRTC,
   CallP2P: CallP2P,
   RestartIce: RestartIce,
+  AudioMute: AudioMute,
   End: End,
 };
 
@@ -54,6 +54,7 @@ const convertNodeNameToClass = (name, kind) => {
     "action.analyze": WebRTCMetrics,
     "action.call": CallP2P,
     "action.restart": RestartIce,
+    "action.mute": kind === "audio" ? AudioMute : AudioMute,
     "action.end": End,
   };
 
