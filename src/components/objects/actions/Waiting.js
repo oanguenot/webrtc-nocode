@@ -72,9 +72,21 @@ class Waiting extends Main {
     }
   }
 
-  execute() {
+  execute(nodes, frames) {
     return new Promise((resolve, _reject) => {
       const delay = this.getPropertyValueFor(KEYS.DELAY);
+
+      Object.keys(frames).forEach(id => {
+        frames[id].probe.addCustomEvent(
+          "Wait",
+          "playground",
+          `Wait during ${delay}`,
+          new Date(),
+          null,
+          {delay}
+        );
+      });
+
       setTimeout(() => {
         resolve();
       }, delay);

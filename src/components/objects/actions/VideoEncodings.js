@@ -117,13 +117,13 @@ class VideoEncodings extends Main {
       codecs.unshift(...preferredCodecs);
       transceiver.setCodecPreferences(codecs);
 
-      addCustomEvent(
-        peerNode.id,
-        frames,
-        "encode",
-        "playground",
-        `${this._uuid} encode track ${trackLabel} using ${codecMimeType}`,
-        new Date()
+      win.probe.addCustomEvent(
+        "setCodecPreferences",
+        "api",
+        `Encode video track ${trackLabel} using ${codecMimeType}`,
+        new Date(),
+        null,
+        { codecs }
       );
       resolve();
     });
