@@ -30,6 +30,7 @@
     "@testing-library/react": "14.0.0",
     "@testing-library/user-event": "14.4.3",
     "add": "2.0.6",
+    "chart.js": "^4.2.1",
     "crypto-js": "^4.1.1",
     "drawflow": "^0.0.59",
     "moment": "2.29.4",
