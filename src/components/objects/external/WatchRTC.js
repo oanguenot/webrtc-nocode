@@ -38,6 +38,13 @@ class WatchRTC extends Main {
         description: "API Key to use",
       },
       {
+        prop: "roomId",
+        label: "Room ID",
+        type: "text",
+        value: `room-${nanoid(4)}`,
+        description: "Name of the room",
+      },
+      {
         prop: KEYS.ACTIVE,
         label: "Active",
         type: KEY_TYPE.ENUM,
@@ -47,13 +54,6 @@ class WatchRTC extends Main {
         ],
         value: "yes",
         description: "Choose if watchRTC is active or not",
-      },
-      {
-        prop: "roomId",
-        label: "Room ID",
-        type: "text",
-        value: `room-${nanoid(4)}`,
-        description: "Name of the room",
       },
     ];
     this._sources = [];
