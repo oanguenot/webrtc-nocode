@@ -2,6 +2,7 @@ import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
 import { getNodeById } from "../../../modules/helper";
+import { addCustomEvent } from "../../../modules/metrics";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
@@ -145,7 +146,8 @@ class CallP2P extends Main {
 
       let rtcOfferSessionDescription = await callerWin.pc.createOffer();
 
-      callerWin.probe.addCustomEvent(
+      addCustomEvent(
+        callerWin,
         "createOffer",
         "api",
         "Create the local offer",
@@ -165,7 +167,8 @@ class CallP2P extends Main {
 
       await callerWin.pc.setLocalDescription(rtcOfferSessionDescription);
 
-      callerWin.probe.addCustomEvent(
+      addCustomEvent(
+        callerWin,
         "setLocalDescription",
         "api",
         "Set the local offer to the local RTCPeerConnection",
@@ -178,7 +181,8 @@ class CallP2P extends Main {
 
       await calleeWin.pc.setRemoteDescription(rtcOfferSessionDescription);
 
-      calleeWin.probe.addCustomEvent(
+      addCustomEvent(
+        calleeWin,
         "setRemoteDescription",
         "api",
         "Set the local offer to the remote RTCPeerConnection",
@@ -189,7 +193,8 @@ class CallP2P extends Main {
 
       const rtcAnswerSessionDescription = await calleeWin.pc.createAnswer();
 
-      calleeWin.probe.addCustomEvent(
+      addCustomEvent(
+        calleeWin,
         "createAnswer",
         "api",
         "Create the remote answer",
@@ -209,7 +214,8 @@ class CallP2P extends Main {
 
       await calleeWin.pc.setLocalDescription(rtcAnswerSessionDescription);
 
-      calleeWin.probe.addCustomEvent(
+      addCustomEvent(
+        calleeWin,
         "setLocalDescription",
         "api",
         "Set the remote answer to the remote RTCPeerConnection",
@@ -223,7 +229,8 @@ class CallP2P extends Main {
       callerIces.forEach((ice) => {
         calleeWin.pc.addIceCandidate(ice);
 
-        calleeWin.probe.addCustomEvent(
+        addCustomEvent(
+          calleeWin,
           "addIceCandidate",
           "api",
           "Add a local candidate to the remote RTCPeerConnection",
@@ -235,7 +242,8 @@ class CallP2P extends Main {
 
       await callerWin.pc.setRemoteDescription(rtcAnswerSessionDescription);
 
-      callerWin.probe.addCustomEvent(
+      addCustomEvent(
+        callerWin,
         "setRemoteDescription",
         "api",
         "Set the remote answer to the local RTCPeerConnection",
@@ -247,7 +255,8 @@ class CallP2P extends Main {
       calleeIces.forEach((ice) => {
         callerWin.pc.addIceCandidate(ice);
 
-        callerWin.probe.addCustomEvent(
+        addCustomEvent(
+          callerWin,
           "addIceCandidate",
           "api",
           "Add a remote candidate to the local RTCPeerConnection",

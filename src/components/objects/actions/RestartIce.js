@@ -101,14 +101,7 @@ class RestartIce extends Main {
 
       // Restart ICE
       win.pc.restartIce();
-      addCustomEvent(
-        peerNode.id,
-        frames,
-        "restart-ice",
-        "playground",
-        "",
-        new Date()
-      );
+      addCustomEvent(win, "restart-ice", "playground", "", new Date());
     });
   }
 

@@ -1,6 +1,8 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
+import { configuration } from "../../../modules/metrics";
+import { findNodeByName, getNodesFromIds } from "../../../modules/helper";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
@@ -75,8 +77,21 @@ class WebRTCMetrics extends Main {
     }
   }
 
-  execute() {
-    return new Promise((resolve, reject) => {});
+  execute(win, nodes) {
+    return new Promise((resolve, reject) => {
+      const inputNodes = getNodesFromIds(this.linksOutput, nodes);
+      const peerNode = findNodeByName(NODES.PEER, inputNodes);
+
+      win.metrics = new win.WebRTCMetrics(configuration);
+      win.probe = win.metrics.createProbe(win.pc, {
+        pname: peerNode.getPropertyValueFor(KEYS.NAME),
+        uid: peerNode.id,
+        ticket: true,
+        record: false,
+      });
+
+      win.metrics.startAllProbes();
+    });
   }
 
   render() {

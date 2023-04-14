@@ -3,8 +3,13 @@ import Main from "../Main";
 import "../Main.css";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
-import { getNodeById, stringify } from "../../../modules/helper";
-import { addCustomEvent, configuration } from "../../../modules/metrics";
+import {
+  findNodeByName,
+  getNodeById,
+  getNodesFromIds,
+  stringify,
+} from "../../../modules/helper";
+import { addCustomEvent } from "../../../modules/metrics";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
@@ -90,6 +95,7 @@ class PeerConnection extends Main {
         const turnId = peerNode.getPropertyValueFor(KEYS.TURN);
         const network = peerNode.getPropertyValueFor(KEYS.NETWORK);
 
+        // create and configure the peer connection
         let configuration = null;
         if (turnId !== "local") {
           const turnNode = getNodeById(turnId, nodes);
@@ -105,17 +111,22 @@ class PeerConnection extends Main {
           win.pc = new win.RTCPeerConnection();
         }
 
-        win.metrics = new win.WebRTCMetrics(configuration);
-        win.probe = win.metrics.createProbe(win.pc, {
-          pname: peerNode.getPropertyValueFor(KEYS.NAME),
-          uid: peerNode.id,
-          ticket: true,
-          record: false,
-        });
+        // Manage the outputs
+        const outputNodes = getNodesFromIds(peerNode.linksOutput, nodes);
+        const watchNode = findNodeByName(NODES.WATCH, outputNodes);
+        const metricsNode = findNodeByName(NODES.ANALYZE, outputNodes);
 
-        win.metrics.startAllProbes();
+        if (watchNode) {
+          const rtcPeerId = peerNode.getPropertyValueFor("name");
+          await watchNode.execute(win, rtcPeerId);
+        }
 
-        win.probe.addCustomEvent(
+        if (metricsNode) {
+          await metricsNode.execute(win, nodes);
+        }
+
+        addCustomEvent(
+          win,
           "RTCPeerConnection",
           "api",
           "Create the new RTCPeerConnection",
@@ -151,7 +162,8 @@ class PeerConnection extends Main {
         });
 
         stream.getTracks().forEach((track) => {
-          win.probe.addCustomEvent(
+          addCustomEvent(
+            win,
             "addTrack",
             "api",
             "Add Track to RTCPeerConnection",

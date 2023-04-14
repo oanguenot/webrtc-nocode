@@ -1,6 +1,7 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
+import { addCustomEvent } from "../../../modules/metrics";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
@@ -76,14 +77,15 @@ class Waiting extends Main {
     return new Promise((resolve, _reject) => {
       const delay = this.getPropertyValueFor(KEYS.DELAY);
 
-      Object.keys(frames).forEach(id => {
-        frames[id].probe.addCustomEvent(
+      Object.keys(frames).forEach((id) => {
+        addCustomEvent(
+          frames[id],
           "Wait",
           "playground",
           `Wait during ${delay}`,
           new Date(),
           null,
-          {delay}
+          { delay }
         );
       });
 

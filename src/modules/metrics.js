@@ -5,8 +5,7 @@ export const configuration = {
 };
 
 export const addCustomEvent = (
-  id,
-  frames,
+  win,
   name,
   category,
   message,
@@ -15,7 +14,6 @@ export const addCustomEvent = (
   data,
   ended
 ) => {
-  const win = frames[id];
   if (win && win.metrics) {
     const probe = win.metrics.probes[0];
     probe.addCustomEvent(name, category, message, at, ssrc, data, ended);

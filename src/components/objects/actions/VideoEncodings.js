@@ -117,7 +117,8 @@ class VideoEncodings extends Main {
       codecs.unshift(...preferredCodecs);
       transceiver.setCodecPreferences(codecs);
 
-      win.probe.addCustomEvent(
+      addCustomEvent(
+        win,
         "setCodecPreferences",
         "api",
         `Encode video track ${trackLabel} using ${codecMimeType}`,

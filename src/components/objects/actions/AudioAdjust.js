@@ -152,8 +152,7 @@ class AudioAdjust extends Main {
         .setParameters(newParameters)
         .then(() => {
           addCustomEvent(
-            peerNode.id,
-            frames,
+            win,
             "set-parameters",
             "playground",
             `${this._uuid} parameterize track with ${parameter}`,

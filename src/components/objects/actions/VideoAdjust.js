@@ -119,6 +119,8 @@ class VideoAdjust extends Main {
       const active = this.getPropertyValueFor(KEYS.ACTIVE);
 
       const trackNode = getNodeById(trackNodeId, nodes);
+      const fromProperty = trackNode.getPropertyFor(KEYS.FROM);
+      const trackLabel = trackNode.getLabelFromPropertySelect(fromProperty);
 
       // Deduce peer node from track node
       const peerId = trackNode.linksOutput[0];
@@ -171,11 +173,10 @@ class VideoAdjust extends Main {
         .setParameters(newParameters)
         .then(() => {
           addCustomEvent(
-            peerNode.id,
-            frames,
+            win,
             "set-parameters",
             "playground",
-            `${this._uuid} parameterize track with ${parameter}`,
+            `Parameterize video track ${trackLabel} with ${parameter}`,
             new Date()
           );
           resolve();

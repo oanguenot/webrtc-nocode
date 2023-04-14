@@ -67,7 +67,7 @@ class SDPMunging extends Main {
 
   execute(peerId, frames, offer) {
     return new Promise((resolve, reject) => {
-      addCustomEvent(peerId, frames, "mungle", "playground", "", new Date());
+      addCustomEvent(frames[peerId], "mungle", "playground", "", new Date());
       const operation = this.getPropertyValueFor(KEYS.OPERATION);
       const updatedOffer = mungle(operation, offer);
       resolve(updatedOffer);

@@ -49,8 +49,8 @@ class End extends Main {
     return new Promise((resolve, reject) => {
       const tickets = [];
       Object.keys(frames).forEach((key) => {
-        addCustomEvent(key, frames, "close", "playground", "", new Date());
         const winFrame = frames[key];
+        addCustomEvent(winFrame, "close", "playground", "", new Date());
         if (winFrame && winFrame.pc) {
           winFrame.pc.close();
         }
