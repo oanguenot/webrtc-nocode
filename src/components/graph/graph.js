@@ -38,7 +38,7 @@ const config = {
         display: true,
         text: "Metrics",
       },
-      autocolors: true,
+      autocolors: false,
       // annotation: {
       //       yMin: metricConfiguration.threshold.bad,
       //       yMax: metricConfiguration.threshold.bad,
