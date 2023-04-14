@@ -2,6 +2,7 @@ export const DEBUG_ACTIONS = {
   ADD_TRACE: "ADD_TRACE",
   SET_TASK_NUMBER: "SET_TASK_NUMBER",
   INCREMENT_TASK_DONE: "INCREMENT_TASK_DONE",
+  ADD_POINTS_IN_GRAPH: "ADD_POINTS_IN_GRAPH",
 };
 
 export const addLog = (tag, level, message, object) => {
@@ -29,5 +30,12 @@ export const incrementTaskDone = (dispatch) => {
   dispatch({
     type: DEBUG_ACTIONS.INCREMENT_TASK_DONE,
     payload: {},
+  });
+};
+
+export const addPointsInGraph = (passthrough, timestamp, dispatch) => {
+  dispatch({
+    type: DEBUG_ACTIONS.ADD_POINTS_IN_GRAPH,
+    payload: { passthrough, timestamp },
   });
 };

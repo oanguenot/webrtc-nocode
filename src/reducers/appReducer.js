@@ -40,6 +40,7 @@ const initialAppState = {
   tasksDone: 0,
   loadedCheckDevices: false,
   problems: [],
+  graph: {},
 };
 
 const updateValueInObject = (objectId, name, value, label, objects) => {
@@ -367,6 +368,30 @@ const appReducer = (state = initialAppState, action) => {
         ...state,
         tasksDone: state.tasksDone + 1,
         playState,
+      };
+    }
+    case DEBUG_ACTIONS.ADD_POINTS_IN_GRAPH: {
+      const passthrough = action.payload.passthrough;
+      const timestamp = action.payload.timestamp;
+      const newGraph = JSON.parse(JSON.stringify(state.graph));
+      Object.keys(passthrough).forEach((key) => {
+        const datasets = passthrough[key];
+        Object.keys(datasets).forEach((set) => {
+          const data = set.split("-");
+          const type = data[0].startsWith("inbound") ? "in" : "out";
+          const kind = data[2].split("_")[0].substring(0, 1);
+          const ssrc = data[2].split("_")[1];
+          const id = `ssrc${ssrc}-${kind}${type}-${key}`;
+
+          if (!(id in newGraph)) {
+            newGraph[id] = [];
+          }
+          newGraph[id].push({ x: timestamp, y: datasets[set] });
+        });
+      });
+      return {
+        ...state,
+        graph: newGraph,
       };
     }
     default:

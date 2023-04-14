@@ -3,6 +3,7 @@ import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
 import { configuration } from "../../../modules/metrics";
 import { findNodeByName, getNodesFromIds } from "../../../modules/helper";
+import { addPointsInGraph } from "../../../actions/DebugActions";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
 const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
@@ -77,10 +78,13 @@ class WebRTCMetrics extends Main {
     }
   }
 
-  execute(win, nodes) {
+  execute(win, nodes, dispatch) {
     return new Promise((resolve, reject) => {
-      const inputNodes = getNodesFromIds(this.linksOutput, nodes);
+      const inputNodes = getNodesFromIds(this.linksInput, nodes);
       const peerNode = findNodeByName(NODES.PEER, inputNodes);
+
+      const inbound = this.getPropertyValueFor(KEYS.INBOUND).split("\n");
+      const outbound = this.getPropertyValueFor(KEYS.OUTBOUND).split("\n");
 
       win.metrics = new win.WebRTCMetrics(configuration);
       win.probe = win.metrics.createProbe(win.pc, {
@@ -88,9 +92,16 @@ class WebRTCMetrics extends Main {
         uid: peerNode.id,
         ticket: true,
         record: false,
+        passthrough: { "inbound-rtp": inbound, "outbound-rtp": outbound },
       });
 
+      win.probe.onreport = (report) => {
+        // Do something with a report collected (JSON)
+        addPointsInGraph(report.passthrough, report.timestamp, dispatch);
+      };
+
       win.metrics.startAllProbes();
+      resolve();
     });
   }
 

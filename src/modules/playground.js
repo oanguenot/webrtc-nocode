@@ -55,7 +55,7 @@ const createMediaElementInIFrame = (win, kind, id, isLocal = true) => {
   localElt.appendChild(elt);
 };
 
-const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
+const createPeerConnection = (peerNode, stream, iceEvents, nodes, dispatch) => {
   return new Promise(async (resolve, _reject) => {
     const win = frames[peerNode.id];
 
@@ -68,7 +68,8 @@ const createPeerConnection = (peerNode, stream, iceEvents, nodes) => {
       async (eventNode, nodes) => {
         return executeANode(eventNode, eventNode, nodes);
       },
-      createMediaElementInIFrame
+      createMediaElementInIFrame,
+      dispatch
     );
     resolve();
   });
@@ -225,7 +226,13 @@ export const execute = (nodes, dispatch) => {
         KEYS.PEER
       );
 
-      await createPeerConnection(peer, stream, iceEventsForPeer, nodes);
+      await createPeerConnection(
+        peer,
+        stream,
+        iceEventsForPeer,
+        nodes,
+        dispatch
+      );
 
       incrementTaskDone(dispatch);
     }

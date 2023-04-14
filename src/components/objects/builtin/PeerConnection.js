@@ -88,7 +88,8 @@ class PeerConnection extends Main {
     iceEvents,
     nodes,
     callback,
-    createMediaElementInIFrame
+    createMediaElementInIFrame,
+    dispatch
   ) {
     return new Promise(async (resolve, reject) => {
       if (win) {
@@ -122,7 +123,7 @@ class PeerConnection extends Main {
         }
 
         if (metricsNode) {
-          await metricsNode.execute(win, nodes);
+          await metricsNode.execute(win, nodes, dispatch);
         }
 
         addCustomEvent(

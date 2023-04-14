@@ -51,6 +51,13 @@ function Debug({ dispatch }) {
     createGraph(canvasRef.current);
   }, []);
 
+  useEffect(() => {
+    if (appState.graph) {
+      const series = appState.graph;
+      Object.keys(series).forEach((set) => addSeries(set, series[set]));
+    }
+  }, [appState.graph]);
+
   const onStart = () => {
     setIsStarted(true, () => {
       setIsReset(false, () => {
@@ -89,93 +96,80 @@ function Debug({ dispatch }) {
       <Main id="debug-main-content" skipLinkTitle="Debug Content">
         <div className="debug-main">
           <PageHeader actions={actionsContent}></PageHeader>
-          {isReset && (
-            <div>
-              <div className="debug-empty-area">
-                <EmptyState
-                  header="No Results"
-                  description="Run the playground to have results"
-                />
+          <>
+            <div className="debug-progress">
+              <p className="debug-progress-title">
+                Progress: {getProgressStatus()}
+              </p>
+              <ProgressBar
+                value={progress}
+                appearance={progress === 1 ? "success" : "default"}
+              />
+              <div className="debug-columns">
+                <p className="debug-iframes-title">IFrames</p>
+                <div id="frames" className="iframes-sidebar"></div>
               </div>
+            </div>
+            <div>
               <canvas className="canvasGraph" ref={canvasRef} />
             </div>
-          )}
-          {!isReset && (
-            <>
-              {(appState.playState === PLAY_STATE.RUNNING ||
-                appState.playState === PLAY_STATE.IDLE) && (
-                <div className="debug-progress">
-                  <p className="debug-progress-title">
-                    Progress: {getProgressStatus()}
-                  </p>
-                  <ProgressBar
-                    value={progress}
-                    appearance={progress === 1 ? "success" : "default"}
-                  />
-                  <div className="debug-columns">
-                    <p className="debug-iframes-title">IFrames</p>
-                    <div id="frames" className="iframes-sidebar"></div>
-                  </div>
-                </div>
-              )}
-              {(appState.playState === PLAY_STATE.ENDED ||
-                appState.playState === PLAY_STATE.FAILED) && (
-                <Content testId="content">
-                  <div
-                    style={{
-                      height: (size.height || window.innerHeight) - 184,
-                      overflow: "scroll",
-                    }}
-                  >
-                    {appState.tickets.map((ticket, key1) => (
-                      <div key={key1}>
-                        <p>{ticket.ua.pname}</p>
-                        <ul key={key1}>
-                          {ticket.call.events.map((log, key2) => (
-                            <li key={key2}>
-                              <div>
-                                <Tag text={log.at}></Tag>{" "}
+            {(appState.playState === PLAY_STATE.ENDED ||
+              appState.playState === PLAY_STATE.FAILED) && (
+              <Content testId="content">
+                <div
+                  style={{
+                    height: (size.height || window.innerHeight) - 184,
+                    overflow: "scroll",
+                  }}
+                >
+                  {appState.tickets.map((ticket, key1) => (
+                    <div key={key1}>
+                      <p>{ticket.ua.pname}</p>
+                      <ul key={key1}>
+                        {ticket.call.events.map((log, key2) => (
+                          <li key={key2}>
+                            <div>
+                              <Tag text={log.at}></Tag>{" "}
+                              <Tag
+                                text={log.category}
+                                color={getColorFromTag(log.category)}
+                              ></Tag>{" "}
+                              <Tag text={log.name} color="greenLight"></Tag>{" "}
+                              {log.ssrc && (
                                 <Tag
-                                  text={log.category}
-                                  color={getColorFromTag(log.category)}
-                                ></Tag>{" "}
-                                <Tag text={log.name} color="greenLight"></Tag>{" "}
-                                {log.ssrc && (
-                                  <Tag
-                                    text={log.ssrc}
-                                    color={getColorFromTag("ssrc")}
-                                  ></Tag>
-                                )}
-                                <span
-                                  style={{
-                                    color: "#999",
-                                    fontSize: "14px",
-                                  }}
-                                >
-                                  {log.details.message}{" "}
-                                </span>
-                              </div>
-                              <div
+                                  text={log.ssrc}
+                                  color={getColorFromTag("ssrc")}
+                                ></Tag>
+                              )}
+                              <span
                                 style={{
-                                  marginLeft: "190px",
-                                  fontSize: "12px",
-                                  padding: "4px",
+                                  color: "#999",
+                                  fontSize: "14px",
                                 }}
                               >
-                                {log.details.value && (
-                                  <span>{stringify(log.details.value)}</span>
-                                )}
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                </Content>
-              )}
-            </>
-          )}
+                                {log.details.message}{" "}
+                              </span>
+                            </div>
+                            <div
+                              style={{
+                                marginLeft: "190px",
+                                fontSize: "12px",
+                                padding: "4px",
+                              }}
+                            >
+                              {log.details.value && (
+                                <span>{stringify(log.details.value)}</span>
+                              )}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </Content>
+            )}
+          </>
         </div>
       </Main>
     </>

@@ -62,8 +62,8 @@ class End extends Main {
         if (winFrame && winFrame.metrics && winFrame.metrics.running) {
           winFrame.metrics.stopAllProbes();
           ticket = winFrame.probe.getTicket();
+          tickets.push(ticket);
         }
-        tickets.push(ticket);
       });
       console.log(">>>TIK", tickets);
       resolve(tickets);

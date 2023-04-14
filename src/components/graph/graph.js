@@ -29,7 +29,7 @@ export const CHART_COLORS = [
   "#795548",
 ];
 
-export const config = {
+const config = {
   type: "line",
   data: [],
   options: {
@@ -38,7 +38,7 @@ export const config = {
         display: true,
         text: "Metrics",
       },
-      autocolors: false,
+      autocolors: true,
       // annotation: {
       //       yMin: metricConfiguration.threshold.bad,
       //       yMax: metricConfiguration.threshold.bad,
@@ -78,9 +78,9 @@ export const config = {
       y: {
         type: "linear",
         min: 0,
-        //max: max,
-        stack: "demo",
-        stackWeight: 3,
+        max: 10000,
+        //stack: "demo",
+        //stackWeight: 3,
       },
     },
   },
@@ -93,14 +93,30 @@ export const createGraph = (canvas) => {
   chart = new Chart(canvas, config);
 };
 
-export const addSeries = (dataSeries) => {
-  chart.data.datasets.push(dataSeries);
-  // const max = Math.max(getMaxYValueOfSerie(values) + metricConfiguration.range.additionalMax, getMaxYValueOfSerie(estimated) + metricConfiguration.range.additionalMax, metricConfiguration.range.defaultMax);
-  // graph.config.options.scales.y.max = max;
+export const addSeries = (name, dataSeries) => {
+  const existingSets = chart.data.datasets;
+
+  // Check if series already exist
+  const series = existingSets.find((set) => set.label === name);
+
+  if (!series) {
+    existingSets.push(createDataSeries(name, dataSeries));
+  } else {
+    series.data = dataSeries;
+  }
+
+  let max = Math.max(...dataSeries.map((data) => data.y));
+  // Add a 5% gap above
+  max += (max * 5) / 100;
+  chart.config.options.scales.y.max = Math.max(
+    chart.config.options.scales.y.max,
+    max
+  );
+
   chart.update();
 };
 
-export const createDataSeries = (name, data) => {
+const createDataSeries = (name, data) => {
   const getRandomIntInclusive = (min, max) => {
     min = Math.ceil(min);
     max = Math.floor(max);
