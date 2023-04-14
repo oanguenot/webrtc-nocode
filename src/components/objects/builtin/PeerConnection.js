@@ -21,7 +21,7 @@ class PeerConnection extends Main {
     this._inputs = 2;
     this._outputs = 1;
     this._acceptInputs = [NODES.TRACK];
-    this._acceptOutputs = [NODES.WATCH];
+    this._acceptOutputs = [NODES.WATCH, NODES.ANALYZE];
     this._info = [
       { key: KEYS.NODE, value: NODES.PEER },
       {
@@ -89,6 +89,7 @@ class PeerConnection extends Main {
       if (win) {
         const turnId = peerNode.getPropertyValueFor(KEYS.TURN);
         const network = peerNode.getPropertyValueFor(KEYS.NETWORK);
+
         let configuration = null;
         if (turnId !== "local") {
           const turnNode = getNodeById(turnId, nodes);

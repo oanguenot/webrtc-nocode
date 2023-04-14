@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import AppContext from "../../contexts/appContext";
 import EmptyState from "@atlaskit/empty-state";
 import { SimpleTag as Tag } from "@atlaskit/tag";
@@ -13,6 +13,7 @@ import { useStateWithCallbackLazy } from "use-state-with-callback";
 import { PLAY_STATE } from "../../reducers/appReducer";
 import { stringify } from "../../modules/helper";
 import { useWindowSize } from "../../modules/hooks";
+import { addSeries, createDataSeries, createGraph } from "../graph/graph";
 
 const getColorFromTag = (tag) => {
   switch (tag) {
@@ -38,11 +39,17 @@ function Debug({ dispatch }) {
   const [isReset, setIsReset] = useStateWithCallbackLazy(true);
   const size = useWindowSize();
 
+  const canvasRef = useRef();
+
   useEffect(() => {
     if (appState.nbTasks > 0) {
       setProgress(appState.tasksDone / appState.nbTasks);
     }
   }, [appState.nbTasks, appState.tasksDone]);
+
+  useEffect(() => {
+    createGraph(canvasRef.current);
+  }, []);
 
   const onStart = () => {
     setIsStarted(true, () => {
@@ -83,11 +90,14 @@ function Debug({ dispatch }) {
         <div className="debug-main">
           <PageHeader actions={actionsContent}></PageHeader>
           {isReset && (
-            <div className="debug-empty-area">
-              <EmptyState
-                header="No Results"
-                description="Run the playground to have results"
-              />
+            <div>
+              <div className="debug-empty-area">
+                <EmptyState
+                  header="No Results"
+                  description="Run the playground to have results"
+                />
+              </div>
+              <canvas className="canvasGraph" ref={canvasRef} />
             </div>
           )}
           {!isReset && (

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Textfield from "@atlaskit/textfield";
+import TextArea from "@atlaskit/textarea";
 import { updateProperty } from "../../actions/objectActions";
 import InlineEdit from "@atlaskit/inline-edit";
 import { css } from "@emotion/react";
@@ -8,6 +9,7 @@ import {
   fontSize as getFontSize,
   gridSize as getGridSize,
 } from "@atlaskit/theme/constants";
+import { KEY_TYPE } from "../../modules/model";
 
 const fontSize = getFontSize();
 const gridSize = getGridSize();
@@ -41,13 +43,12 @@ function Property({ objectId, property, dispatch }) {
       valueDisplayed = defaultValue.label;
     }
   }
-
   return (
     <InlineEdit
       defaultValue={defaultValue}
       label={property.label}
-      editView={({ errorMessage, ...fieldProps }) => {
-        if (property.type !== "enum") {
+      editView={({ errorMessage, ...fieldProps }, ref) => {
+        if (property.type === KEY_TYPE.TEXT) {
           return (
             <Textfield
               {...fieldProps}
@@ -56,7 +57,7 @@ function Property({ objectId, property, dispatch }) {
               onChange={(event) => onChange(event)}
             />
           );
-        } else {
+        } else if (property.type === KEY_TYPE.ENUM) {
           return (
             <Select
               inputId="single-select-example"
@@ -64,6 +65,16 @@ function Property({ objectId, property, dispatch }) {
               classNamePrefix="react-select"
               options={property.enum}
               value={value || defaultValue}
+              onChange={(event) => onChange(event)}
+            />
+          );
+        } else {
+          return (
+            <TextArea
+              {...fieldProps}
+              autoFocus
+              value={value || property.value}
+              ref={ref}
               onChange={(event) => onChange(event)}
             />
           );

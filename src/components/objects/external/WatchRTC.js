@@ -1,6 +1,9 @@
 import Main from "../Main";
-import { KEY_TYPE, KEYS } from "../../../modules/model";
-import { nanoid } from "nanoid";
+import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { customAlphabet } from "nanoid";
+
+const CUSTOM_ALPHABET = "0123456789abcdef";
+const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class WatchRTC extends Main {
   static item = "WatchRTC";
@@ -14,20 +17,20 @@ class WatchRTC extends Main {
     this._inputs = 1;
     this._outputs = 0;
     this._info = [
-      { key: "node", value: "rtc.watchrtc" },
+      { key: KEYS.NODE, value: NODES.WATCH },
       {
-        key: "info",
+        key: KEYS.INFO,
         value:
           "Create a probe to analyze the data sent and received by this RTCPeerConnection",
       },
     ];
-    this._acceptInputs = ["rtc.peer"];
+    this._acceptInputs = [NODES.PEER];
     this._properties = [
       {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `WatchRTC SDK`,
+        value: `Watch-${nanoid()}`,
         description: "Name of the tool",
       },
       {
@@ -63,9 +66,9 @@ class WatchRTC extends Main {
     const property = this.getPropertyFor(prop);
 
     switch (prop) {
-      case "name":
+      case KEYS.NAME:
         return property.value;
-      case "active":
+      case KEYS.ACTIVE:
         return property.value === "yes" ? "active" : "pause";
       case "apiKey":
         return property.value ? "*****" : "none";

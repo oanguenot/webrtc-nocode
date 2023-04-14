@@ -1,10 +1,15 @@
 import Main from "../Main";
+import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { customAlphabet } from "nanoid";
+
+const CUSTOM_ALPHABET = "0123456789abcdef";
+const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class WebRTCMetrics extends Main {
-  static item = "WebRTC Metrics";
-  static description = "Analyze call metrics";
+  static item = "Metrics";
+  static description = "Analyze WebRTC metrics live";
   static icon = "ruler";
-  static section = "actions";
+  static section = "builtin";
   static name = "WebRTCMetrics";
 
   constructor(x, y) {
@@ -12,99 +17,66 @@ class WebRTCMetrics extends Main {
     this._inputs = 1;
     this._outputs = 0;
     this._info = [
-      { key: "node", value: "action.analyze" },
+      { key: KEYS.NODE, value: NODES.ANALYZE },
       {
-        key: "info",
+        key: KEYS.INFO,
         value:
           "Create a probe to analyze the data sent and received by this RTCPeerConnection",
       },
     ];
-    this._acceptInputs = ["rtc.peer"];
+    this._acceptInputs = [NODES.PEER];
     this._properties = [
       {
-        prop: "name",
+        prop: KEYS.NAME,
         label: "Name",
-        type: "text",
-        value: `WebRTCMetrics`,
+        type: KEY_TYPE.TEXT,
+        value: `Metrics-${nanoid()}`,
         description: "Name of the tool",
       },
       {
-        prop: "start",
-        label: "Start",
-        type: "enum",
-        enum: [
-          { label: "Immediately", value: 0 },
-          { label: "After 1 second", value: 1000 },
-          { label: "After 2 seconds", value: 2000 },
-          { label: "After 3 seconds", value: 3000 },
-          { label: "After 5 seconds", value: 5000 },
-        ],
-        value: 0,
-        description: "Choose the metrics to collect",
+        prop: KEYS.INBOUND,
+        label: "Inbound",
+        type: KEY_TYPE.TEXTAREA,
+        value: "bytesReceived",
+        description: "Choose the metrics to collect for inbound tracks",
       },
       {
-        prop: "every",
-        label: "Refresh every",
-        type: "enum",
-        enum: [
-          { label: "1 second", value: 1000 },
-          { label: "2 seconds", value: 2000 },
-          { label: "3 seconds", value: 3000 },
-          { label: "5 seconds", value: 5000 },
-          { label: "8 seconds", value: 8000 },
-          { label: "10 seconds", value: 10000 },
-          { label: "15 seconds", value: 15000 },
-        ],
-        value: 2000,
-        description: "Choose the metrics to collect",
-      },
-      {
-        prop: "metrics",
-        label: "Metrics collected",
-        type: "enum",
-        enum: [
-          { label: "All", value: "all" },
-          { label: "Inbound streams", value: "inbound" },
-          { label: "Outbound streams", value: "outbound" },
-        ],
-        value: "all",
-        description: "Choose the metrics to collect",
-      },
-      {
-        prop: "exporter",
-        label: "Exporter",
-        type: "enum",
-        enum: [
-          { label: "File", value: "file" },
-          { label: "Console", value: "console" },
-        ],
-        value: "console",
-        description: "Choose where to store the metrics",
+        prop: KEYS.OUTBOUND,
+        label: "Outbound",
+        type: KEY_TYPE.TEXTAREA,
+        value: "bytesSent",
+        description: "Choose the metrics to collect for outbound tracks",
       },
     ];
     this._sources = [];
   }
 
   renderProp(prop) {
+    const displayNbPropsFromValue = (value) => {
+      const values = property.value.split("\n");
+      return values.length > 1
+        ? `${values.length} properties`
+        : values.length === 1
+        ? "1 property"
+        : "no property";
+    };
+
     const property = this.getPropertyFor(prop);
-    const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
-      case "name":
+      case KEYS.NAME:
         return property.value;
-      case "start":
-        return `start ${label.toLowerCase()}`;
-      case "every":
-        return `refresh ${label.toLowerCase()}`;
-      case "metrics":
-        return property.value === "all"
-          ? "report all metrics"
-          : `${label.toLowerCase()}`;
-      case "exporter":
-        return `saved in ${label.toLowerCase()}`;
+      case KEYS.INBOUND:
+        return displayNbPropsFromValue(property.value);
+      case KEYS.OUTBOUND:
+        return displayNbPropsFromValue(property.value);
       default:
         return "";
     }
+  }
+
+  execute() {
+    return new Promise((resolve, reject) => {});
   }
 
   render() {
@@ -113,28 +85,18 @@ class WebRTCMetrics extends Main {
         <div class="title-box">
           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
       this._uuid
-    }">${this.renderProp("name")}</span>
+    }">${this.renderProp(KEYS.NAME)}</span>
         </div>
          <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="start-${
+            <i class="fas fa-long-arrow-alt-left"></i><span class="object-details-value" id="inbound-${
               this._uuid
-            }">${this.renderProp("start")}</span>
+            }">${this.renderProp(KEYS.INBOUND)}</span>
             </div>
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="every-${
+            <i class="fas fa-long-arrow-alt-right"></i><span class="object-details-value" id="outbound-${
               this._uuid
-            }">${this.renderProp("every")}</span>
-            </div>
-            <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="metrics-${
-              this._uuid
-            }">${this.renderProp("metrics")}</span>
-            </div>
-            <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i><span class="object-details-value" id="exporter-${
-              this._uuid
-            }">${this.renderProp("exporter")}</span>
+            }">${this.renderProp(KEYS.OUTBOUND)}</span>
             </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${this.node}

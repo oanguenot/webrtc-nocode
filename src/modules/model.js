@@ -8,7 +8,7 @@ export const NODES = {
   CALL: "action.call",
   MUTE: "action.mute",
   RESTARTICE: "action.restart",
-  ANALYZE: "action.analyze", // for WebRTCMetrics
+  ANALYZE: "rtc.analyze", // for WebRTCMetrics
   WATCH: "rtc.watchrtc", // for WatchRTC
   WAIT: "action.wait",
   EVENTS: "event.*",
@@ -50,9 +50,13 @@ export const KEYS = {
   TURNTOKEN: "turntoken",
   OPERATION: "operation",
   METHOD: "method",
+  INBOUND: "inbound",
+  OUTBOUND: "outbound",
+  TRANSPORT: "transport",
 };
 
 export const KEY_TYPE = {
   TEXT: "text",
   ENUM: "enum",
+  TEXTAREA: "textarea",
 };
