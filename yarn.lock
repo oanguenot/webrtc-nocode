@@ -59,10 +59,10 @@
     prop-types "^15.5.10"
     use-memo-one "^1.1.1"
 
-"@atlaskit/atlassian-navigation@2.4.0":
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/@atlaskit/atlassian-navigation/-/atlassian-navigation-2.4.0.tgz#884a21d20717152ff9439e69e89bab236cf09004"
-  integrity sha512-rkXT/PbnbcW8DaJ/ruezRt98/8aHwBVR0AazATx8hvbpUFHtP2tAVzJWJgv6j3wPK/uB10vllSB6WOdtpSySEw==
+"@atlaskit/atlassian-navigation@2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@atlaskit/atlassian-navigation/-/atlassian-navigation-2.4.1.tgz#509540a05aa2d67c25649cc427dbaa9cab58e24b"
+  integrity sha512-XIVH7NkW5KDtMRCL19wWOguFtUGH/2f7gTYbuBUl7VkhXhBsg3kubMC/HkoEW3BEmpF761kCZR/XGiteGKeB4g==
   dependencies:
     "@atlaskit/analytics-namespaced-context" "^6.6.0"
     "@atlaskit/button" "^16.6.0"
@@ -453,10 +453,10 @@
     react-uid "^2.2.0"
     shallow-equal "^1.0.0"
 
-"@atlaskit/side-navigation@1.6.4":
-  version "1.6.4"
-  resolved "https://registry.yarnpkg.com/@atlaskit/side-navigation/-/side-navigation-1.6.4.tgz#7e2d3cf1aafdf21ba9235755252d228423411709"
-  integrity sha512-52qEpzOHiHH//LAUL2+qotQ6GkjynLD+Hn2ORwOH9y6seJapBOYWkujz1GRrlbtHojk/kmen+y0nWYJF49nemQ==
+"@atlaskit/side-navigation@1.6.5":
+  version "1.6.5"
+  resolved "https://registry.yarnpkg.com/@atlaskit/side-navigation/-/side-navigation-1.6.5.tgz#1ad96eea38492745e00caf27a0b3f5a7dab3e634"
+  integrity sha512-3gVCPnXn0dPVK76abO44XZSzFjLIiYiaqeQq1YAfAVSEJ7T7x/3LmWcWy8XIcIoScOeBZ/elUbNIL0Gu61sfHQ==
   dependencies:
     "@atlaskit/ds-explorations" "^2.0.0"
     "@atlaskit/ds-lib" "^2.1.0"
@@ -595,10 +595,10 @@
     "@atlaskit/tokens" "^0.13.0"
     "@babel/runtime" "^7.0.0"
 
-"@atlaskit/tokens@1.2.11":
-  version "1.2.11"
-  resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-1.2.11.tgz#88010d3ce2dad55fdac250da3aedf329eec64c7c"
-  integrity sha512-5phlExBDvMAHAuATqVKkzWWLQHbbgDqnCMl+I0DaWja//yG/GNvDJ3xJ5X1i/OyoYkzdeaLJxsVNC9BMdaTAxA==
+"@atlaskit/tokens@1.2.12":
+  version "1.2.12"
+  resolved "https://registry.yarnpkg.com/@atlaskit/tokens/-/tokens-1.2.12.tgz#7cdcbbbc1d349f39082668297e9cfd1d95dcd8fb"
+  integrity sha512-8p1z+LJ4NG8f1RyPpdOv6mtAXk8/eawPdI6nLs6czfKG7B8aqSqUvSq71dUXHE7iEqAPpEAd8Tiu0CTXPqSQDA==
   dependencies:
     "@atlaskit/ds-lib" "^2.1.0"
     "@atlaskit/platform-feature-flags" "^0.1.0"
