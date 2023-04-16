@@ -110,18 +110,16 @@ function Debug({ dispatch }) {
                 <div id="frames" className="iframes-sidebar"></div>
               </div>
             </div>
-            <div>
-              <canvas className="canvasGraph" ref={canvasRef} />
-            </div>
-            {(appState.playState === PLAY_STATE.ENDED ||
-              appState.playState === PLAY_STATE.FAILED) && (
               <Content testId="content">
                 <div
                   style={{
-                    height: (size.height || window.innerHeight) - 184,
-                    overflow: "scroll",
+                    height: (size.height || window.innerHeight) - 224,
+                    width: "100%",
                   }}
                 >
+                  <div className="graph">
+                    <canvas className="canvasGraph" ref={canvasRef} />
+                  </div>
                   {appState.tickets.map((ticket, key1) => (
                     <div key={key1}>
                       <p>{ticket.ua.pname}</p>
@@ -168,7 +166,6 @@ function Debug({ dispatch }) {
                   ))}
                 </div>
               </Content>
-            )}
           </>
         </div>
       </Main>

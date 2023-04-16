@@ -78,9 +78,7 @@ const config = {
       y: {
         type: "linear",
         min: 0,
-        max: 10000,
-        //stack: "demo",
-        //stackWeight: 3,
+        max: 10,
       },
     },
   },
@@ -129,9 +127,9 @@ const createDataSeries = (name, data) => {
     label: name,
     backgroundColor: color,
     borderColor: color,
-    tension: 0.4,
+    tension: 0.5,
     radius: 2,
-    pointRadius: 3,
+    pointRadius: 2,
     data,
     type: "line",
   };

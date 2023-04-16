@@ -85,6 +85,25 @@ class WebRTCMetrics extends Main {
 
       const inbound = this.getPropertyValueFor(KEYS.INBOUND).split("\n");
       const outbound = this.getPropertyValueFor(KEYS.OUTBOUND).split("\n");
+      const remoteInbound = [];
+      const remoteOutbound = [];
+
+      // Manage roundTripTime, Jitter, packetsLost, fractionLost in remote-inbound
+      ["roundTripTime", "Jitter", "packetsLost", "fractionLost"].forEach(property => {
+        const index = outbound.indexOf(property);
+        if(index > -1) {
+          outbound.splice(index, 1);
+          remoteInbound.push(property);
+        }
+      });
+
+      ["roundTripTime"].forEach(property => {
+        const index = inbound.indexOf(property);
+        if(index > -1) {
+          inbound.splice(index, 1);
+          remoteOutbound.push(property);
+        }
+      });
 
       win.metrics = new win.WebRTCMetrics(configuration);
       win.probe = win.metrics.createProbe(win.pc, {
@@ -92,7 +111,12 @@ class WebRTCMetrics extends Main {
         uid: peerNode.id,
         ticket: true,
         record: false,
-        passthrough: { "inbound-rtp": inbound, "outbound-rtp": outbound },
+        passthrough: {
+          "inbound-rtp": inbound,
+          "outbound-rtp": outbound,
+          "remote-inbound-rtp": remoteInbound,
+          "remote-outbound-rtp": remoteOutbound
+        },
       });
 
       win.probe.onreport = (report) => {
