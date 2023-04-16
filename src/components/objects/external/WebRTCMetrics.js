@@ -89,7 +89,7 @@ class WebRTCMetrics extends Main {
       const remoteOutbound = [];
 
       // Manage roundTripTime, Jitter, packetsLost, fractionLost in remote-inbound
-      ["roundTripTime", "Jitter", "packetsLost", "fractionLost"].forEach(property => {
+      ["roundTripTime", "jitter", "packetsLost", "fractionLost"].forEach(property => {
         const index = outbound.indexOf(property);
         if(index > -1) {
           outbound.splice(index, 1);
