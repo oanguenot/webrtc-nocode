@@ -146,6 +146,15 @@ class CallP2P extends Main {
 
       let rtcOfferSessionDescription = await callerWin.pc.createOffer();
 
+      if (munglerId) {
+        const munglerNode = getNodeById(munglerId, nodes);
+        rtcOfferSessionDescription.sdp = await munglerNode.execute(
+          callerNode.id,
+          frames,
+          rtcOfferSessionDescription.sdp
+        );
+      }
+
       addCustomEvent(
         callerWin,
         "createOffer",
@@ -155,15 +164,6 @@ class CallP2P extends Main {
         null,
         rtcOfferSessionDescription.sdp
       );
-
-      if (munglerId) {
-        const munglerNode = getNodeById(munglerId, nodes);
-        munglerNode.execute(
-          callerNode.id,
-          frames,
-          rtcOfferSessionDescription.sdp
-        );
-      }
 
       await callerWin.pc.setLocalDescription(rtcOfferSessionDescription);
 
@@ -193,6 +193,15 @@ class CallP2P extends Main {
 
       const rtcAnswerSessionDescription = await calleeWin.pc.createAnswer();
 
+      if (munglerId) {
+        const munglerNode = getNodeById(munglerId, nodes);
+        rtcAnswerSessionDescription.sdp = await munglerNode.execute(
+          calleeNode.id,
+          frames,
+          rtcAnswerSessionDescription.sdp
+        );
+      }
+
       addCustomEvent(
         calleeWin,
         "createAnswer",
@@ -202,15 +211,6 @@ class CallP2P extends Main {
         null,
         rtcOfferSessionDescription.sdp
       );
-
-      if (munglerId) {
-        const munglerNode = getNodeById(munglerId, nodes);
-        munglerNode.execute(
-          calleeNode.id,
-          frames,
-          rtcAnswerSessionDescription.sdp
-        );
-      }
 
       await calleeWin.pc.setLocalDescription(rtcAnswerSessionDescription);
 
