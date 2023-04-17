@@ -62,7 +62,8 @@ const config = {
       //   }
       // }
     },
-    responsive: true,
+    responsive: false,
+    maintainAspectRatio: true,
     scales: {
       x: {
         type: "time",
@@ -71,9 +72,10 @@ const config = {
           displayFormats: {
             second: "TT",
           },
+          unit: "second",
         },
-        min: DateTime.now().plus({ second: 2 }).valueOf(),
-        max: DateTime.now().plus({ second: 100 }).valueOf(),
+        min: DateTime.now().plus({ second: 0 }).valueOf(),
+        max: DateTime.now().plus({ second: 10 }).valueOf(),
       },
       y: {
         type: "linear",
@@ -82,6 +84,16 @@ const config = {
       },
     },
   },
+};
+
+export const startTimeline = () => {
+  if (chart) {
+    chart.config.options.scales.x.min = DateTime.now().valueOf();
+    chart.config.options.scales.x.max = DateTime.now()
+      .plus({ second: 10 })
+      .valueOf();
+    chart.update();
+  }
 };
 
 export const createGraph = (canvas) => {
@@ -111,6 +123,10 @@ export const addSeries = (name, dataSeries) => {
     max
   );
 
+  //  Adapt x timeline
+  chart.config.options.scales.x.max = DateTime.now()
+    .plus({ second: 15 })
+    .valueOf();
   chart.update();
 };
 
