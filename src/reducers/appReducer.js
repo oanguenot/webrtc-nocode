@@ -378,9 +378,13 @@ const appReducer = (state = initialAppState, action) => {
         const datasets = passthrough[key];
         Object.keys(datasets).forEach((set) => {
           const data = set.split("-");
-          const type = data[0].startsWith("inbound") ? "in" : "out";
-          const kind = data[2].split("_")[0].substring(0, 1);
-          const ssrc = data[2].split("_")[1];
+          const type =
+            data[0].startsWith("inbound") ||
+            data[0].startsWith("remote-outbound")
+              ? "in"
+              : "out";
+          const kind = data[data.length - 1].split("_")[0].substring(0, 1);
+          const ssrc = data[data.length - 1].split("_")[1];
           const id = `ssrc${ssrc}-${kind}${type}-${key}`;
 
           if (!(id in newGraph)) {

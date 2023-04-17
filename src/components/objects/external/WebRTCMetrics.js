@@ -88,20 +88,23 @@ class WebRTCMetrics extends Main {
       const remoteInbound = [];
       const remoteOutbound = [];
 
-      // Manage roundTripTime, Jitter, packetsLost, fractionLost in remote-inbound
-      ["roundTripTime", "jitter", "packetsLost", "fractionLost"].forEach(property => {
-        const index = outbound.indexOf(property);
-        if(index > -1) {
-          outbound.splice(index, 1);
-          remoteInbound.push(property);
+      // Manage roundTripTime, jitter, packetsLost, fractionLost in remote-inbound
+      ["roundTripTime", "jitter", "packetsLost", "fractionLost"].forEach(
+        (property) => {
+          const index = outbound.findIndex((elt) => elt.includes(property));
+          if (index > -1) {
+            const removed = outbound.splice(index, 1);
+            remoteInbound.push(removed[0]);
+          }
         }
-      });
+      );
 
-      ["roundTripTime"].forEach(property => {
-        const index = inbound.indexOf(property);
-        if(index > -1) {
-          inbound.splice(index, 1);
-          remoteOutbound.push(property);
+      // Manage roundTripTime in remote-outbound
+      ["roundTripTime"].forEach((property) => {
+        const index = inbound.findIndex((elt) => elt.includes(property));
+        if (index > -1) {
+          const removed = inbound.splice(index, 1);
+          remoteOutbound.push(removed[0]);
         }
       });
 
@@ -115,7 +118,7 @@ class WebRTCMetrics extends Main {
           "inbound-rtp": inbound,
           "outbound-rtp": outbound,
           "remote-inbound-rtp": remoteInbound,
-          "remote-outbound-rtp": remoteOutbound
+          "remote-outbound-rtp": remoteOutbound,
         },
       });
 
