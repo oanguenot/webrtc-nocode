@@ -62,7 +62,7 @@ const config = {
       //   }
       // }
     },
-    responsive: false,
+    responsive: true,
     maintainAspectRatio: true,
     scales: {
       x: {
@@ -75,7 +75,7 @@ const config = {
           unit: "second",
         },
         min: DateTime.now().plus({ second: 0 }).valueOf(),
-        max: DateTime.now().plus({ second: 10 }).valueOf(),
+        max: DateTime.now().plus({ second: 5 }).valueOf(),
       },
       y: {
         type: "linear",
@@ -90,7 +90,7 @@ export const startTimeline = () => {
   if (chart) {
     chart.config.options.scales.x.min = DateTime.now().valueOf();
     chart.config.options.scales.x.max = DateTime.now()
-      .plus({ second: 10 })
+      .plus({ second: 5 })
       .valueOf();
     chart.update();
   }
@@ -125,7 +125,7 @@ export const addSeries = (name, dataSeries) => {
 
   //  Adapt x timeline
   chart.config.options.scales.x.max = DateTime.now()
-    .plus({ second: 15 })
+    .plus({ second: 5 })
     .valueOf();
   chart.update();
 };
