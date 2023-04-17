@@ -379,8 +379,8 @@ const appReducer = (state = initialAppState, action) => {
         Object.keys(datasets).forEach((set) => {
           const data = set.split("-");
           const type =
-            data[0].startsWith("inbound") ||
-            data[0].startsWith("remote-outbound")
+            data[0] === "inbound" ||
+            (data[0] === "remote" && data[1] === "outbound")
               ? "in"
               : "out";
           const kind = data[data.length - 1].split("_")[0].substring(0, 1);
