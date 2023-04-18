@@ -19,6 +19,7 @@ import {
   createGraph,
   startTimeline,
 } from "../graph/graph";
+import {resetDebug} from "../../actions/DebugActions";
 
 const getColorFromTag = (tag) => {
   switch (tag) {
@@ -39,7 +40,7 @@ const getColorFromTag = (tag) => {
 
 function Debug({ dispatch }) {
   const appState = useContext(AppContext);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useStateWithCallbackLazy(0);
   const [isStarted, setIsStarted] = useStateWithCallbackLazy(false);
   const [isReset, setIsReset] = useStateWithCallbackLazy(true);
   const size = useWindowSize();
@@ -63,7 +64,10 @@ function Debug({ dispatch }) {
     }
   }, [appState.graph]);
 
-  const onStart = () => {
+  const onStart = async () => {
+    if(isStarted && !isReset) {
+      await onReset();
+    }
     setIsStarted(true, () => {
       setIsReset(false, () => {
         startTimeline();
@@ -73,8 +77,17 @@ function Debug({ dispatch }) {
   };
 
   const onReset = () => {
-    setIsStarted(false);
-    setProgress(0);
+    return new Promise((resolve) => {
+      setIsStarted(false, () => {
+        setProgress(0, () => {
+          resetDebug(dispatch);
+          createGraph(canvasRef.current);
+          setIsReset(true, () => {
+            resolve();
+          });
+        });
+      });
+    });
   };
 
   const actionsContent = (

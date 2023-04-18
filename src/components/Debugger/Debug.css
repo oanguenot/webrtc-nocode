@@ -91,7 +91,7 @@
 .canvasGraph {
     position: relative;
     background-color: #fff !important;
-    width: 100%;
+    width: 100% !important;
     height: 100%;
 }
 

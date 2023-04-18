@@ -398,6 +398,16 @@ const appReducer = (state = initialAppState, action) => {
         graph: newGraph,
       };
     }
+    case DEBUG_ACTIONS.RESET: {
+      return {
+        ...state,
+        graph: {},
+        playState: PLAY_STATE.IDLE,
+        nbTasks: 0,
+        tasksDone: 0,
+        events: [],
+      };
+    }
     default:
       return state;
   }
