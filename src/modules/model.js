@@ -5,6 +5,7 @@ export const NODES = {
   MUNGING: "rtc.munging",
   ENCODE: "action.encode",
   ADJUST: "action.adjust",
+  CONSTRAINTS: "action.constraints",
   CALL: "action.call",
   MUTE: "action.mute",
   RESTARTICE: "action.restart",
@@ -32,6 +33,7 @@ export const KEYS = {
   NAME: "name",
   NETWORK: "network",
   ACTIVE: "active",
+  CONSTRAINTS: "constraints",
   PREFERENCE: "preference",
   MAX_BITRATE: "maxBitrate",
   FRAMERATE: "framerate",
@@ -58,5 +60,6 @@ export const KEYS = {
 export const KEY_TYPE = {
   TEXT: "text",
   ENUM: "enum",
+  SELECT: "select",
   TEXTAREA: "textarea",
 };

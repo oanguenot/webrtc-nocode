@@ -140,3 +140,13 @@ export const stringify = (data) => {
       return `${JSON.stringify(data)}`;
   }
 };
+
+export const displayNbPropsFromValue = (textContent) => {
+  if(!textContent) {
+    return "no property";
+  }
+  const values = textContent.split("\n");
+  return values.length > 1
+    ? `${values.length} properties`
+    : "1 property";
+};

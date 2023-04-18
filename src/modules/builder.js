@@ -16,6 +16,7 @@ import VideoAdjust from "../components/objects/actions/VideoAdjust";
 import RestartIce from "../components/objects/actions/RestartIce";
 import SDPMunging from "../components/objects/builtin/SDPMunging";
 import AudioMute from "../components/objects/actions/AudioMute";
+import VideoConstraints from "../components/objects/actions/VideoConstraints";
 
 const ObjectBuilder = {
   Ready: Ready,
@@ -32,6 +33,7 @@ const ObjectBuilder = {
   VideoEncodings: VideoEncodings,
   AudioAdjust: AudioAdjust,
   VideoAdjust: VideoAdjust,
+  VideoConstraints: VideoConstraints,
   WatchRTC: WatchRTC,
   WebRTCMetrics: WebRTCMetrics,
   CallP2P: CallP2P,
@@ -53,6 +55,7 @@ const convertNodeNameToClass = (name, kind) => {
     "action.wait": Waiting,
     "action.encode": kind === "audio" ? AudioEncodings : VideoEncodings,
     "action.adjust": kind === "audio" ? AudioAdjust : VideoAdjust,
+    "action.constraints": kind === "audio" ? VideoConstraints : VideoConstraints,
     "action.call": CallP2P,
     "action.restart": RestartIce,
     "action.mute": kind === "audio" ? AudioMute : AudioMute,

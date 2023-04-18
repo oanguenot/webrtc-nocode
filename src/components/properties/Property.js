@@ -5,6 +5,8 @@ import { updateProperty } from "../../actions/objectActions";
 import InlineEdit from "@atlaskit/inline-edit";
 import { css } from "@emotion/react";
 import Select from "@atlaskit/select";
+import Tag from '@atlaskit/tag';
+import Group from '@atlaskit/tag-group';
 import {
   fontSize as getFontSize,
   gridSize as getGridSize,
@@ -37,12 +39,13 @@ function Property({ objectId, property, dispatch }) {
 
   let defaultValue = property.value;
   let valueDisplayed = property.value;
-  if (property.type === "enum") {
+  if (property.type === KEY_TYPE.ENUM) {
     defaultValue = property.enum.find((item) => item.value === property.value);
     if (defaultValue) {
       valueDisplayed = defaultValue.label;
     }
   }
+
   return (
     <InlineEdit
       defaultValue={defaultValue}
@@ -57,7 +60,7 @@ function Property({ objectId, property, dispatch }) {
               onChange={(event) => onChange(event)}
             />
           );
-        } else if (property.type === KEY_TYPE.ENUM) {
+        } else if (property.type === KEY_TYPE.ENUM || property.type === KEY_TYPE.SELECT) {
           return (
             <Select
               inputId="single-select-example"
@@ -82,7 +85,20 @@ function Property({ objectId, property, dispatch }) {
       }}
       readView={() => (
         <div css={readViewContainerStyles}>
-          {valueDisplayed || "Click to edit"}
+          {!valueDisplayed && ("Click to edit")}
+
+          {valueDisplayed && property.type === KEY_TYPE.SELECT && (
+            <div style={{ padding: `${gridSize / 2}px` }}>
+              <Group>
+                {valueDisplayed &&
+                  valueDisplayed.map((option, key) => (
+                    <Tag text={option.label} key={option.value} />
+                  ))}
+              </Group>
+            </div>
+            )}
+
+          {valueDisplayed && property.type !== KEY_TYPE.SELECT && (valueDisplayed)}
         </div>
       )}
       onConfirm={async () => {

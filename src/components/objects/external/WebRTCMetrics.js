@@ -2,7 +2,7 @@ import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { customAlphabet } from "nanoid";
 import { configuration } from "../../../modules/metrics";
-import { findNodeByName, getNodesFromIds } from "../../../modules/helper";
+import {displayNbPropsFromValue, findNodeByName, getNodesFromIds} from "../../../modules/helper";
 import { addPointsInGraph } from "../../../actions/DebugActions";
 
 const CUSTOM_ALPHABET = "0123456789abcdef";
@@ -55,15 +55,6 @@ class WebRTCMetrics extends Main {
   }
 
   renderProp(prop) {
-    const displayNbPropsFromValue = (value) => {
-      const values = property.value.split("\n");
-      return values.length > 1
-        ? `${values.length} properties`
-        : values.length === 1
-        ? "1 property"
-        : "no property";
-    };
-
     const property = this.getPropertyFor(prop);
 
     switch (prop) {
