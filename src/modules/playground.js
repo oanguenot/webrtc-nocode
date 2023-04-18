@@ -12,9 +12,9 @@ import {
   addLog,
   incrementTaskDone,
   setTaskNumber,
+  terminate
 } from "../actions/DebugActions";
 import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
-import { terminate } from "../actions/playgroundActions";
 
 const frames = {};
 let dispatcher = null;
@@ -31,6 +31,25 @@ const createIFrame = (peerNode) => {
     iframesElt.appendChild(iframe);
   });
 };
+
+export const resetExecute = () => {
+  return new Promise((resolve, reject) => {
+    addLog(
+      "play",
+      "log",
+      `reset frames`,
+      null
+    );
+
+    Object.keys(frames).forEach(id => {
+      const iframe = document.querySelector(`#${id}`);
+      if(iframe) {
+        iframe.parentNode.removeChild(iframe);
+      }
+      delete frames[id];
+    });
+  });
+}
 
 const updateTitleInIFrame = (win, id) => {
   const titleElt = win.document.querySelector("#frameTitle");

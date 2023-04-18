@@ -312,12 +312,6 @@ const appReducer = (state = initialAppState, action) => {
         problems,
       };
     }
-    case PLAYGROUND_ACTIONS.PLAYGROUND_RUN_SUCCESS:
-      return {
-        ...state,
-        playState: PLAY_STATE.ENDED,
-        tickets: action.payload.tickets,
-      };
     case PLAYGROUND_ACTIONS.PLAYGROUND_RUN_FAILED:
       return {
         ...state,
@@ -340,7 +334,6 @@ const appReducer = (state = initialAppState, action) => {
         lastAdded: null,
         selected: null,
         link: null,
-        tickets: [],
         nbTasks: 0,
         tasksDone: 0,
         problems: [],
@@ -406,6 +399,14 @@ const appReducer = (state = initialAppState, action) => {
         nbTasks: 0,
         tasksDone: 0,
         events: [],
+        tickets: [],
+      };
+    }
+    case DEBUG_ACTIONS.TERMINATE: {
+      return {
+        ...state,
+        playState: PLAY_STATE.ENDED,
+        tickets: action.payload.tickets,
       };
     }
     default:

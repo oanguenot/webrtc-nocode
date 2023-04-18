@@ -8,7 +8,6 @@ import { Content, Main } from "@atlaskit/page-layout";
 import PageHeader from "@atlaskit/page-header";
 import ProgressBar from "@atlaskit/progress-bar";
 import Button, { ButtonGroup } from "@atlaskit/button";
-import { run } from "../../actions/playgroundActions";
 import { useStateWithCallbackLazy } from "use-state-with-callback";
 import { PLAY_STATE } from "../../reducers/appReducer";
 import { stringify } from "../../modules/helper";
@@ -19,7 +18,7 @@ import {
   createGraph,
   startTimeline,
 } from "../graph/graph";
-import {resetDebug} from "../../actions/DebugActions";
+import {reset, run} from "../../actions/DebugActions";
 
 const getColorFromTag = (tag) => {
   switch (tag) {
@@ -80,7 +79,7 @@ function Debug({ dispatch }) {
     return new Promise((resolve) => {
       setIsStarted(false, () => {
         setProgress(0, () => {
-          resetDebug(dispatch);
+          reset(dispatch);
           createGraph(canvasRef.current);
           setIsReset(true, () => {
             resolve();

@@ -5,6 +5,7 @@ import {
   getNodeEnumLabelFromValue,
 } from "../modules/helper";
 import { KEYS, NODES } from "../modules/model";
+import {DEBUG_ACTIONS} from "./DebugActions";
 
 let ref_fileHandle = null;
 
@@ -27,21 +28,8 @@ export const PLAYGROUND_STORAGE_KEYS = {
   POS_Y: "pos_y",
 };
 
-export const run = (nodes, dispatch) => {
-  dispatch({
-    type: PLAYGROUND_ACTIONS.PLAYGROUND_RUN_IN_PROGRESS,
-    payload: {},
-  });
 
-  execute(nodes, dispatch);
-};
 
-export const terminate = (tickets, dispatch) => {
-  dispatch({
-    type: PLAYGROUND_ACTIONS.PLAYGROUND_RUN_SUCCESS,
-    payload: { tickets },
-  });
-};
 
 export const load = (nodes, dispatch) => {
   const model = rehydrateModel(nodes);
