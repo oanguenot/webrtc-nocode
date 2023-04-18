@@ -29,64 +29,61 @@ export const CHART_COLORS = [
   "#795548",
 ];
 
-const getDefaultConfig = () => (
-  {
-    type: "line",
-    data: [],
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: "Metrics",
-        },
-        autocolors: false,
-        // annotation: {
-        //       yMin: metricConfiguration.threshold.bad,
-        //       yMax: metricConfiguration.threshold.bad,
-        //       borderColor: CHART_COLORS.red,
-        //       borderWidth: 2,
-        //     },
-        //     poor: {
-        //       type: 'line',
-        //       yMin: metricConfiguration.threshold.poor,
-        //       yMax: metricConfiguration.threshold.poor,
-        //       borderColor: CHART_COLORS.orange,
-        //       borderWidth: 2,
-        //     },
-        //     good: {
-        //       type: 'line',
-        //       yMin: metricConfiguration.threshold.good,
-        //       yMax: metricConfiguration.threshold.good,
-        //       borderColor: CHART_COLORS.green,
-        //       borderWidth: 2,
-        //     },
-        //   }
-        // }
+const getDefaultConfig = () => ({
+  type: "line",
+  data: [],
+  options: {
+    plugins: {
+      title: {
+        display: true,
+        text: "Metrics",
       },
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        x: {
-          type: "time",
-          time: {
-            tooltipFormat: "TT",
-            displayFormats: {
-              second: "TT",
-            },
-            unit: "second",
+      autocolors: false,
+      // annotation: {
+      //       yMin: metricConfiguration.threshold.bad,
+      //       yMax: metricConfiguration.threshold.bad,
+      //       borderColor: CHART_COLORS.red,
+      //       borderWidth: 2,
+      //     },
+      //     poor: {
+      //       type: 'line',
+      //       yMin: metricConfiguration.threshold.poor,
+      //       yMax: metricConfiguration.threshold.poor,
+      //       borderColor: CHART_COLORS.orange,
+      //       borderWidth: 2,
+      //     },
+      //     good: {
+      //       type: 'line',
+      //       yMin: metricConfiguration.threshold.good,
+      //       yMax: metricConfiguration.threshold.good,
+      //       borderColor: CHART_COLORS.green,
+      //       borderWidth: 2,
+      //     },
+      //   }
+      // }
+    },
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: "time",
+        time: {
+          tooltipFormat: "TT",
+          displayFormats: {
+            second: "TT",
           },
-          min: DateTime.now().plus({second: 0}).valueOf(),
-          max: DateTime.now().plus({second: 5}).valueOf(),
+          unit: "second",
         },
-        y: {
-          type: "linear",
-          min: 0,
-          max: 10,
-        },
+        min: DateTime.now().plus({ second: 0 }).valueOf(),
+        max: DateTime.now().plus({ second: 5 }).valueOf(),
+      },
+      y: {
+        type: "linear",
+        min: 0,
       },
     },
-  }
-);
+  },
+});
 
 export const startTimeline = () => {
   if (chart) {
@@ -116,14 +113,6 @@ export const addSeries = (name, dataSeries) => {
   } else {
     series.data = dataSeries;
   }
-
-  let max = Math.max(...dataSeries.map((data) => data.y));
-  // Add a 5% gap above
-  max += (max * 5) / 100;
-  chart.config.options.scales.y.max = Math.max(
-    chart.config.options.scales.y.max,
-    max
-  );
 
   //  Adapt x timeline
   chart.config.options.scales.x.max = DateTime.now()
