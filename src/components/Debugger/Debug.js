@@ -92,7 +92,6 @@ function Debug({ dispatch }) {
   const actionsContent = (
     <ButtonGroup>
       <Button onClick={() => onReset()}>Reset</Button>
-      <Button appearance="subtle">Stop</Button>
       <Button appearance="primary" onClick={() => onStart()}>
         Run
       </Button>
