@@ -15,6 +15,9 @@
 }
 
 .debug-columns {
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     flex-basis: 100%;
@@ -97,4 +100,10 @@
 
 .graph {
     height: 400px;
+}
+
+.debug-messages {
+    margin-top: 12px;
+    height: calc(100% - 380px);
+    overflow: scroll;
 }

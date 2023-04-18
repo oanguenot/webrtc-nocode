@@ -18,7 +18,7 @@ import {
   createGraph,
   startTimeline,
 } from "../graph/graph";
-import {reset, run} from "../../actions/DebugActions";
+import { reset, run } from "../../actions/DebugActions";
 
 const getColorFromTag = (tag) => {
   switch (tag) {
@@ -64,7 +64,7 @@ function Debug({ dispatch }) {
   }, [appState.graph]);
 
   const onStart = async () => {
-    if(isStarted && !isReset) {
+    if (isStarted && !isReset) {
       await onReset();
     }
     setIsStarted(true, () => {
@@ -137,50 +137,52 @@ function Debug({ dispatch }) {
                   <p className="debug-iframes-title">IFrames</p>
                   <div id="frames" className="iframes-sidebar"></div>
                 </div>
-                {appState.tickets.map((ticket, key1) => (
-                  <div key={key1}>
-                    <p>{ticket.ua.pname}</p>
-                    <ul key={key1}>
-                      {ticket.call.events.map((log, key2) => (
-                        <li key={key2}>
-                          <div>
-                            <Tag text={log.at}></Tag>{" "}
-                            <Tag
-                              text={log.category}
-                              color={getColorFromTag(log.category)}
-                            ></Tag>{" "}
-                            <Tag text={log.name} color="greenLight"></Tag>{" "}
-                            {log.ssrc && (
+                <div className="debug-messages">
+                  {appState.tickets.map((ticket, key1) => (
+                    <div key={key1}>
+                      <p>{ticket.ua.pname}</p>
+                      <ul key={key1}>
+                        {ticket.call.events.map((log, key2) => (
+                          <li key={key2}>
+                            <div>
+                              <Tag text={log.at}></Tag>{" "}
                               <Tag
-                                text={log.ssrc}
-                                color={getColorFromTag("ssrc")}
-                              ></Tag>
-                            )}
-                            <span
+                                text={log.category}
+                                color={getColorFromTag(log.category)}
+                              ></Tag>{" "}
+                              <Tag text={log.name} color="greenLight"></Tag>{" "}
+                              {log.ssrc && (
+                                <Tag
+                                  text={log.ssrc}
+                                  color={getColorFromTag("ssrc")}
+                                ></Tag>
+                              )}
+                              <span
+                                style={{
+                                  color: "#999",
+                                  fontSize: "14px",
+                                }}
+                              >
+                                {log.details.message}{" "}
+                              </span>
+                            </div>
+                            <div
                               style={{
-                                color: "#999",
-                                fontSize: "14px",
+                                marginLeft: "190px",
+                                fontSize: "12px",
+                                padding: "4px",
                               }}
                             >
-                              {log.details.message}{" "}
-                            </span>
-                          </div>
-                          <div
-                            style={{
-                              marginLeft: "190px",
-                              fontSize: "12px",
-                              padding: "4px",
-                            }}
-                          >
-                            {log.details.value && (
-                              <span>{stringify(log.details.value)}</span>
-                            )}
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+                              {log.details.value && (
+                                <span>{stringify(log.details.value)}</span>
+                              )}
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
             </Content>
           </>
