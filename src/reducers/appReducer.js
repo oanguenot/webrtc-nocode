@@ -378,7 +378,7 @@ const appReducer = (state = initialAppState, action) => {
               : "out";
           const kind = data[data.length - 1].split("_")[0].substring(0, 1);
           const ssrc = data[data.length - 1].split("_")[1];
-          const id = `ssrc${ssrc}-${kind}${type}-${key}`;
+          const id = `${key} (${kind}${type}-${ssrc})`;
 
           if (!(id in newGraph)) {
             newGraph[id] = [];
