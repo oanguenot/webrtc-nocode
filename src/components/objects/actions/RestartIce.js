@@ -1,6 +1,6 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import { getNodeById } from "../../../modules/helper";
+import { generateCustomId4, getNodeById } from "../../../modules/helper";
 import { addCustomEvent } from "../../../modules/metrics";
 
 class RestartIce extends Main {
@@ -28,8 +28,9 @@ class RestartIce extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Restart ICE",
+        value: `Restart-${generateCustomId4()}`,
         description: "Action/Name",
+        default: "Restart",
       },
       {
         prop: KEYS.CALL,

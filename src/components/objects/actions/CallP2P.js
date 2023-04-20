@@ -1,11 +1,7 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import { customAlphabet } from "nanoid";
-import { getNodeById } from "../../../modules/helper";
+import { generateCustomId4, getNodeById } from "../../../modules/helper";
 import { addCustomEvent } from "../../../modules/metrics";
-
-const CUSTOM_ALPHABET = "0123456789abcdef";
-const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class CallP2P extends Main {
   static item = "CallP2P";
@@ -32,8 +28,9 @@ class CallP2P extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `Call-${nanoid()}`,
+        value: `Call-${generateCustomId4()}`,
         description: "Action/Name",
+        default: "Call",
       },
       {
         prop: KEYS.CALLER,

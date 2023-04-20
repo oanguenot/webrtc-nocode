@@ -1,9 +1,6 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
-import { customAlphabet } from "nanoid";
-
-const CUSTOM_ALPHABET = "0123456789abcdef";
-const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
+import { generateCustomId4 } from "../../../modules/helper";
 
 class AudioMute extends Main {
   static item = "Mute Audio Track";
@@ -31,8 +28,9 @@ class AudioMute extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `Mute-${nanoid()}`,
+        value: `Mute-${generateCustomId4()}`,
         description: "Name of the Mute",
+        default: "Mute",
       },
       {
         prop: KEYS.TRACK,

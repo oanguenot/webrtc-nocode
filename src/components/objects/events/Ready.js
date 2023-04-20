@@ -26,6 +26,7 @@ class Ready extends Main {
         type: KEY_TYPE.TEXT,
         value: `ON READY`,
         description: "Name of the event",
+        default: "ON READY",
       },
     ];
     this._acceptOutputs = [NODES.ACTIONS];

@@ -1,11 +1,12 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
-import {displayNbPropsFromValue, getNodeById, getTransceiver} from "../../../modules/helper";
+import {
+  displayNbPropsFromValue,
+  generateCustomId4,
+  getNodeById,
+  getTransceiver,
+} from "../../../modules/helper";
 import { addCustomEvent } from "../../../modules/metrics";
-import {customAlphabet} from "nanoid";
-
-const CUSTOM_ALPHABET = "0123456789abcdef";
-const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class VideoConstraints extends Main {
   static item = "Adjust Video constraints";
@@ -34,8 +35,9 @@ class VideoConstraints extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `Constraints-${nanoid()}`,
+        value: `Constraints-${generateCustomId4()}`,
         description: "Name of the adjustment",
+        default: "Constraints",
       },
       {
         prop: KEYS.TRACK,
@@ -75,16 +77,18 @@ class VideoConstraints extends Main {
   execute(nodes, frames) {
     return new Promise((resolve, reject) => {
       const trackNodeId = this.getPropertyValueFor(KEYS.TRACK);
-      const listOfConstraints = this.getPropertyValueFor(KEYS.CONSTRAINTS).split("\n");
+      const listOfConstraints = this.getPropertyValueFor(
+        KEYS.CONSTRAINTS
+      ).split("\n");
 
       const constraints = {};
 
-      listOfConstraints.forEach(contraintString => {
+      listOfConstraints.forEach((contraintString) => {
         const properties = contraintString.split("=")[0];
         const value = contraintString.split("=")[1];
         const property = properties.split(".")[0];
         const operator = properties.split(".")[1];
-        if(property && value) {
+        if (property && value) {
           if (operator) {
             constraints[property] = {};
             constraints[property][operator] = value;
@@ -162,8 +166,8 @@ class VideoConstraints extends Main {
             </div>
             <div class="object-box-line">
             <i class="fas fa-chevron-right"></i><span class="object-details-value" id="constraints-${
-      this._uuid
-    }">${this.renderProp(KEYS.CONSTRAINTS)}</span>
+              this._uuid
+            }">${this.renderProp(KEYS.CONSTRAINTS)}</span>
             </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${this.node}

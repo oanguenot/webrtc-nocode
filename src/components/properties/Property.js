@@ -5,19 +5,27 @@ import { updateProperty } from "../../actions/objectActions";
 import InlineEdit from "@atlaskit/inline-edit";
 import { css } from "@emotion/react";
 import Select from "@atlaskit/select";
-import Tag from '@atlaskit/tag';
-import Group from '@atlaskit/tag-group';
+import Tag from "@atlaskit/tag";
+import Group from "@atlaskit/tag-group";
 import {
   fontSize as getFontSize,
   gridSize as getGridSize,
 } from "@atlaskit/theme/constants";
 import { KEY_TYPE } from "../../modules/model";
+import { generateCustomId4 } from "../../modules/helper";
 
 const fontSize = getFontSize();
 const gridSize = getGridSize();
 
+const getItemFromValue = (property) => {
+  if (property.enum) {
+    return property.enum.find((item) => item.value === property.value);
+  }
+  return property.value;
+};
+
 function Property({ objectId, property, dispatch }) {
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState(getItemFromValue(property));
 
   const readViewContainerStyles = css({
     display: "flex",
@@ -56,11 +64,14 @@ function Property({ objectId, property, dispatch }) {
             <Textfield
               {...fieldProps}
               autoFocus
-              value={value || property.value}
+              value={value}
               onChange={(event) => onChange(event)}
             />
           );
-        } else if (property.type === KEY_TYPE.ENUM || property.type === KEY_TYPE.SELECT) {
+        } else if (
+          property.type === KEY_TYPE.ENUM ||
+          property.type === KEY_TYPE.SELECT
+        ) {
           return (
             <Select
               inputId="single-select-example"
@@ -76,7 +87,7 @@ function Property({ objectId, property, dispatch }) {
             <TextArea
               {...fieldProps}
               autoFocus
-              value={value || property.value}
+              value={value}
               ref={ref}
               onChange={(event) => onChange(event)}
             />
@@ -85,7 +96,7 @@ function Property({ objectId, property, dispatch }) {
       }}
       readView={() => (
         <div css={readViewContainerStyles}>
-          {!valueDisplayed && ("Click to edit")}
+          {!valueDisplayed && "Click to edit"}
 
           {valueDisplayed && property.type === KEY_TYPE.SELECT && (
             <div style={{ padding: `${gridSize / 2}px` }}>
@@ -96,30 +107,36 @@ function Property({ objectId, property, dispatch }) {
                   ))}
               </Group>
             </div>
-            )}
+          )}
 
-          {valueDisplayed && property.type !== KEY_TYPE.SELECT && (valueDisplayed)}
+          {valueDisplayed &&
+            property.type !== KEY_TYPE.SELECT &&
+            valueDisplayed}
         </div>
       )}
       onConfirm={async () => {
-        const newValue =
-          property.type !== "enum"
-            ? value || property.value
-            : (value && value.value) || property.value;
-
-        const label =
-          property.type === "enum"
-            ? property.enum.find((item) => item.value === newValue).label
-            : "";
+        let newValue = value;
+        let label = "";
+        if (property.type === KEY_TYPE.ENUM) {
+          newValue = (value && value.value) || property.value;
+          label = property.enum.find((item) => item.value === newValue).label;
+        } else {
+          if (!newValue && property.default) {
+            newValue = `${property.default}-${generateCustomId4(4)}`;
+            setValue(newValue);
+          }
+        }
 
         await updateProperty(
           objectId,
           property.prop,
           newValue,
-          property.type === "enum" ? (value && value.label) || label : null,
+          property.type === KEY_TYPE.ENUM
+            ? (value && value.label) || label
+            : null,
           dispatch
         );
-        setValue(null);
+        //setValue(null);
       }}
     />
   );

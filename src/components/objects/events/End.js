@@ -29,6 +29,7 @@ class End extends Main {
         type: KEY_TYPE.TEXT,
         value: "FINISH",
         description: "Name of the End node",
+        default: "FINISH",
       },
     ];
     this._sources = [];

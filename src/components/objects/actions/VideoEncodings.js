@@ -1,6 +1,10 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
-import { getNodeById, getTransceiver } from "../../../modules/helper";
+import {
+  generateCustomId4,
+  getNodeById,
+  getTransceiver,
+} from "../../../modules/helper";
 import { addCustomEvent } from "../../../modules/metrics";
 
 class VideoEncodings extends Main {
@@ -30,8 +34,9 @@ class VideoEncodings extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Set Video Codec",
+        value: `Encode-${generateCustomId4()}`,
         description: "Name of the Encodings",
+        default: "Encode",
       },
       {
         prop: KEYS.TRACK,

@@ -1,9 +1,6 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
-import { customAlphabet } from "nanoid";
-
-const CUSTOM_ALPHABET = "0123456789abcdef";
-const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
+import { generateCustomId4 } from "../../../modules/helper";
 
 class AudioTrack extends Main {
   static item = "Audio Track";
@@ -31,8 +28,9 @@ class AudioTrack extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `${KIND.AUDIO}-${nanoid()}`,
+        value: `${KIND.AUDIO}-${generateCustomId4()}`,
         description: "Choose the preferred microphone",
+        default: KIND.AUDIO,
       },
       {
         prop: KEYS.FROM,

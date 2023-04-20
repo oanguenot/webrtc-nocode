@@ -24,8 +24,9 @@ class ICEConnectionEvent extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `ON ICE STATE CHANGE`,
+        value: `ON ICE CHANGE`,
         description: "Action/Name",
+        default: "ON ICE CHANGE",
       },
       {
         prop: KEYS.ICESTATE,

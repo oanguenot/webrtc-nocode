@@ -1,12 +1,13 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import { customAlphabet } from "nanoid";
 import { configuration } from "../../../modules/metrics";
-import {displayNbPropsFromValue, findNodeByName, getNodesFromIds} from "../../../modules/helper";
+import {
+  displayNbPropsFromValue,
+  findNodeByName,
+  generateCustomId4,
+  getNodesFromIds,
+} from "../../../modules/helper";
 import { addPointsInGraph } from "../../../actions/DebugActions";
-
-const CUSTOM_ALPHABET = "0123456789abcdef";
-const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class WebRTCMetrics extends Main {
   static item = "Metrics";
@@ -33,8 +34,9 @@ class WebRTCMetrics extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `Metrics-${nanoid()}`,
+        value: `Metrics-${generateCustomId4()}`,
         description: "Name of the tool",
+        default: "Metrics",
       },
       {
         prop: KEYS.INBOUND,

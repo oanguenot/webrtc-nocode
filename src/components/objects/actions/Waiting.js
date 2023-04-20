@@ -1,10 +1,7 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import { customAlphabet } from "nanoid";
 import { addCustomEvent } from "../../../modules/metrics";
-
-const CUSTOM_ALPHABET = "0123456789abcdef";
-const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
+import { generateCustomId4 } from "../../../modules/helper";
 
 class Waiting extends Main {
   static item = "Wait";
@@ -31,8 +28,9 @@ class Waiting extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `Wait-${nanoid()}`,
+        value: `Wait-${generateCustomId4()}`,
         description: "Name of the Waiter",
+        default: "Wait",
       },
       {
         prop: KEYS.DELAY,

@@ -1,9 +1,6 @@
 import Main from "../Main";
-import { customAlphabet } from "nanoid";
 import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
-
-const CUSTOM_ALPHABET = "0123456789abcdef";
-const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
+import { generateCustomId4 } from "../../../modules/helper";
 
 class VideoTrack extends Main {
   static item = "Video Track";
@@ -31,8 +28,9 @@ class VideoTrack extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `${KIND.VIDEO}-${nanoid()}`,
+        value: `${KIND.VIDEO}-${generateCustomId4()}`,
         description: "Choose the preferred microphone",
+        default: KIND.VIDEO,
       },
       {
         prop: KEYS.FROM,

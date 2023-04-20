@@ -2,17 +2,14 @@ import Main from "../Main";
 
 import "../Main.css";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import { customAlphabet } from "nanoid";
 import {
   findNodeByName,
+  generateCustomId4,
   getNodeById,
   getNodesFromIds,
   stringify,
 } from "../../../modules/helper";
 import { addCustomEvent } from "../../../modules/metrics";
-
-const CUSTOM_ALPHABET = "0123456789abcdef";
-const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 class PeerConnection extends Main {
   static item = "Peer Connection";
@@ -39,8 +36,9 @@ class PeerConnection extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `PC-${nanoid()}`,
+        value: `Peer-${generateCustomId4()}`,
         description: "Name of the Peer Connection",
+        default: "Peer",
       },
       {
         prop: KEYS.TURN,

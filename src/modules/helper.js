@@ -1,4 +1,8 @@
 import CryptoJS from "crypto-js";
+import { customAlphabet } from "nanoid";
+
+const CUSTOM_ALPHABET = "0123456789abcdef";
+const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
 
 export const getDimensionFromResolution = (resolution) => {
   switch (resolution) {
@@ -142,11 +146,13 @@ export const stringify = (data) => {
 };
 
 export const displayNbPropsFromValue = (textContent) => {
-  if(!textContent) {
+  if (!textContent) {
     return "no property";
   }
   const values = textContent.split("\n");
-  return values.length > 1
-    ? `${values.length} properties`
-    : "1 property";
+  return values.length > 1 ? `${values.length} properties` : "1 property";
+};
+
+export const generateCustomId4 = () => {
+  return nanoid(4);
 };

@@ -1,9 +1,6 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import { customAlphabet } from "nanoid";
-
-const CUSTOM_ALPHABET = "0123456789abcdef";
-const nanoid = customAlphabet(CUSTOM_ALPHABET, 4);
+import { generateCustomId4 } from "../../../modules/helper";
 
 class WatchRTC extends Main {
   static item = "WatchRTC";
@@ -30,8 +27,9 @@ class WatchRTC extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `Watch-${nanoid()}`,
+        value: `Watch-${generateCustomId4()}`,
         description: "Name of the tool",
+        default: "Watch",
       },
       {
         prop: "apiKey",
@@ -44,8 +42,9 @@ class WatchRTC extends Main {
         prop: "roomId",
         label: "Room ID",
         type: "text",
-        value: `room-${nanoid(4)}`,
+        value: `room-${generateCustomId4()}`,
         description: "Name of the room",
+        default: "room",
       },
       {
         prop: KEYS.ACTIVE,

@@ -1,6 +1,10 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
-import { getNodeById, getTransceiver } from "../../../modules/helper";
+import {
+  generateCustomId4,
+  getNodeById,
+  getTransceiver,
+} from "../../../modules/helper";
 import { addCustomEvent } from "../../../modules/metrics";
 
 class VideoAdjust extends Main {
@@ -30,8 +34,9 @@ class VideoAdjust extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: "Adjust Video",
+        value: `Adjust-${generateCustomId4()}`,
         description: "Name of the adjustment",
+        default: "Adjust",
       },
       {
         prop: KEYS.TRACK,
