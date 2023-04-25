@@ -65,6 +65,11 @@ class End extends Main {
           ticket = winFrame.probe.getTicket();
           tickets.push(ticket);
         }
+
+        //Remove iframe element
+        const iframe = document.querySelector(`#${key}`);
+        iframe.parentNode.removeChild(iframe);
+        delete frames[key];
       });
       console.log(">>>TIK", tickets);
       resolve(tickets);

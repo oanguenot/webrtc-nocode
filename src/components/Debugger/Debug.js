@@ -138,6 +138,7 @@ function Debug({ dispatch }) {
                   <div id="frames" className="iframes-sidebar"></div>
                 </div>
                 <div className="debug-messages">
+                  <p className="debug-iframes-title">Logs</p>
                   {appState.tickets.map((ticket, key1) => (
                     <div key={key1}>
                       <p>{ticket.ua.pname}</p>
