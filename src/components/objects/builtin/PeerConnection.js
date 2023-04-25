@@ -171,14 +171,20 @@ class PeerConnection extends Main {
             stringify(track)
           );
 
-          win.pc.addTrack(track);
-          // win.pc.addTransceiver(track, {
-          //   sendEncodings: [
-          //     { rid: "q", scaleResolutionDownBy: 4.0, scalabilityMode: "L1T3" },
-          //     { rid: "h", scaleResolutionDownBy: 2.0, scalabilityMode: "L1T3" },
-          //     { rid: "f", scalabilityMode: "L1T3" },
-          //   ],
-          // });
+          //win.pc.addTrack(track);
+          win.pc.addTransceiver(track, {
+            // sendEncodings: [
+            //   { rid: "q", scaleResolutionDownBy: 4.0, scalabilityMode: "L1T3" },
+            //   { rid: "h", scaleResolutionDownBy: 2.0, scalabilityMode: "L1T3" },
+            //   { rid: "f", scalabilityMode: "L1T3" },
+            // ],
+            // sendEncodings: [
+            //   { rid: "h", maxBitrate: 1200 * 1024 },
+            //   { rid: "m", maxBitrate: 600 * 1024, scaleResolutionDownBy: 2 },
+            //   { rid: "l", maxBitrate: 300 * 1024, scaleResolutionDownBy: 4 },
+            // ],
+            //sendEncodings: [{ scalabilityMode: "L2T3" }],
+          });
         });
       }
       resolve();

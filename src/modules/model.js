@@ -17,6 +17,7 @@ export const NODES = {
   READY: "event.ready",
   ICE: "event.ice",
   END: "action.end",
+  REPLACE: "action.replace",
 };
 
 export const KIND = {

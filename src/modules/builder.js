@@ -17,6 +17,7 @@ import RestartIce from "../components/objects/actions/RestartIce";
 import SDPMunging from "../components/objects/builtin/SDPMunging";
 import AudioMute from "../components/objects/actions/AudioMute";
 import VideoConstraints from "../components/objects/actions/VideoConstraints";
+import ReplaceTrack from "../components/objects/actions/ReplaceTrack";
 
 const ObjectBuilder = {
   Ready: Ready,
@@ -39,6 +40,7 @@ const ObjectBuilder = {
   CallP2P: CallP2P,
   RestartIce: RestartIce,
   AudioMute: AudioMute,
+  ReplaceTrack: ReplaceTrack,
   End: End,
 };
 
@@ -55,9 +57,11 @@ const convertNodeNameToClass = (name, kind) => {
     "action.wait": Waiting,
     "action.encode": kind === "audio" ? AudioEncodings : VideoEncodings,
     "action.adjust": kind === "audio" ? AudioAdjust : VideoAdjust,
-    "action.constraints": kind === "audio" ? VideoConstraints : VideoConstraints,
+    "action.constraints":
+      kind === "audio" ? VideoConstraints : VideoConstraints,
     "action.call": CallP2P,
     "action.restart": RestartIce,
+    "action.replace": ReplaceTrack,
     "action.mute": kind === "audio" ? AudioMute : AudioMute,
     "action.end": End,
   };

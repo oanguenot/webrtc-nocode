@@ -206,7 +206,7 @@ class CallP2P extends Main {
         "Create the remote answer",
         new Date(),
         null,
-        rtcOfferSessionDescription.sdp
+        rtcAnswerSessionDescription.sdp
       );
 
       await calleeWin.pc.setLocalDescription(rtcAnswerSessionDescription);
@@ -218,7 +218,7 @@ class CallP2P extends Main {
         "Set the remote answer to the remote RTCPeerConnection",
         new Date(),
         null,
-        rtcOfferSessionDescription.sdp
+        rtcAnswerSessionDescription.sdp
       );
 
       const calleeIces = await waitForIce(calleeWin.pc, calleeNode.id);
@@ -246,7 +246,7 @@ class CallP2P extends Main {
         "Set the remote answer to the local RTCPeerConnection",
         new Date(),
         null,
-        rtcOfferSessionDescription.sdp
+        rtcAnswerSessionDescription.sdp
       );
 
       calleeIces.forEach((ice) => {

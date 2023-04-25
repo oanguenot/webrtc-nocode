@@ -14,7 +14,7 @@ class AudioTrack extends Main {
     this._inputs = 0;
     this._outputs = 1;
     this._acceptInputs = [];
-    this._acceptOutputs = [NODES.PEER];
+    this._acceptOutputs = [NODES.PEER, NODES.REPLACE];
     this._info = [
       { key: KEYS.NODE, value: NODES.TRACK },
       { key: KEYS.KIND, value: KIND.AUDIO },
@@ -99,6 +99,7 @@ class AudioTrack extends Main {
 
       try {
         const audioTrack = getAudioTrack();
+        audioTrack.__wp = this.id;
         const stream = new win.MediaStream();
         stream.addTrack(audioTrack);
         resolve(stream);

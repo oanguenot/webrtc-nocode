@@ -85,7 +85,7 @@ function Playground({ dispatch }) {
           appState.lastAdded.y,
           appState.lastAdded.getPropertyValueFor("name"),
           { id: appState.lastAdded.id },
-          appState.lastAdded.render(),
+          appState.lastAdded.render(appState.objects),
           false
         );
 

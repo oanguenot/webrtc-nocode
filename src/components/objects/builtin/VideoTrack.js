@@ -14,7 +14,7 @@ class VideoTrack extends Main {
     this._inputs = 0;
     this._outputs = 1;
     this._acceptInputs = [];
-    this._acceptOutputs = [NODES.PEER];
+    this._acceptOutputs = [NODES.PEER, NODES.REPLACE];
     this._info = [
       { key: KEYS.NODE, value: NODES.TRACK },
       { key: KEYS.KIND, value: KIND.VIDEO },
@@ -39,6 +39,10 @@ class VideoTrack extends Main {
         enum: [
           { label: "None", value: "none" },
           { label: "Fake", value: "[fake]" },
+          { label: "Movie 576p", value: "480p" },
+          { label: "Movie 720p", value: "720p" },
+          { label: "Movie 1080p", value: "1080p" },
+          { label: "Movie 4k", value: "4k" },
         ],
         value: "[fake]",
         description: "Choose the preferred camera",
@@ -82,39 +86,95 @@ class VideoTrack extends Main {
   }
 
   execute(win) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       const getVideoTrack = (width, height, r, g, b) => {
-        const canvas = Object.assign(win.document.createElement("canvas"), {
-          width,
-          height,
-        });
+        return new Promise((resolve, reject) => {
+          const canvas = Object.assign(win.document.createElement("canvas"), {
+            width,
+            height,
+          });
 
-        const ctx = canvas.getContext("2d");
-        ctx.fillRect(0, 0, width, height);
-        const p = ctx.getImageData(0, 0, width, height);
-        const draw = () => {
-          for (let i = 0; i < p.data.length; i++) {
-            const color = Math.random() * 255;
-            p.data[i++] = color * r;
-            p.data[i++] = color * g;
-            p.data[i++] = color * b;
-          }
-          ctx.putImageData(p, 0, 0);
+          const ctx = canvas.getContext("2d");
+          ctx.fillRect(0, 0, width, height);
+          const p = ctx.getImageData(0, 0, width, height);
+          const draw = () => {
+            for (let i = 0; i < p.data.length; i++) {
+              const color = Math.random() * 255;
+              p.data[i++] = color * r;
+              p.data[i++] = color * g;
+              p.data[i++] = color * b;
+            }
+            ctx.putImageData(p, 0, 0);
+            requestAnimationFrame(draw);
+          };
           requestAnimationFrame(draw);
-        };
-        requestAnimationFrame(draw);
-        const videoStream = canvas.captureStream();
-        return videoStream.getVideoTracks()[0];
+          const videoStream = canvas.captureStream();
+          resolve(videoStream.getVideoTracks()[0]);
+        });
       };
 
+      const getVideoFromPlayer = async (resolution) => {
+        return new Promise((resolve, reject) => {
+          const video = win.document.createElement("video");
+          video.setAttribute("loop", true);
+          video.addEventListener("loadedmetadata", () => {
+            console.log(
+              `local video videoWidth: ${video.videoWidth}px,  videoHeight: ${video.videoHeight}px`
+            );
+          });
+
+          video.addEventListener("resize", () => {
+            console.log(
+              `Local video size changed to ${video.videoWidth}x${video.videoHeight}`
+            );
+          });
+
+          video.src = `./${resolution}.mp4`;
+          video
+            .play()
+            .then(() => {
+              const stream = video.captureStream();
+              const [track] = stream.getVideoTracks();
+              resolve(track);
+            })
+            .catch((err) => {
+              console.log(">>>ERR", err);
+              resolve(null);
+            });
+        });
+      };
+
+      let videoTrack = null;
       try {
-        const videoTrack = getVideoTrack(96, 64, 0, 1, 0);
+        const videoType = this.getPropertyValueFor(KEYS.FROM);
+        switch (videoType) {
+          case "[fake]":
+            videoTrack = await getVideoTrack(96, 64, 0, 1, 0);
+            break;
+          case "576p":
+          case "720p":
+          case "1080p":
+          case "4k":
+            videoTrack = await getVideoFromPlayer(videoType);
+            break;
+          default:
+            break;
+        }
+
+        // const constraints = {
+        //   frameRate: { exact: 10 },
+        // };
+        // await videoTrack.applyConstraints(constraints);
+
         const stream = new win.MediaStream();
-        stream.addTrack(videoTrack);
+        if (videoTrack) {
+          videoTrack.__wp = this.id;
+          stream.addTrack(videoTrack);
+        }
         resolve(stream);
       } catch (err) {
         console.log(`[IFRAME] :: error got stream ${err.toString()}`);
-        reject(null);
+        reject(videoTrack);
       }
     });
   }

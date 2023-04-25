@@ -12,7 +12,7 @@ import {
   addLog,
   incrementTaskDone,
   setTaskNumber,
-  terminate
+  terminate,
 } from "../actions/DebugActions";
 import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
 
@@ -34,22 +34,17 @@ const createIFrame = (peerNode) => {
 
 export const resetExecute = () => {
   return new Promise((resolve, reject) => {
-    addLog(
-      "play",
-      "log",
-      `reset frames`,
-      null
-    );
+    addLog("play", "log", `reset frames`, null);
 
-    Object.keys(frames).forEach(id => {
+    Object.keys(frames).forEach((id) => {
       const iframe = document.querySelector(`#${id}`);
-      if(iframe) {
+      if (iframe) {
         iframe.parentNode.removeChild(iframe);
       }
       delete frames[id];
     });
   });
-}
+};
 
 const updateTitleInIFrame = (win, id) => {
   const titleElt = win.document.querySelector("#frameTitle");
@@ -115,7 +110,6 @@ const createMedia = (peerNode, nodes) => {
             win.document.querySelector(`#local-${inputId}`).srcObject =
               captured;
             captured.getTracks().forEach((track) => {
-              track.__wp = inputId;
               win.stream.addTrack(track);
             });
           }

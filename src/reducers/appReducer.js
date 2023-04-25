@@ -57,6 +57,7 @@ const updateLinkInObject = (objectId, fromId, objects) => {
   const updatedObjects = [...objects];
   updatedObjects[recipientIndex].addInputLink(fromId);
   updatedObjects[initiatorIndex].addOutputLink(objectId);
+
   return updatedObjects;
 };
 
