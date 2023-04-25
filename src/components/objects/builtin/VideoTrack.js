@@ -39,7 +39,7 @@ class VideoTrack extends Main {
         enum: [
           { label: "None", value: "none" },
           { label: "Fake", value: "[fake]" },
-          { label: "Movie 576p", value: "480p" },
+          { label: "Movie 576p", value: "576p" },
           { label: "Movie 720p", value: "720p" },
           { label: "Movie 1080p", value: "1080p" },
           { label: "Movie 4k", value: "4k" },
@@ -138,7 +138,7 @@ class VideoTrack extends Main {
               resolve(track);
             })
             .catch((err) => {
-              console.log(">>>ERR", err);
+              console.warn("[videotrack] can't capture stream", err);
               resolve(null);
             });
         });
@@ -165,7 +165,6 @@ class VideoTrack extends Main {
         //   frameRate: { exact: 10 },
         // };
         // await videoTrack.applyConstraints(constraints);
-
         const stream = new win.MediaStream();
         if (videoTrack) {
           videoTrack.__wp = this.id;

@@ -91,46 +91,55 @@ class ReplaceTrack extends Main {
         newTrackNode.getLabelFromPropertySelect(newFromProperty);
 
       // Deduce peer node from track node
+      let transceiver = null;
+      let win = null;
       for (const peerId of Object.keys(frames)) {
-        const win = frames[peerId];
+        win = frames[peerId];
         const pc = win.pc;
         if (pc) {
           const transceivers = win.pc.getTransceivers();
-          const transceiver = getTransceiver(transceivers, trackNodeId);
+          transceiver = getTransceiver(transceivers, trackNodeId);
           if (transceiver) {
-            // Execute new track
-            const newStream = await newTrackNode.execute(win);
-            const [track] = newStream.getTracks();
-
-            const sender = transceiver.sender;
-            if (sender && track) {
-              try {
-                // Replace the track
-                await sender.replaceTrack(track);
-
-                console.log(">>>SENDER TRACK", track);
-
-                // Update the media element
-                win.document.querySelector(`#local-${trackNodeId}`).srcObject =
-                  newStream;
-                win.document.querySelector(`#local-${trackNodeId}`).id =
-                  newTrackNode.id;
-
-                // Send custom event
-                addCustomEvent(
-                  win,
-                  "replace-track",
-                  "playground",
-                  `Replace track ${trackLabel} by track ${newTrackLabel}`,
-                  new Date()
-                );
-                resolve();
-              } catch (err) {
-                console.warn("[encode] error", err);
-                resolve();
-              }
-            }
+            break;
           }
+        }
+      }
+      if (!transceiver) {
+        console.warn(
+          `[replace] don't find transceiver for track ${trackNodeId}`
+        );
+        resolve();
+        return;
+      }
+
+      // Execute new track
+      const newStream = await newTrackNode.execute(win);
+      const [track] = newStream.getTracks();
+      const sender = transceiver.sender;
+      if (sender && track) {
+        try {
+          // Replace the track
+          await sender.replaceTrack(track);
+
+          // Update the media element
+          win.document.querySelector(`#local-${trackNodeId}`).srcObject =
+            newStream;
+          win.document.querySelector(
+            `#local-${trackNodeId}`
+          ).id = `local-${newTrackNode.id}`;
+
+          // Send custom event
+          addCustomEvent(
+            win,
+            "replace-track",
+            "playground",
+            `Replace track ${trackLabel} by track ${newTrackLabel}`,
+            new Date()
+          );
+          resolve();
+        } catch (err) {
+          console.warn("[encode] error", err);
+          resolve();
         }
       }
     });

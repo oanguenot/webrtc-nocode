@@ -18,9 +18,15 @@ function Properties({ dispatch }) {
         </div>
         <table>
           <tbody>
+            <tr key="id">
+              <td className="col-label">id</td>
+              <td className="col-info">
+                <Lozenge appearance="moved">{appState.selected.id}</Lozenge>
+              </td>
+            </tr>
             {appState.selected.info.map((info, key) => (
               <tr key={key}>
-                <td className="col-label">{info.key}:</td>
+                <td className="col-label">{info.key}</td>
                 {info.key === "info" && (
                   <td className="col-info">{info.value}</td>
                 )}
@@ -80,7 +86,7 @@ function Properties({ dispatch }) {
               <tbody>
                 {appState.selected.linksInput.map((link, index) => (
                   <tr key={index}>
-                    <td className="col-label">input:</td>
+                    <td className="col-label">input</td>
                     <td className="col-value-accept">{getLinkName(link)}</td>
                   </tr>
                 ))}
@@ -90,7 +96,7 @@ function Properties({ dispatch }) {
               <tbody>
                 {appState.selected.linksOutput.map((link, index) => (
                   <tr key={index}>
-                    <td className="col-label">output:</td>
+                    <td className="col-label">output</td>
                     <td className="col-value-accept">{getLinkName(link)}</td>
                   </tr>
                 ))}
