@@ -286,10 +286,10 @@
     "@emotion/react" "^11.7.1"
     react-uid "^2.2.0"
 
-"@atlaskit/lozenge@11.3.9":
-  version "11.3.9"
-  resolved "https://registry.yarnpkg.com/@atlaskit/lozenge/-/lozenge-11.3.9.tgz#bc9898323789e48ee1449f4c74df74151eabfe80"
-  integrity sha512-U7HjoAdQO4WK+EZeqQ0v0Ojg8IMkroErxcADMUsG9NkERTZupQ3amEjoOIwJAT8ws/cHahQUbdHQEMpYzV2lqw==
+"@atlaskit/lozenge@11.3.10":
+  version "11.3.10"
+  resolved "https://registry.yarnpkg.com/@atlaskit/lozenge/-/lozenge-11.3.10.tgz#a4730d3d0255f8e29e3dcce2fa90ef5c39ec0648"
+  integrity sha512-LgFVyaI4ny2ONSpHiNv/MVkWIZEiYLAPWBNc4TdU8Jd6LNpqAVlC1WD4Dm/heBCQyCkLjbp/5nl2vBCuYtCWyw==
   dependencies:
     "@atlaskit/codemod-utils" "^4.1.0"
     "@atlaskit/ds-explorations" "^2.0.0"
