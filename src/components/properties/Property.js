@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Textfield from "@atlaskit/textfield";
 import TextArea from "@atlaskit/textarea";
 import { updateProperty } from "../../actions/objectActions";
@@ -13,6 +13,7 @@ import {
 } from "@atlaskit/theme/constants";
 import { KEY_TYPE } from "../../modules/model";
 import { generateCustomId4 } from "../../modules/helper";
+import AppContext from "../../contexts/appContext";
 
 const fontSize = getFontSize();
 const gridSize = getGridSize();
@@ -25,7 +26,14 @@ const getItemFromValue = (property) => {
 };
 
 function Property({ objectId, property, dispatch }) {
+  const appState = useContext(AppContext);
   const [value, setValue] = useState(getItemFromValue(property));
+
+  useEffect(() => {
+    if (appState.selected) {
+      setValue(getItemFromValue(property));
+    }
+  }, [appState.selected]);
 
   const readViewContainerStyles = css({
     display: "flex",
