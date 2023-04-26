@@ -131,11 +131,12 @@ class ReplaceTrack extends Main {
           // Send custom event
           addCustomEvent(
             win,
-            "replace-track",
-            "playground",
+            "replaceTrack",
+            "api",
             `Replace track ${trackLabel} by track ${newTrackLabel}`,
             new Date()
           );
+
           resolve();
         } catch (err) {
           console.warn("[encode] error", err);
