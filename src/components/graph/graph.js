@@ -1,6 +1,9 @@
 import Chart from "chart.js/auto";
 import "chartjs-adapter-luxon";
+import annotationPlugin from "chartjs-plugin-annotation";
 import { DateTime } from "luxon";
+
+Chart.register(annotationPlugin);
 
 let chart;
 
@@ -38,29 +41,9 @@ const getDefaultConfig = () => ({
         display: true,
         text: "Metrics",
       },
-      autocolors: false,
-      // annotation: {
-      //       yMin: metricConfiguration.threshold.bad,
-      //       yMax: metricConfiguration.threshold.bad,
-      //       borderColor: CHART_COLORS.red,
-      //       borderWidth: 2,
-      //     },
-      //     poor: {
-      //       type: 'line',
-      //       yMin: metricConfiguration.threshold.poor,
-      //       yMax: metricConfiguration.threshold.poor,
-      //       borderColor: CHART_COLORS.orange,
-      //       borderWidth: 2,
-      //     },
-      //     good: {
-      //       type: 'line',
-      //       yMin: metricConfiguration.threshold.good,
-      //       yMax: metricConfiguration.threshold.good,
-      //       borderColor: CHART_COLORS.green,
-      //       borderWidth: 2,
-      //     },
-      //   }
-      // }
+      annotation: {
+        annotations: {},
+      },
     },
     responsive: true,
     maintainAspectRatio: false,
@@ -95,11 +78,40 @@ export const startTimeline = () => {
   }
 };
 
+export const addAPICallToGraph = (apiName, timestamp) => {
+  const api = {
+    drawTime: "afterDatasetsDraw",
+    type: "line",
+    mode: "vertical",
+    scaleID: "x",
+    value: DateTime.fromJSDate(new Date(timestamp)).valueOf(),
+    borderWidth: 2,
+    borderColor: "red",
+    label: {
+      backgroundColor: "red",
+      content: apiName,
+      display: true,
+      position: "start",
+    },
+  };
+
+  if (chart) {
+    chart.config.options.plugins.annotation.annotations[apiName] = api;
+    chart.update();
+  }
+};
+
 export const createGraph = (canvas) => {
   if (chart) {
     chart.destroy();
   }
   chart = new Chart(canvas, getDefaultConfig());
+};
+
+export const destroyGraph = () => {
+  if (chart) {
+    chart.destroy();
+  }
 };
 
 export const addSeries = (name, dataSeries) => {

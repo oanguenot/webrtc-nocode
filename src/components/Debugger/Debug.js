@@ -16,6 +16,7 @@ import {
   addSeries,
   createDataSeries,
   createGraph,
+  destroyGraph,
   startTimeline,
 } from "../graph/graph";
 import { reset, run } from "../../actions/DebugActions";
@@ -54,6 +55,7 @@ function Debug({ dispatch }) {
 
   useEffect(() => {
     createGraph(canvasRef.current);
+    return () => destroyGraph();
   }, []);
 
   useEffect(() => {
