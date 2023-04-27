@@ -147,7 +147,8 @@ class CallP2P extends Main {
         rtcOfferSessionDescription.sdp = await munglerNode.execute(
           callerNode.id,
           frames,
-          rtcOfferSessionDescription.sdp
+          rtcOfferSessionDescription.sdp,
+          reporter
         );
       }
 
@@ -197,7 +198,8 @@ class CallP2P extends Main {
         rtcAnswerSessionDescription.sdp = await munglerNode.execute(
           calleeNode.id,
           frames,
-          rtcAnswerSessionDescription.sdp
+          rtcAnswerSessionDescription.sdp,
+          reporter
         );
       }
 

@@ -1,6 +1,5 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import { addCustomEvent } from "../../../modules/metrics";
 import { mungle } from "../../../modules/sdp";
 import { generateCustomId4 } from "../../../modules/helper";
 
@@ -63,10 +62,20 @@ class SDPMunging extends Main {
     }
   }
 
-  execute(peerId, frames, offer) {
+  execute(peerId, frames, offer, reporter) {
     return new Promise((resolve, reject) => {
-      addCustomEvent(frames[peerId], "mungle", "playground", "", new Date());
       const operation = this.getPropertyValueFor(KEYS.OPERATION);
+      reporter({
+        win: frames[peerId],
+        name: "mungle",
+        category: "api",
+        details: "Munge the SDP",
+        ssrc: null,
+        data: { operation },
+        timestamp: Date.now(),
+        ended: null,
+      });
+
       const updatedOffer = mungle(operation, offer);
       resolve(updatedOffer);
     });

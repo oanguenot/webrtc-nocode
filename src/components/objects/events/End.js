@@ -1,6 +1,5 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import { addCustomEvent } from "../../../modules/metrics";
 
 class End extends Main {
   static item = "End";
@@ -46,12 +45,20 @@ class End extends Main {
     }
   }
 
-  execute(nodes, frames) {
+  execute(nodes, frames, reporter) {
     return new Promise((resolve, reject) => {
       const tickets = [];
       Object.keys(frames).forEach((key) => {
         const winFrame = frames[key];
-        addCustomEvent(winFrame, "close", "playground", "", new Date());
+        reporter({
+          win: winFrame,
+          name: "close",
+          category: "playground",
+          details: "",
+          data: {},
+          timestamp: Date.now(),
+          ended: null,
+        });
         if (winFrame && winFrame.pc) {
           winFrame.pc.close();
         }

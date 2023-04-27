@@ -9,7 +9,10 @@ import {
   getNodesFromIds,
   stringify,
 } from "../../../modules/helper";
-import { addCustomEvent } from "../../../modules/metrics";
+import {
+  addCustomEvent,
+  addCustomEventWithObject,
+} from "../../../modules/metrics";
 
 class PeerConnection extends Main {
   static item = "Peer Connection";
@@ -124,15 +127,16 @@ class PeerConnection extends Main {
           await metricsNode.execute(win, nodes, dispatch);
         }
 
-        addCustomEvent(
+        addCustomEventWithObject({
           win,
-          "RTCPeerConnection",
-          "api",
-          "Create the new RTCPeerConnection",
-          new Date(),
-          null,
-          { configuration }
-        );
+          name: "RTCPeerConnection",
+          category: "api",
+          details: "Create the new RTCPeerConnection",
+          timestamp: Date.now(),
+          ssrc: null,
+          data: { configuration },
+          ended: null,
+        });
 
         win.ices = [];
         win.pc.addEventListener("iceconnectionstatechange", () => {
@@ -161,15 +165,16 @@ class PeerConnection extends Main {
         });
 
         stream.getTracks().forEach((track) => {
-          addCustomEvent(
+          addCustomEventWithObject({
             win,
-            "addTrack",
-            "api",
-            "Add Track to RTCPeerConnection",
-            new Date(),
-            null,
-            stringify(track)
-          );
+            name: "addTrack",
+            category: "api",
+            details: "Add Track to RTCPeerConnection",
+            timestamp: Date.now(),
+            ssrc: null,
+            data: track,
+            ended: null,
+          });
 
           //win.pc.addTrack(track);
           win.pc.addTransceiver(track, {
