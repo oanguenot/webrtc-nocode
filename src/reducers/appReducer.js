@@ -404,6 +404,7 @@ const appReducer = (state = initialAppState, action) => {
       return {
         ...state,
         graph: {},
+        graphAPI: [],
         playState: PLAY_STATE.IDLE,
         nbTasks: 0,
         tasksDone: 0,
