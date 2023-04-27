@@ -1,7 +1,6 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
 import { generateCustomId4, getNodeById } from "../../../modules/helper";
-import { addCustomEvent } from "../../../modules/metrics";
 
 class RestartIce extends Main {
   static item = "RestartIce";

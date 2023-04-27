@@ -5,7 +5,6 @@ import {
   getNodeById,
   getTransceiver,
 } from "../../../modules/helper";
-import { addCustomEvent } from "../../../modules/metrics";
 
 class VideoEncodings extends Main {
   static item = "Set Video Codec";
@@ -80,7 +79,7 @@ class VideoEncodings extends Main {
     }
   }
 
-  execute(nodes, frames) {
+  execute(nodes, frames, reporter) {
     return new Promise((resolve, reject) => {
       const trackNodeId = this.getPropertyValueFor(KEYS.TRACK);
       const codecMimeType = this.getPropertyValueFor(KEYS.PREFERENCE);
@@ -122,15 +121,16 @@ class VideoEncodings extends Main {
       codecs.unshift(...preferredCodecs);
       transceiver.setCodecPreferences(codecs);
 
-      addCustomEvent(
+      reporter({
         win,
-        "setCodecPreferences",
-        "api",
-        `Encode video track ${trackLabel} using ${codecMimeType}`,
-        new Date(),
-        null,
-        { codecs }
-      );
+        name: "setCodecPreferences",
+        category: "api",
+        details: `Encode video track ${trackLabel} using ${codecMimeType}`,
+        timestamp: Date.now(),
+        ssrc: null,
+        data: { codecs },
+        ended: null,
+      });
       resolve();
     });
   }

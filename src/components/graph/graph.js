@@ -104,6 +104,9 @@ export const addAPICallToGraph = (series) => {
           content: event.name,
           display: true,
           position: "start",
+          font: {
+            size: 11,
+          },
         },
       };
     });
@@ -160,7 +163,7 @@ const createDataSeries = (name, data) => {
     label: name,
     backgroundColor: color,
     borderColor: color,
-    tension: 0.5,
+    tension: 0.2,
     radius: 2,
     pointRadius: 2,
     data,
