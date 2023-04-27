@@ -7,7 +7,6 @@ import {
   getNodesFromIds,
   getTransceiver,
 } from "../../../modules/helper";
-import { addCustomEvent } from "../../../modules/metrics";
 
 class ReplaceTrack extends Main {
   static item = "Replace a Track";
@@ -76,7 +75,7 @@ class ReplaceTrack extends Main {
     }
   }
 
-  execute(nodes, frames) {
+  execute(nodes, frames, reporter) {
     return new Promise(async (resolve, _reject) => {
       const trackNodeId = this.getPropertyValueFor(KEYS.TRACK);
       const trackNode = getNodeById(trackNodeId, nodes);
@@ -129,13 +128,16 @@ class ReplaceTrack extends Main {
           ).id = `local-${newTrackNode.id}`;
 
           // Send custom event
-          addCustomEvent(
+          reporter({
             win,
-            "replaceTrack",
-            "api",
-            `Replace track ${trackLabel} by track ${newTrackLabel}`,
-            new Date()
-          );
+            name: "replaceTrack",
+            category: "api",
+            details: `Replace track ${trackLabel} by track ${newTrackLabel}`,
+            timestamp: Date.now(),
+            ssrc: null,
+            data: null,
+            ended: null,
+          });
 
           resolve();
         } catch (err) {

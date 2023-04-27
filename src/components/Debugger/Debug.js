@@ -13,6 +13,7 @@ import { PLAY_STATE } from "../../reducers/appReducer";
 import { stringify } from "../../modules/helper";
 import { useWindowSize } from "../../modules/hooks";
 import {
+  addAPICallToGraph,
   addSeries,
   createDataSeries,
   createGraph,
@@ -64,6 +65,10 @@ function Debug({ dispatch }) {
       Object.keys(series).forEach((set) => addSeries(set, series[set]));
     }
   }, [appState.graph]);
+
+  useEffect(() => {
+    addAPICallToGraph(appState.graphAPI);
+  }, [appState.graphAPI]);
 
   const onStart = async () => {
     if (isStarted && !isReset) {

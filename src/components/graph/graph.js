@@ -2,6 +2,7 @@ import Chart from "chart.js/auto";
 import "chartjs-adapter-luxon";
 import annotationPlugin from "chartjs-plugin-annotation";
 import { DateTime } from "luxon";
+import { nanoid } from "nanoid";
 
 Chart.register(annotationPlugin);
 
@@ -78,25 +79,38 @@ export const startTimeline = () => {
   }
 };
 
-export const addAPICallToGraph = (apiName, timestamp) => {
-  const api = {
-    drawTime: "afterDatasetsDraw",
-    type: "line",
-    mode: "vertical",
-    scaleID: "x",
-    value: DateTime.fromJSDate(new Date(timestamp)).valueOf(),
-    borderWidth: 2,
-    borderColor: "red",
-    label: {
-      backgroundColor: "red",
-      content: apiName,
-      display: true,
-      position: "start",
-    },
-  };
+export const addAPICallToGraph = (series) => {
+  let annotations = {};
+  if (series) {
+    series = series.filter(
+      (event) =>
+        event.name !== "addIceCandidate" &&
+        event.name !== "setLocalDescription" &&
+        event.name !== "setRemoteDescription" &&
+        event.name !== "createOffer" &&
+        event.name !== "createAnswer"
+    );
+    series.forEach((event) => {
+      annotations[`${event.name}-${nanoid(4)}`] = {
+        drawTime: "afterDatasetsDraw",
+        type: "line",
+        mode: "vertical",
+        scaleID: "x",
+        value: DateTime.fromJSDate(new Date(event.timestamp)).valueOf(),
+        borderWidth: 1,
+        borderColor: "red",
+        label: {
+          backgroundColor: "red",
+          content: event.name,
+          display: true,
+          position: "start",
+        },
+      };
+    });
+  }
 
   if (chart) {
-    chart.config.options.plugins.annotation.annotations[apiName] = api;
+    chart.config.options.plugins.annotation.annotations = annotations;
     chart.update();
   }
 };

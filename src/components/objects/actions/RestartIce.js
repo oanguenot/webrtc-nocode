@@ -71,7 +71,7 @@ class RestartIce extends Main {
     }
   }
 
-  execute(nodes, frames) {
+  execute(nodes, frames, reporter) {
     return new Promise((resolve, reject) => {
       const peerId = this.getPropertyValueFor(KEYS.PEER);
       const peerNode = getNodeById(peerId, nodes);
@@ -94,7 +94,7 @@ class RestartIce extends Main {
       win.pc.addEventListener(
         "negotiationneeded",
         async () => {
-          await callNode.execute(nodes, frames, invertedCall);
+          await callNode.execute(nodes, frames, reporter, invertedCall);
           resolve();
         },
         { once: true }
@@ -102,7 +102,15 @@ class RestartIce extends Main {
 
       // Restart ICE
       win.pc.restartIce();
-      addCustomEvent(win, "restart-ice", "playground", "", new Date());
+      reporter({
+        win,
+        name: "restartIce",
+        category: "api",
+        timestamp: Date.now(),
+        ssrc: null,
+        data: null,
+        ended: null,
+      });
     });
   }
 

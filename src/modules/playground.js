@@ -9,12 +9,14 @@ import {
 import { KEYS, NODES } from "./model";
 import { rehydrateObject } from "./builder";
 import {
+  addGraphEvent,
   addLog,
   incrementTaskDone,
   setTaskNumber,
   terminate,
 } from "../actions/DebugActions";
 import { createTempPeriod, endTempPeriod, hasPeriodFor } from "./timeline";
+import { addCustomEvent, addCustomEventWithObject } from "./metrics";
 
 const frames = {};
 let dispatcher = null;
@@ -151,7 +153,14 @@ const executeANode = (initialEvent, currentNode, nodes) => {
     null
   );
   return new Promise((resolve, reject) => {
-    currentNode.execute(nodes, frames).then(async (results) => {
+    const reporter = async (object) => {
+      addCustomEventWithObject(object);
+      if (object.category === "api") {
+        await addGraphEvent(object.name, object.timestamp, dispatcher);
+      }
+    };
+
+    currentNode.execute(nodes, frames, reporter).then(async (results) => {
       incrementTaskDone(dispatcher);
 
       const nextNode = getNodeById(currentNode.linksOutput[0], nodes);

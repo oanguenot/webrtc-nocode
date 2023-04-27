@@ -1,4 +1,4 @@
-import {execute, resetExecute} from "../modules/playground";
+import { execute, resetExecute } from "../modules/playground";
 
 export const DEBUG_ACTIONS = {
   ADD_TRACE: "ADD_TRACE",
@@ -8,6 +8,7 @@ export const DEBUG_ACTIONS = {
   RESET: "RESET",
   RUN: "RUN",
   TERMINATE: "TERMINATE",
+  ADD_API_IN_GRAPH: "ADD_API_IN_GRAPH",
 };
 
 export const addLog = (tag, level, message, object) => {
@@ -61,10 +62,17 @@ export const terminate = (tickets, dispatch) => {
   });
 };
 
-export const reset= async (dispatch) => {
+export const reset = async (dispatch) => {
   resetExecute();
   dispatch({
     type: DEBUG_ACTIONS.RESET,
-    payload: { },
+    payload: {},
   });
-}
+};
+
+export const addGraphEvent = async (name, timestamp, dispatch) => {
+  dispatch({
+    type: DEBUG_ACTIONS.ADD_API_IN_GRAPH,
+    payload: { name, timestamp },
+  });
+};

@@ -19,3 +19,27 @@ export const addCustomEvent = (
     probe.addCustomEvent(name, category, message, at, ssrc, data, ended);
   }
 };
+
+export const addCustomEventWithObject = ({
+  win,
+  name,
+  category,
+  message,
+  timestamp,
+  ssrc,
+  data,
+  ended,
+}) => {
+  if (win && win.metrics) {
+    const probe = win.metrics.probes[0];
+    probe.addCustomEvent(
+      name,
+      category,
+      message,
+      new Date(timestamp),
+      ssrc,
+      data,
+      ended
+    );
+  }
+};

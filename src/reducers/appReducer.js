@@ -41,6 +41,7 @@ const initialAppState = {
   loadedCheckDevices: false,
   problems: [],
   graph: {},
+  graphAPI: [],
 };
 
 const updateValueInObject = (objectId, name, value, label, objects) => {
@@ -362,6 +363,13 @@ const appReducer = (state = initialAppState, action) => {
         ...state,
         tasksDone: state.tasksDone + 1,
         playState,
+      };
+    }
+    case DEBUG_ACTIONS.ADD_API_IN_GRAPH: {
+      const { timestamp, name } = action.payload;
+      return {
+        ...state,
+        graphAPI: [...state.graphAPI, { timestamp, name }],
       };
     }
     case DEBUG_ACTIONS.ADD_POINTS_IN_GRAPH: {
