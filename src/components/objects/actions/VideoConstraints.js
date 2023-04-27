@@ -6,7 +6,6 @@ import {
   getNodeById,
   getTransceiver,
 } from "../../../modules/helper";
-import { addCustomEvent } from "../../../modules/metrics";
 
 class VideoConstraints extends Main {
   static item = "Adjust Video constraints";
@@ -74,7 +73,7 @@ class VideoConstraints extends Main {
     }
   }
 
-  execute(nodes, frames) {
+  execute(nodes, frames, reporter) {
     return new Promise((resolve, reject) => {
       const trackNodeId = this.getPropertyValueFor(KEYS.TRACK);
       const listOfConstraints = this.getPropertyValueFor(
@@ -132,13 +131,16 @@ class VideoConstraints extends Main {
       track
         .applyConstraints(constraints)
         .then(() => {
-          addCustomEvent(
+          reporter({
             win,
-            "applyConstraints",
-            "playground",
-            `Change constraints for ${trackLabel} with ${constraints}`,
-            new Date()
-          );
+            name: "applyConstraints",
+            category: "api",
+            details: `Change constraints for ${trackLabel} with ${constraints}`,
+            ssrc: null,
+            data: constraints,
+            timestamp: Date.now(),
+            ended: null,
+          });
           resolve();
         })
         .catch((err) => {

@@ -5,7 +5,6 @@ import {
   getNodeById,
   getTransceiver,
 } from "../../../modules/helper";
-import { addCustomEvent } from "../../../modules/metrics";
 
 class AudioEncodings extends Main {
   static item = "Set Audio Codec";
@@ -82,7 +81,7 @@ class AudioEncodings extends Main {
     }
   }
 
-  execute(nodes, frames) {
+  execute(nodes, frames, reporter) {
     return new Promise((resolve, reject) => {
       const trackNodeId = this.getPropertyValueFor(KEYS.TRACK);
       const codecMimeType = this.getPropertyValueFor(KEYS.PREFERENCE);
@@ -124,14 +123,16 @@ class AudioEncodings extends Main {
       codecs.unshift(...preferredCodecs);
       transceiver.setCodecPreferences(codecs);
 
-      addCustomEvent(
-        peerNode.id,
-        frames,
-        "encode",
-        "playground",
-        `${this._uuid} encode track ${trackLabel} using ${codecMimeType}`,
-        new Date()
-      );
+      reporter({
+        win,
+        name: "setCodecPreferences",
+        category: "api",
+        timestamp: Date.now(),
+        ssrc: null,
+        details: `${this._uuid} encode track ${trackLabel} using ${codecMimeType}`,
+        data: { codecs },
+        ended: null,
+      });
       resolve();
     });
   }

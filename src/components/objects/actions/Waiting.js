@@ -1,6 +1,5 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import { addCustomEvent } from "../../../modules/metrics";
 import { generateCustomId4 } from "../../../modules/helper";
 
 class Waiting extends Main {
@@ -71,20 +70,21 @@ class Waiting extends Main {
     }
   }
 
-  execute(nodes, frames) {
+  execute(nodes, frames, reporter) {
     return new Promise((resolve, _reject) => {
       const delay = this.getPropertyValueFor(KEYS.DELAY);
 
       Object.keys(frames).forEach((id) => {
-        addCustomEvent(
-          frames[id],
-          "Wait",
-          "playground",
-          `Wait during ${delay}`,
-          new Date(),
-          null,
-          { delay }
-        );
+        reporter({
+          win: frames[id],
+          name: "wait",
+          category: "playground",
+          details: `Wait during ${delay}`,
+          timestamp: Date.now(),
+          ssrc: null,
+          data: { delay },
+          ended: null,
+        });
       });
 
       setTimeout(() => {

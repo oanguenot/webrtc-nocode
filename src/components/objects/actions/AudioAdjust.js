@@ -5,7 +5,6 @@ import {
   getNodeById,
   getTransceiver,
 } from "../../../modules/helper";
-import { addCustomEvent } from "../../../modules/metrics";
 
 class AudioAdjust extends Main {
   static item = "Adjust Audio Parameters";
@@ -97,7 +96,7 @@ class AudioAdjust extends Main {
     }
   }
 
-  execute(nodes, frames) {
+  execute(nodes, frames, reporter) {
     return new Promise((resolve, reject) => {
       const trackNodeId = this.getPropertyValueFor(KEYS.TRACK);
       const maxBitrate = this.getPropertyValueFor(KEYS.MAX_BITRATE);
@@ -156,13 +155,16 @@ class AudioAdjust extends Main {
       sender
         .setParameters(newParameters)
         .then(() => {
-          addCustomEvent(
+          reporter({
             win,
-            "set-parameters",
-            "playground",
-            `${this._uuid} parameterize track with ${parameter}`,
-            new Date()
-          );
+            name: "setParameters",
+            category: "api",
+            timestamp: Date.now(),
+            ssrc: null,
+            details: `${this._uuid} parameterize track with ${parameter}`,
+            data: { parameters: newParameters },
+            ended: null,
+          });
           resolve();
         })
         .catch((err) => {

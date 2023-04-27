@@ -5,7 +5,6 @@ import {
   getNodeById,
   getTransceiver,
 } from "../../../modules/helper";
-import { addCustomEvent } from "../../../modules/metrics";
 
 class VideoAdjust extends Main {
   static item = "Adjust Video parameters";
@@ -116,7 +115,7 @@ class VideoAdjust extends Main {
     }
   }
 
-  execute(nodes, frames) {
+  execute(nodes, frames, reporter) {
     return new Promise((resolve, reject) => {
       const trackNodeId = this.getPropertyValueFor(KEYS.TRACK);
       const maxBitrate = this.getPropertyValueFor(KEYS.MAX_BITRATE);
@@ -177,13 +176,16 @@ class VideoAdjust extends Main {
       sender
         .setParameters(newParameters)
         .then(() => {
-          addCustomEvent(
+          reporter({
             win,
-            "set-parameters",
-            "playground",
-            `Parameterize video track ${trackLabel} with ${parameter}`,
-            new Date()
-          );
+            name: "setParameters",
+            category: "api",
+            details: `Parameterize video track ${trackLabel} with ${parameter}`,
+            ssrc: null,
+            timestamp: Date.now(),
+            data: { parameters: newParameters },
+            ended: null,
+          });
           resolve();
         })
         .catch((err) => {

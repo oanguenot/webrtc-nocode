@@ -105,6 +105,7 @@ class RestartIce extends Main {
         win,
         name: "restartIce",
         category: "api",
+        details: "",
         timestamp: Date.now(),
         ssrc: null,
         data: null,
