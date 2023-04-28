@@ -28,7 +28,7 @@ const createIFrame = (peerNode) => {
     iframe.addEventListener("load", () => {
       resolve(iframe.contentWindow);
     });
-    iframe.setAttribute("id", peerNode.id);
+    iframe.setAttribute("id", `iframe_${peerNode.id}`);
     iframe.src = `${window.location.href}/iframe.html`;
     iframesElt.appendChild(iframe);
   });
@@ -39,7 +39,7 @@ export const resetExecute = () => {
     addLog("play", "log", `reset frames`, null);
 
     Object.keys(frames).forEach((id) => {
-      const iframe = document.querySelector(`#${id}`);
+      const iframe = document.querySelector(`#iframe_${id}`);
       if (iframe) {
         iframe.parentNode.removeChild(iframe);
       }

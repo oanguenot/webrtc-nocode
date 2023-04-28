@@ -74,7 +74,7 @@ class End extends Main {
         }
 
         //Remove iframe element
-        const iframe = document.querySelector(`#${key}`);
+        const iframe = document.querySelector(`#iframe_${key}`);
         iframe.parentNode.removeChild(iframe);
         delete frames[key];
       });
