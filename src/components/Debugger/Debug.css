@@ -3,7 +3,8 @@
 }
 
 .debug-main {
-    height: calc(100% - 24px);
+    height: 100%;
+    overflow: auto;
 }
 
 .debug-layout {
@@ -104,6 +105,5 @@
 
 .debug-messages {
     margin-top: 12px;
-    height: calc(100% - 380px);
-    overflow: scroll;
+    height: 100%;
 }
