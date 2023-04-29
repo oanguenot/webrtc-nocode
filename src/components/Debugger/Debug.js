@@ -1,6 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import AppContext from "../../contexts/appContext";
-import EmptyState from "@atlaskit/empty-state";
 import { SimpleTag as Tag } from "@atlaskit/tag";
 
 import "./Debug.css";
@@ -9,7 +8,6 @@ import PageHeader from "@atlaskit/page-header";
 import ProgressBar from "@atlaskit/progress-bar";
 import Button, { ButtonGroup } from "@atlaskit/button";
 import { useStateWithCallbackLazy } from "use-state-with-callback";
-import { PLAY_STATE } from "../../reducers/appReducer";
 import { stringify } from "../../modules/helper";
 import { useWindowSize } from "../../modules/hooks";
 import {
@@ -18,7 +16,7 @@ import {
   createDataSeries,
   createGraph,
   destroyGraph,
-  startTimeline,
+  setStartTime,
 } from "../graph/graph";
 import { reset, run } from "../../actions/DebugActions";
 
@@ -46,7 +44,9 @@ function Debug({ dispatch }) {
   const [isReset, setIsReset] = useStateWithCallbackLazy(true);
   const size = useWindowSize();
 
-  const canvasRef = useRef();
+  useEffect(() => {
+    return () => destroyGraph();
+  }, []);
 
   useEffect(() => {
     if (appState.nbTasks > 0) {
@@ -55,15 +55,19 @@ function Debug({ dispatch }) {
   }, [appState.nbTasks, appState.tasksDone]);
 
   useEffect(() => {
-    createGraph(canvasRef.current);
-    return () => destroyGraph();
-  }, []);
-
-  useEffect(() => {
     if (appState.graph) {
-      const series = appState.graph;
-      Object.keys(series).forEach((set) => addSeries(set, series[set]));
+      const data = appState.graph;
+      Object.keys(data).forEach((peerId) => {
+        let canvas = document.querySelector(`#canvas-${peerId}`);
+        createGraph(peerId, canvas);
+        //startTimeline(peerId);
+        const series = data[peerId];
+        Object.keys(series).forEach((set) =>
+          addSeries(peerId, set, series[set])
+        );
+      });
     }
+    return () => destroyGraph();
   }, [appState.graph]);
 
   useEffect(() => {
@@ -76,7 +80,7 @@ function Debug({ dispatch }) {
     }
     setIsStarted(true, () => {
       setIsReset(false, () => {
-        startTimeline();
+        setStartTime(new Date());
         run(appState.objects, dispatch);
       });
     });
@@ -87,7 +91,7 @@ function Debug({ dispatch }) {
       setIsStarted(false, () => {
         setProgress(0, () => {
           reset(dispatch);
-          createGraph(canvasRef.current);
+          //createGraph(canvasRef.current);
           setIsReset(true, () => {
             resolve();
           });
@@ -137,8 +141,17 @@ function Debug({ dispatch }) {
                   width: size.width || window.innerWidth,
                 }}
               >
-                <div className="graph">
-                  <canvas className="canvasGraph" ref={canvasRef} />
+                <div>
+                  {appState.graph &&
+                    Object.keys(appState.graph).map((peerId, index) => (
+                      <div key={index} className="graph">
+                        <p className="debug-iframes-title">Peer-{peerId}</p>
+                        <canvas
+                          className="canvasGraph"
+                          id={`canvas-${peerId}`}
+                        />
+                      </div>
+                    ))}
                 </div>
                 <div className="debug-columns">
                   <p className="debug-iframes-title">IFrames</p>

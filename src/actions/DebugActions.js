@@ -39,10 +39,10 @@ export const incrementTaskDone = (dispatch) => {
   });
 };
 
-export const addPointsInGraph = (passthrough, timestamp, dispatch) => {
+export const addPointsInGraph = (peerId, passthrough, timestamp, dispatch) => {
   dispatch({
     type: DEBUG_ACTIONS.ADD_POINTS_IN_GRAPH,
-    payload: { passthrough, timestamp },
+    payload: { peerId, passthrough, timestamp },
   });
 };
 

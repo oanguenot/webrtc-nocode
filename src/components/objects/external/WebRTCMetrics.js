@@ -112,12 +112,18 @@ class WebRTCMetrics extends Main {
           "outbound-rtp": outbound,
           "remote-inbound-rtp": remoteInbound,
           "remote-outbound-rtp": remoteOutbound,
+          //transport: ["ps:bytesSent.kbits", "ps:bytesReceived.kbits"],
         },
       });
 
       win.probe.onreport = (report) => {
         // Do something with a report collected (JSON)
-        addPointsInGraph(report.passthrough, report.timestamp, dispatch);
+        addPointsInGraph(
+          peerNode.id,
+          report.passthrough,
+          report.timestamp,
+          dispatch
+        );
       };
 
       win.metrics.startAllProbes();

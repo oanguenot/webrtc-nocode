@@ -373,9 +373,15 @@ const appReducer = (state = initialAppState, action) => {
       };
     }
     case DEBUG_ACTIONS.ADD_POINTS_IN_GRAPH: {
+      const peerId = action.payload.peerId;
       const passthrough = action.payload.passthrough;
       const timestamp = action.payload.timestamp;
       const newGraph = JSON.parse(JSON.stringify(state.graph));
+
+      if (!(peerId in newGraph)) {
+        newGraph[peerId] = {};
+      }
+
       Object.keys(passthrough).forEach((key) => {
         const datasets = passthrough[key];
         Object.keys(datasets).forEach((set) => {
@@ -389,10 +395,10 @@ const appReducer = (state = initialAppState, action) => {
           const ssrc = data[data.length - 1].split("_")[1];
           const id = `${key} (${kind}${type}-${ssrc})`;
 
-          if (!(id in newGraph)) {
-            newGraph[id] = [];
+          if (!(id in newGraph[peerId])) {
+            newGraph[peerId][id] = [];
           }
-          newGraph[id].push({ x: timestamp, y: datasets[set] });
+          newGraph[peerId][id].push({ x: timestamp, y: datasets[set] });
         });
       });
       return {

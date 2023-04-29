@@ -6,7 +6,8 @@ import { nanoid } from "nanoid";
 
 Chart.register(annotationPlugin);
 
-let chart;
+let charts = {};
+let startTime = null;
 
 export const CHART_COLORS = [
   "#dc3545",
@@ -39,7 +40,7 @@ const getDefaultConfig = () => ({
   options: {
     plugins: {
       title: {
-        display: true,
+        display: false,
         text: "Metrics",
       },
       annotation: {
@@ -58,8 +59,8 @@ const getDefaultConfig = () => ({
           },
           unit: "second",
         },
-        min: DateTime.now().plus({ second: 0 }).valueOf(),
-        max: DateTime.now().plus({ second: 5 }).valueOf(),
+        min: DateTime.now().minus({ second: 5 }).valueOf(),
+        //max: DateTime.now().plus({ second: 5 }).valueOf(),
       },
       y: {
         type: "linear",
@@ -69,13 +70,18 @@ const getDefaultConfig = () => ({
   },
 });
 
-export const startTimeline = () => {
-  if (chart) {
-    chart.config.options.scales.x.min = DateTime.now().valueOf();
-    chart.config.options.scales.x.max = DateTime.now()
+export const setStartTime = (time) => {
+  startTime = time;
+};
+
+export const startTimeline = (chartId) => {
+  if (charts[chartId]) {
+    charts[chartId].config.options.scales.x.min =
+      DateTime.fromJSDate(startTime).valueOf();
+    charts[chartId].config.options.scales.x.max = DateTime.now()
       .plus({ second: 5 })
       .valueOf();
-    chart.update();
+    charts[chartId].update();
   }
 };
 
@@ -112,27 +118,30 @@ export const addAPICallToGraph = (series) => {
     });
   }
 
-  if (chart) {
-    chart.config.options.plugins.annotation.annotations = annotations;
-    chart.update();
+  Object.keys(charts).forEach((chartId) => {
+    if (charts[chartId]) {
+      charts[chartId].config.options.plugins.annotation.annotations =
+        annotations;
+      charts[chartId].update();
+    }
+  });
+};
+
+export const createGraph = (peerId, canvas) => {
+  if (!charts[peerId]) {
+    charts[peerId] = new Chart(canvas, getDefaultConfig());
   }
 };
 
-export const createGraph = (canvas) => {
-  if (chart) {
-    chart.destroy();
-  }
-  chart = new Chart(canvas, getDefaultConfig());
-};
-
-export const destroyGraph = () => {
-  if (chart) {
-    chart.destroy();
+export const destroyGraph = (peerId) => {
+  if (charts[peerId]) {
+    charts[peerId].destroy();
+    delete charts[peerId];
   }
 };
 
-export const addSeries = (name, dataSeries) => {
-  const existingSets = chart.data.datasets;
+export const addSeries = (peerId, name, dataSeries) => {
+  const existingSets = charts[peerId].data.datasets;
 
   // Check if series already exist
   const series = existingSets.find((set) => set.label === name);
@@ -144,10 +153,10 @@ export const addSeries = (name, dataSeries) => {
   }
 
   //  Adapt x timeline
-  chart.config.options.scales.x.max = DateTime.now()
+  charts[peerId].config.options.scales.x.max = DateTime.now()
     .plus({ second: 5 })
     .valueOf();
-  chart.update();
+  charts[peerId].update();
 };
 
 const createDataSeries = (name, data) => {
