@@ -112,7 +112,7 @@ class WebRTCMetrics extends Main {
           "outbound-rtp": outbound,
           "remote-inbound-rtp": remoteInbound,
           "remote-outbound-rtp": remoteOutbound,
-          //transport: ["ps:bytesSent.kbits", "ps:bytesReceived.kbits"],
+          transport: ["ps:bytesSent.kbits", "ps:bytesReceived.kbits"],
         },
       });
 
