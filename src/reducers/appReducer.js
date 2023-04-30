@@ -385,20 +385,29 @@ const appReducer = (state = initialAppState, action) => {
       Object.keys(passthrough).forEach((key) => {
         const datasets = passthrough[key];
         Object.keys(datasets).forEach((set) => {
-          const data = set.split("-");
-          const type =
-            data[0] === "inbound" ||
-            (data[0] === "remote" && data[1] === "outbound")
-              ? "in"
-              : "out";
-          const kind = data[data.length - 1].split("_")[0].substring(0, 1);
-          const ssrc = data[data.length - 1].split("_")[1];
+          const identifiers = set.split("=");
+          const indexOfKind = identifiers[0].lastIndexOf("-");
+          const typeOfReport = identifiers[0].substring(0, indexOfKind);
+          const kindOfReport = identifiers[0].substring(indexOfKind + 1);
+          const isInbound =
+            typeOfReport === "inbound" || typeOfReport === "remote-outbound";
+          const isOutbound =
+            typeOfReport === "outbound" || typeOfReport === "remote-inbound";
+
+          const type = isInbound ? "in" : isOutbound ? "out" : "data";
+          const kind = kindOfReport.substring(0, 1);
+          const ssrc = identifiers[1];
           const id = `${key} (${kind}${type}-${ssrc})`;
 
-          if (!(id in newGraph[peerId])) {
-            newGraph[peerId][id] = [];
+          if (
+            (!(id in newGraph[peerId]) && datasets[set] !== 0) ||
+            id in newGraph[peerId]
+          ) {
+            if (!(id in newGraph[peerId])) {
+              newGraph[peerId][id] = [];
+            }
+            newGraph[peerId][id].push({ x: timestamp, y: datasets[set] });
           }
-          newGraph[peerId][id].push({ x: timestamp, y: datasets[set] });
         });
       });
       return {
