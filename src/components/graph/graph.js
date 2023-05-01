@@ -29,7 +29,6 @@ export const CHART_COLORS = [
   "#e14eca",
   "#8549ba",
   "#5603ad",
-  "#fff",
   "#000",
   "#795548",
 ];
@@ -129,15 +128,17 @@ export const addAPICallToGraph = (series) => {
 
 export const createGraph = (peerId, canvas) => {
   if (!charts[peerId]) {
+    console.log(">>>CREATE graph", charts, peerId);
     charts[peerId] = new Chart(canvas, getDefaultConfig());
   }
 };
 
-export const destroyGraph = (peerId) => {
-  if (charts[peerId]) {
-    charts[peerId].destroy();
-    delete charts[peerId];
-  }
+export const destroyGraph = () => {
+  console.log(">>>destroy graph");
+  Object.keys(charts).forEach((chartId) => {
+    charts[chartId].destroy();
+    delete charts[chartId];
+  });
 };
 
 export const addSeries = (peerId, name, dataSeries) => {

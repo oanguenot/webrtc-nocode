@@ -45,7 +45,9 @@ function Debug({ dispatch }) {
   const size = useWindowSize();
 
   useEffect(() => {
-    return () => destroyGraph();
+    return () => {
+      destroyGraph();
+    };
   }, []);
 
   useEffect(() => {
@@ -67,7 +69,7 @@ function Debug({ dispatch }) {
         );
       });
     }
-    return () => destroyGraph();
+    //return () => destroyGraph();
   }, [appState.graph]);
 
   useEffect(() => {
