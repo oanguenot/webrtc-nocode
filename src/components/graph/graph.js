@@ -128,13 +128,11 @@ export const addAPICallToGraph = (series) => {
 
 export const createGraph = (peerId, canvas) => {
   if (!charts[peerId]) {
-    console.log(">>>CREATE graph", charts, peerId);
     charts[peerId] = new Chart(canvas, getDefaultConfig());
   }
 };
 
 export const destroyGraph = () => {
-  console.log(">>>destroy graph");
   Object.keys(charts).forEach((chartId) => {
     charts[chartId].destroy();
     delete charts[chartId];

@@ -160,32 +160,34 @@ const executeANode = (initialEvent, currentNode, nodes) => {
       }
     };
 
-    currentNode.execute(nodes, frames, reporter).then(async (results) => {
-      incrementTaskDone(dispatcher);
+    currentNode
+      .execute(nodes, frames, reporter, createMediaElementInIFrame)
+      .then(async (results) => {
+        incrementTaskDone(dispatcher);
 
-      const nextNode = getNodeById(currentNode.linksOutput[0], nodes);
-      if (!nextNode) {
-        addLog(
-          "play",
-          "log",
-          `node ${initialEvent.node}|${initialEvent.id} has terminated its flow`,
-          null
-        );
+        const nextNode = getNodeById(currentNode.linksOutput[0], nodes);
+        if (!nextNode) {
+          addLog(
+            "play",
+            "log",
+            `node ${initialEvent.node}|${initialEvent.id} has terminated its flow`,
+            null
+          );
 
-        if (currentNode.node === NODES.END) {
-          terminate(results, dispatcher);
+          if (currentNode.node === NODES.END) {
+            terminate(results, dispatcher);
+          }
+          resolve();
+        } else {
+          addLog(
+            "play",
+            "log",
+            `go to next node ${nextNode.node}|${nextNode.id}`,
+            null
+          );
+          return executeANode(initialEvent, nextNode, nodes);
         }
-        resolve();
-      } else {
-        addLog(
-          "play",
-          "log",
-          `go to next node ${nextNode.node}|${nextNode.id}`,
-          null
-        );
-        return executeANode(initialEvent, nextNode, nodes);
-      }
-    });
+      });
   });
 };
 

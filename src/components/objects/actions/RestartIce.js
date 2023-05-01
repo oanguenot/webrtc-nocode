@@ -93,7 +93,14 @@ class RestartIce extends Main {
       win.pc.addEventListener(
         "negotiationneeded",
         async () => {
-          await callNode.execute(nodes, frames, reporter, invertedCall);
+          await callNode.execute(
+            nodes,
+            frames,
+            reporter,
+            null,
+            invertedCall,
+            true
+          );
           resolve();
         },
         { once: true }

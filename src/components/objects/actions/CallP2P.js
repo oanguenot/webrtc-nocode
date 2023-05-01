@@ -94,10 +94,17 @@ class CallP2P extends Main {
     }
   }
 
-  execute(nodes, frames, reporter, invertedCall = false) {
+  execute(
+    nodes,
+    frames,
+    reporter,
+    callback,
+    invertedCall = false,
+    withICENegotiation = true
+  ) {
     return new Promise(async (resolve, reject) => {
-      const waitForIce = (peer, id) => {
-        return new Promise((resolve, reject) => {
+      const waitForIce = (peer, _id) => {
+        return new Promise((resolve, _reject) => {
           const ices = [];
 
           peer.addEventListener("icecandidate", (event) => {
@@ -176,7 +183,10 @@ class CallP2P extends Main {
         ended: null,
       });
 
-      const callerIces = await waitForIce(callerWin.pc, callerNode.id);
+      let callerIces = null;
+      if (withICENegotiation) {
+        callerIces = await waitForIce(callerWin.pc, callerNode.id);
+      }
 
       await calleeWin.pc.setRemoteDescription(rtcOfferSessionDescription);
 
@@ -227,22 +237,27 @@ class CallP2P extends Main {
         ended: null,
       });
 
-      const calleeIces = await waitForIce(calleeWin.pc, calleeNode.id);
+      let calleeIces = null;
+      if (withICENegotiation) {
+        calleeIces = await waitForIce(calleeWin.pc, calleeNode.id);
+      }
 
-      callerIces.forEach((ice) => {
-        calleeWin.pc.addIceCandidate(ice);
+      if (callerIces) {
+        callerIces.forEach((ice) => {
+          calleeWin.pc.addIceCandidate(ice);
 
-        reporter({
-          win: calleeWin,
-          name: "addIceCandidate",
-          category: "api",
-          details: "Add a local candidate to the remote RTCPeerConnection",
-          timestamp: Date.now(),
-          ssrc: null,
-          data: ice,
-          ended: null,
+          reporter({
+            win: calleeWin,
+            name: "addIceCandidate",
+            category: "api",
+            details: "Add a local candidate to the remote RTCPeerConnection",
+            timestamp: Date.now(),
+            ssrc: null,
+            data: ice,
+            ended: null,
+          });
         });
-      });
+      }
 
       await callerWin.pc.setRemoteDescription(rtcAnswerSessionDescription);
 
@@ -257,20 +272,23 @@ class CallP2P extends Main {
         ended: null,
       });
 
-      calleeIces.forEach((ice) => {
-        callerWin.pc.addIceCandidate(ice);
+      if (calleeIces) {
+        calleeIces.forEach((ice) => {
+          callerWin.pc.addIceCandidate(ice);
 
-        reporter({
-          win: callerWin,
-          name: "addIceCandidate",
-          category: "api",
-          details: "Add a remote candidate to the local RTCPeerConnection",
-          timestamp: new Date(),
-          ssrc: null,
-          data: ice,
-          ended: null,
+          reporter({
+            win: callerWin,
+            name: "addIceCandidate",
+            category: "api",
+            details: "Add a remote candidate to the local RTCPeerConnection",
+            timestamp: new Date(),
+            ssrc: null,
+            data: ice,
+            ended: null,
+          });
         });
-      });
+      }
+
       resolve();
     });
   }

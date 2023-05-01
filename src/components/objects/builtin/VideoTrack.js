@@ -14,7 +14,7 @@ class VideoTrack extends Main {
     this._inputs = 0;
     this._outputs = 1;
     this._acceptInputs = [];
-    this._acceptOutputs = [NODES.PEER, NODES.REPLACE];
+    this._acceptOutputs = [NODES.PEER, NODES.REPLACE, NODES.ADDTRACK];
     this._info = [
       { key: KEYS.NODE, value: NODES.TRACK },
       { key: KEYS.KIND, value: KIND.VIDEO },
@@ -161,10 +161,6 @@ class VideoTrack extends Main {
             break;
         }
 
-        // const constraints = {
-        //   frameRate: { exact: 10 },
-        // };
-        // await videoTrack.applyConstraints(constraints);
         const stream = new win.MediaStream();
         if (videoTrack) {
           videoTrack.__wp = this.id;

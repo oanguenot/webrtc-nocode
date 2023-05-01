@@ -18,6 +18,7 @@ import SDPMunging from "../components/objects/builtin/SDPMunging";
 import AudioMute from "../components/objects/actions/AudioMute";
 import VideoConstraints from "../components/objects/actions/VideoConstraints";
 import ReplaceTrack from "../components/objects/actions/ReplaceTrack";
+import AddTrack from "../components/objects/actions/AddTrack";
 
 const ObjectBuilder = {
   Ready: Ready,
@@ -41,6 +42,7 @@ const ObjectBuilder = {
   RestartIce: RestartIce,
   AudioMute: AudioMute,
   ReplaceTrack: ReplaceTrack,
+  AddTrack: AddTrack,
   End: End,
 };
 
@@ -63,6 +65,7 @@ const convertNodeNameToClass = (name, kind) => {
     "action.restart": RestartIce,
     "action.replace": ReplaceTrack,
     "action.mute": kind === "audio" ? AudioMute : AudioMute,
+    "action.addTrack": AddTrack,
     "action.end": End,
   };
 

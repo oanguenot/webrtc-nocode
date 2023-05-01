@@ -6,25 +6,26 @@ import {
   getNodeById,
   getNodesFromIds,
   getTransceiver,
+  stringify,
 } from "../../../modules/helper";
 
-class ReplaceTrack extends Main {
-  static item = "Replace a Track";
-  static description = "Replace an existing track by a new one";
-  static icon = "exchange-alt";
+class AddTrack extends Main {
+  static item = "Add a Track";
+  static description = "Add a track during a call";
+  static icon = "plus";
   static section = "actions";
-  static name = "ReplaceTrack";
+  static name = "AddTrack";
 
   constructor(x, y) {
     super(x, y);
     this._inputs = 2;
     this._outputs = 1;
     this._info = [
-      { key: KEYS.NODE, value: NODES.REPLACE },
+      { key: KEYS.NODE, value: NODES.ADDTRACK },
       {
         key: KEYS.INFO,
         value:
-          "Replace an existing track in a RTCPeerConnection. Equivalent to replaceTrack",
+          "Add a new track in a RTCPeerConnection. Equivalent to addTransceiver",
       },
     ];
     this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS, NODES.TRACK];
@@ -34,9 +35,17 @@ class ReplaceTrack extends Main {
         prop: KEYS.NAME,
         label: "Name",
         type: KEY_TYPE.TEXT,
-        value: `Replace-${generateCustomId4()}`,
-        description: "Name of the Replacement",
-        default: "Replace",
+        value: `Add-${generateCustomId4()}`,
+        description: "Name of the Adding",
+        default: "Add",
+      },
+      {
+        prop: KEYS.CALL,
+        label: "Call",
+        type: KEY_TYPE.ENUM,
+        enum: [{ label: "None", value: "none" }],
+        value: "none",
+        description: "Choose the call to update",
       },
       {
         prop: KEYS.PEER,
@@ -46,20 +55,9 @@ class ReplaceTrack extends Main {
         value: "none",
         description: "Choose the RTCPeerConnection to call",
       },
-      {
-        prop: KEYS.TRACK,
-        label: "Replace Track",
-        type: KEY_TYPE.ENUM,
-        enum: [
-          { label: "No source", value: "none" },
-          { label: "Null", value: "null" },
-        ],
-        value: "none",
-        description: "Choose the track to replace",
-      },
     ];
     this._sources = [
-      `${KEYS.NAME}:${KEYS.TRACK}@${NODES.TRACK}`,
+      `${KEYS.NAME}:${KEYS.CALL}@${NODES.CALL}`,
       `${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`,
     ];
   }
@@ -71,8 +69,8 @@ class ReplaceTrack extends Main {
     switch (prop) {
       case KEYS.NAME:
         return property.value;
-      case KEYS.TRACK:
-        return property.value === "none" ? "[no source]" : `[${label}]`;
+      case KEYS.CALL:
+        return property.value === "none" ? "no call" : `[${label}]`;
       case KEYS.PEER:
         return property.value === "none" ? "[no peer]" : `[${label}]`;
       default:
@@ -80,14 +78,9 @@ class ReplaceTrack extends Main {
     }
   }
 
-  execute(nodes, frames, reporter) {
+  execute(nodes, frames, reporter, createMediaElementInIFrame) {
     return new Promise(async (resolve, _reject) => {
-      const trackNodeId = this.getPropertyValueFor(KEYS.TRACK);
-      const trackNode = getNodeById(trackNodeId, nodes);
-      const fromProperty = trackNode.getPropertyFor(KEYS.FROM);
-      const trackLabel = trackNode.getLabelFromPropertySelect(fromProperty);
-
-      // Get new track to replace
+      // Get new track to add
       const inputNodes = getNodesFromIds(this.linksInput, nodes);
       const newTrackNode = findNodeByName(NODES.TRACK, inputNodes);
       const newFromProperty = newTrackNode.getPropertyFor(KEYS.FROM);
@@ -95,53 +88,66 @@ class ReplaceTrack extends Main {
         newTrackNode.getLabelFromPropertySelect(newFromProperty);
       const peerId = this.getPropertyValueFor(KEYS.PEER);
 
+      const callId = this.getPropertyValueFor(KEYS.CALL);
+      const callNode = getNodeById(callId, nodes);
+      const calleeId = callNode.getPropertyValueFor(KEYS.RECIPIENT);
+      let invertedCall = false;
+      if (calleeId === peerId) {
+        invertedCall = true;
+      }
+
       // Deduce peer node from track node
-      let transceiver = null;
       const win = frames[peerId];
       const pc = win.pc;
       if (pc) {
-        const transceivers = win.pc.getTransceivers();
-        transceiver = getTransceiver(transceivers, trackNodeId);
-      }
-      if (!transceiver) {
-        console.warn(
-          `[replace] don't find transceiver for track ${trackNodeId}`
-        );
-        resolve();
-        return;
-      }
-
-      // Execute new track
-      const newStream = await newTrackNode.execute(win);
-      const [track] = newStream.getTracks();
-      const sender = transceiver.sender;
-      if (sender && track) {
         try {
-          // Replace the track
-          await sender.replaceTrack(track);
+          const newStream = await newTrackNode.execute(win);
+          const [track] = newStream.getTracks();
 
-          // Update the media element
-          win.document.querySelector(`#local-${trackNodeId}`).srcObject =
+          win.pc.addEventListener(
+            "negotiationneeded",
+            async () => {
+              await callNode.execute(
+                nodes,
+                frames,
+                reporter,
+                null,
+                invertedCall,
+                false
+              );
+              resolve();
+            },
+            { once: true }
+          );
+
+          pc.addTransceiver(track, {});
+
+          // Create media element in IFrame
+          createMediaElementInIFrame(
+            win,
+            newTrackNode.getInfoValueFor(KEYS.KIND),
+            newTrackNode.id,
+            true
+          );
+
+          win.document.querySelector(`#local-${newTrackNode.id}`).srcObject =
             newStream;
-          win.document.querySelector(
-            `#local-${trackNodeId}`
-          ).id = `local-${newTrackNode.id}`;
 
           // Send custom event
           reporter({
             win,
-            name: "replaceTrack",
+            name: "addTransceiver",
             category: "api",
-            details: `Replace track ${trackLabel} by track ${newTrackLabel}`,
+            details: `add new track ${newTrackLabel}`,
             timestamp: Date.now(),
             ssrc: null,
-            data: null,
+            data: stringify(track),
             ended: null,
           });
 
           resolve();
         } catch (err) {
-          console.warn("[encode] error", err);
+          console.warn("[addTrack] error", err);
           resolve();
         }
       }
@@ -158,20 +164,19 @@ class ReplaceTrack extends Main {
         </div>
          <div class="box">
          <div class="object-box-line">
+            <i id="call-color-${this._uuid}" class="fas fa-phone-volume ${
+      this.renderColorIsMissingProp(KEYS.CALL) ? "red" : ""
+    }"></i><span class="object-details-value ${
+      this.renderColorIsMissingProp(KEYS.CALL) ? "red" : ""
+    }" id="call-${this._uuid}">${this.renderProp(KEYS.CALL)}</span>
+            </div>
+         <div class="object-box-line">
             <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
       this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
     }"></i><span class="object-details-value ${
       this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
     }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
             </div>
-            <div class="object-box-line">
-            <i id="track-color-${this._uuid}" class="fas fa-video ${
-      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
-    }"></i><span class="object-details-value ${
-      this.renderColorIsMissingProp(KEYS.TRACK) ? "red" : ""
-    }" id="track-${this._uuid}">${this.renderProp(KEYS.TRACK)}</span>
-            </div>
-            
              <div class="object-footer">
                 <span class="object-node object-title-box">${this.node}
                 </span>    
@@ -182,4 +187,4 @@ class ReplaceTrack extends Main {
   }
 }
 
-export default ReplaceTrack;
+export default AddTrack;

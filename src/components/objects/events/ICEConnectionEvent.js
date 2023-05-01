@@ -66,7 +66,7 @@ class ICEConnectionEvent extends Main {
         return `on ${label}`;
       }
       case KEYS.PEER:
-        return property.value === "none" ? "no peer" : `[${label}]`;
+        return property.value === "none" ? "[no peer]" : `[${label}]`;
       default:
         return "";
     }
@@ -88,17 +88,17 @@ class ICEConnectionEvent extends Main {
         </div>
         <div class="box">
             <div class="object-box-line">
-            <i class="fas fa-chevron-right"></i>
-            <span class="object-details-value" id="iceState-${
-              this._uuid
-            }">${this.renderProp(KEYS.ICESTATE)}</span>
-            </div>
-             <div class="object-box-line">
             <i id="peer-color-${this._uuid}" class="fas fa-portrait ${
       this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
     }"></i><span class="object-details-value ${
       this.renderColorIsMissingProp(KEYS.PEER) ? "red" : ""
     }" id="peer-${this._uuid}">${this.renderProp(KEYS.PEER)}</span>
+            </div>
+            <div class="object-box-line">
+              <i class="fas fa-chevron-right"></i>
+              <span class="object-details-value" id="iceState-${
+                this._uuid
+              }">${this.renderProp(KEYS.ICESTATE)}</span>
             </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${
