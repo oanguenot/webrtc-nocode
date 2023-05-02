@@ -14,7 +14,6 @@ class VideoTrack extends Main {
     this._inputs = 0;
     this._outputs = 1;
     this._acceptInputs = [];
-    this._acceptOutputs = [NODES.PEER, NODES.REPLACE, NODES.ADDTRACK];
     this._info = [
       { key: KEYS.NODE, value: NODES.TRACK },
       { key: KEYS.KIND, value: KIND.VIDEO },

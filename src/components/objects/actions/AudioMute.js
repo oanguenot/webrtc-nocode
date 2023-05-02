@@ -22,7 +22,6 @@ class AudioMute extends Main {
       },
     ];
     this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS];
-    this._acceptOutputs = [NODES.ACTIONS];
     this._properties = [
       {
         prop: KEYS.NAME,

@@ -29,7 +29,6 @@ class Ready extends Main {
         default: "ON READY",
       },
     ];
-    this._acceptOutputs = [NODES.ACTIONS];
     this._acceptInputs = [];
     this._sources = [];
   }

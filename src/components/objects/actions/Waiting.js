@@ -14,7 +14,6 @@ class Waiting extends Main {
     this._inputs = 1;
     this._outputs = 1;
     this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS];
-    this._acceptOutputs = [NODES.ACTIONS];
     this._info = [
       { key: KEYS.NODE, value: "action.wait" },
       {

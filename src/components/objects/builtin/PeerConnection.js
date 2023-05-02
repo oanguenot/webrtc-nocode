@@ -26,7 +26,6 @@ class PeerConnection extends Main {
     this._inputs = 2;
     this._outputs = 1;
     this._acceptInputs = [NODES.TRACK];
-    this._acceptOutputs = [NODES.WATCH, NODES.ANALYZE];
     this._info = [
       { key: KEYS.NODE, value: NODES.PEER },
       {

@@ -22,7 +22,6 @@ class SDPMunging extends Main {
       },
     ];
     this._acceptInputs = [];
-    this._acceptOutputs = [NODES.CALL];
     this._properties = [
       {
         prop: KEYS.NAME,

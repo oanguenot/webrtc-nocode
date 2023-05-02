@@ -29,7 +29,6 @@ class AddTrack extends Main {
       },
     ];
     this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS, NODES.TRACK];
-    this._acceptOutputs = [NODES.ACTIONS];
     this._properties = [
       {
         prop: KEYS.NAME,

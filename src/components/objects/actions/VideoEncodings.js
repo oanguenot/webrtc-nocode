@@ -27,7 +27,6 @@ class VideoEncodings extends Main {
       },
     ];
     this._acceptInputs = [NODES.PEER, NODES.EVENTS, NODES.ACTIONS];
-    this._acceptOutputs = [NODES.ACTIONS];
     this._properties = [
       {
         prop: KEYS.NAME,

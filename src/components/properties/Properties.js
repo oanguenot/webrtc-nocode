@@ -127,22 +127,6 @@ function Properties({ dispatch }) {
             </tbody>
           </table>
         )}
-        {appState.selected.acceptOutput.length > 0 && (
-          <table>
-            <tbody>
-              <tr>
-                <td className="col-label-accept">Accept Output:</td>
-                <td className="col-value-accept">
-                  <TagGroup alignment="start">
-                    {appState.selected.acceptOutput.map((name, key) => (
-                      <Tag color="blueLight" key={key} text={name}></Tag>
-                    ))}
-                  </TagGroup>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        )}
       </div>
     );
   };

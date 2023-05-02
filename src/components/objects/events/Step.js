@@ -13,7 +13,6 @@ class Step extends Main {
     this._inputs = 0;
     this._outputs = 1;
     this._acceptInputs = [];
-    this._acceptOutputs = ["*"];
     this._info = [
       { key: "node", value: "step" },
       { key: "uuid", value: nanoid(15) },

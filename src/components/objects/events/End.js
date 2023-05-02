@@ -20,7 +20,6 @@ class End extends Main {
       },
     ];
     this._acceptInputs = ["*"];
-    this._acceptOutputs = [];
     this._properties = [
       {
         prop: KEYS.NAME,

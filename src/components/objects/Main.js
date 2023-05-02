@@ -75,10 +75,6 @@ class Main {
     return this._acceptInputs;
   }
 
-  get acceptOutput() {
-    return this._acceptOutputs;
-  }
-
   get node() {
     const infoNode = this._info.find((info) => info.key === KEYS.NODE);
     return infoNode ? infoNode.value : "Unknown";
@@ -172,19 +168,6 @@ class Main {
     }
 
     const accepts = this._acceptInputs.map((acceptName) =>
-      acceptName.replace(/.\*$/, "")
-    );
-    return includes(nodeName, accepts);
-  }
-
-  acceptOutputConnection(nodeName) {
-    if (this._linksOutputs.length >= this._outputs) {
-      return false;
-    }
-    if (this._acceptOutputs.includes("*")) {
-      return true;
-    }
-    const accepts = this._acceptOutputs.map((acceptName) =>
       acceptName.replace(/.\*$/, "")
     );
     return includes(nodeName, accepts);

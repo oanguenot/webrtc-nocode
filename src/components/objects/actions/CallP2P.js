@@ -21,7 +21,6 @@ class CallP2P extends Main {
       },
     ];
     this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS, NODES.MUNGING];
-    this._acceptOutputs = [NODES.ACTIONS];
     this._properties = [
       {
         prop: KEYS.NAME,

@@ -49,7 +49,6 @@ class ICEConnectionEvent extends Main {
         description: "Choose the Peer to check",
       },
     ];
-    this._acceptOutputs = [NODES.ACTIONS];
     this._acceptInputs = [];
     this._sources = [`${KEYS.NAME}:${KEYS.PEER}@${NODES.PEER}`];
   }
