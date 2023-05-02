@@ -52,7 +52,6 @@ class ReplaceTrack extends Main {
         type: KEY_TYPE.ENUM,
         enum: [
           { label: "No source", value: "none" },
-          { label: "Null", value: "null" },
         ],
         value: "none",
         description: "Choose the track to replace",
@@ -119,8 +118,6 @@ class ReplaceTrack extends Main {
         console.warn(
           `[replace] find an empty transceiver for track ${trackNodeId}`
         );
-        resolve();
-        return;
       }
 
       // Execute new track
@@ -141,7 +138,7 @@ class ReplaceTrack extends Main {
           newStream;
         win.document.querySelector(
           `#local-${trackNodeId}`
-        ).id = `local-${newTrackNode.id}`;
+        ).id = `local-${newTrackNode ? newTrackNode.id : "null"}`;
 
         // Send custom event
         reporter({

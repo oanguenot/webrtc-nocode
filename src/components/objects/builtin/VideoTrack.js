@@ -38,6 +38,7 @@ class VideoTrack extends Main {
         type: KEY_TYPE.ENUM,
         enum: [
           { label: "None", value: "none" },
+          { label: "Null", value: "null" },
           { label: "Fake", value: "[fake]" },
           { label: "Movie 576p", value: "576p" },
           { label: "Movie 720p", value: "720p" },
@@ -79,7 +80,12 @@ class VideoTrack extends Main {
       case KEYS.NAME:
         return property.value;
       case KEYS.FROM:
-        return property.value !== "none" ? `[${label}]` : label;
+        if(property.value === "none") {
+          return `[${label}]`;
+        } else if(property.value === "null") {
+          return `[Empty]`;
+        }
+        return label;
       default:
         return "";
     }
@@ -156,6 +162,9 @@ class VideoTrack extends Main {
           case "1080p":
           case "4k":
             videoTrack = await getVideoFromPlayer(videoType);
+            break;
+          case "null":
+            // Don't return any track
             break;
           default:
             break;

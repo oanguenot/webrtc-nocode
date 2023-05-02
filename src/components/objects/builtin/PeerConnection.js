@@ -177,7 +177,7 @@ class PeerConnection extends Main {
           });
 
           //win.pc.addTrack(track);
-          win.pc.addTransceiver(track, {
+          const transceiver = win.pc.addTransceiver(track, {
             // sendEncodings: [
             //   { rid: "q", scaleResolutionDownBy: 4.0, scalabilityMode: "L1T3" },
             //   { rid: "h", scaleResolutionDownBy: 2.0, scalabilityMode: "L1T3" },
@@ -190,6 +190,9 @@ class PeerConnection extends Main {
             // ],
             //sendEncodings: [{ scalabilityMode: "L2T3" }],
           });
+
+          // Store track id in private property
+          transceiver.sender.__wp = track.__wp;
         });
       }
       resolve();

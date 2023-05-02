@@ -128,7 +128,8 @@ export const getTransceiver = (transceivers, trackNodeId) => {
 
     const track = sender.track;
     if (!track) {
-      return false;
+      // If no track, try to find the transceiver from the sender
+      return sender.__wp === trackNodeId;
     }
     return track.__wp === trackNodeId;
   });
