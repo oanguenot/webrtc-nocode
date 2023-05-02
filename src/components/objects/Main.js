@@ -23,8 +23,8 @@ class Main {
     this._posY = posY;
     this._uuid = nanoid();
     this._acceptInputs = [];
-    this._acceptOutputs = [];
     this._sources = []; // Import data from these nodes
+    this._executed = false;
   }
 
   get inputs() {
@@ -87,6 +87,10 @@ class Main {
 
   get sources() {
     return this._sources;
+  }
+
+  get executed() {
+    return this._executed;
   }
 
   getInfoValueFor(name) {

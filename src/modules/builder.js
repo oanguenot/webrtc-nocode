@@ -19,6 +19,7 @@ import AudioMute from "../components/objects/actions/AudioMute";
 import VideoConstraints from "../components/objects/actions/VideoConstraints";
 import ReplaceTrack from "../components/objects/actions/ReplaceTrack";
 import AddTrack from "../components/objects/actions/AddTrack";
+import Aggregator from "../components/objects/events/Aggregator";
 
 const ObjectBuilder = {
   Ready: Ready,
@@ -43,6 +44,7 @@ const ObjectBuilder = {
   AudioMute: AudioMute,
   ReplaceTrack: ReplaceTrack,
   AddTrack: AddTrack,
+  Aggregator: Aggregator,
   End: End,
 };
 
@@ -66,6 +68,7 @@ const convertNodeNameToClass = (name, kind) => {
     "action.replace": ReplaceTrack,
     "action.mute": kind === "audio" ? AudioMute : AudioMute,
     "action.addTrack": AddTrack,
+    "action.aggregator": Aggregator,
     "action.end": End,
   };
 

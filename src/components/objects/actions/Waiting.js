@@ -87,6 +87,7 @@ class Waiting extends Main {
       });
 
       setTimeout(() => {
+        this._executed = true;
         resolve();
       }, delay);
     });

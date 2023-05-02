@@ -17,6 +17,7 @@ export const NODES = {
   READY: "event.ready",
   ICE: "event.ice",
   END: "action.end",
+  AGGREGATOR: "action.aggregator",
   REPLACE: "action.replace",
   ADDTRACK: "action.addTrack",
 };
