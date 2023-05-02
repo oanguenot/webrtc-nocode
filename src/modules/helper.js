@@ -119,6 +119,7 @@ export const getTURNCredentials = (
 };
 
 export const getTransceiver = (transceivers, trackNodeId) => {
+  // Try to find a transceiver from an existing track
   return transceivers.find((transceiver) => {
     const sender = transceiver.sender;
     if (!sender) {
@@ -132,6 +133,18 @@ export const getTransceiver = (transceivers, trackNodeId) => {
     return track.__wp === trackNodeId;
   });
 };
+
+export const getFirstEmptyTransceiver = (transceivers) => {
+  // Find the first empty transceiver
+  return transceivers.find((transceiver) => {
+    const sender = transceiver.sender;
+    if (!sender) {
+      return false;
+    }
+
+    return sender.track ? false : true;
+  });
+}
 
 export const stringify = (data) => {
   switch (data.constructor.name) {

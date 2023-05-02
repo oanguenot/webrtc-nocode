@@ -2,7 +2,7 @@ import Main from "../Main";
 import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
 import {
   findNodeByName,
-  generateCustomId4,
+  generateCustomId4, getFirstEmptyTransceiver,
   getNodeById,
   getNodesFromIds,
   getTransceiver,
@@ -90,9 +90,12 @@ class ReplaceTrack extends Main {
       // Get new track to replace
       const inputNodes = getNodesFromIds(this.linksInput, nodes);
       const newTrackNode = findNodeByName(NODES.TRACK, inputNodes);
-      const newFromProperty = newTrackNode.getPropertyFor(KEYS.FROM);
-      const newTrackLabel =
-        newTrackNode.getLabelFromPropertySelect(newFromProperty);
+      let newTrackLabel = "null";
+      if(newTrackNode) {
+        const newFromProperty = newTrackNode.getPropertyFor(KEYS.FROM);
+        newTrackLabel =
+          newTrackNode.getLabelFromPropertySelect(newFromProperty);
+      }
       const peerId = this.getPropertyValueFor(KEYS.PEER);
 
       // Deduce peer node from track node
@@ -102,6 +105,9 @@ class ReplaceTrack extends Main {
       if (pc) {
         const transceivers = win.pc.getTransceivers();
         transceiver = getTransceiver(transceivers, trackNodeId);
+        if(!transceiver) {
+          transceiver = getFirstEmptyTransceiver(transceivers);
+        }
       }
       if (!transceiver) {
         console.warn(
@@ -109,41 +115,50 @@ class ReplaceTrack extends Main {
         );
         resolve();
         return;
+      } else if (!transceiver.sender.track) {
+        console.warn(
+          `[replace] find an empty transceiver for track ${trackNodeId}`
+        );
+        resolve();
+        return;
       }
 
       // Execute new track
-      const newStream = await newTrackNode.execute(win);
-      const [track] = newStream.getTracks();
+      let newStream = null, track= null;
+      if(newTrackNode) {
+        newStream = await newTrackNode.execute(win);
+        [track] = newStream.getTracks();
+      }
+
       const sender = transceiver.sender;
-      if (sender && track) {
-        try {
-          // Replace the track
-          await sender.replaceTrack(track);
 
-          // Update the media element
-          win.document.querySelector(`#local-${trackNodeId}`).srcObject =
-            newStream;
-          win.document.querySelector(
-            `#local-${trackNodeId}`
-          ).id = `local-${newTrackNode.id}`;
+      try {
+        // Replace the track
+        await sender.replaceTrack(track);
 
-          // Send custom event
-          reporter({
-            win,
-            name: "replaceTrack",
-            category: "api",
-            details: `Replace track ${trackLabel} by track ${newTrackLabel}`,
-            timestamp: Date.now(),
-            ssrc: null,
-            data: null,
-            ended: null,
-          });
+        // Update the media element
+        win.document.querySelector(`#local-${trackNodeId}`).srcObject =
+          newStream;
+        win.document.querySelector(
+          `#local-${trackNodeId}`
+        ).id = `local-${newTrackNode.id}`;
 
-          resolve();
-        } catch (err) {
-          console.warn("[encode] error", err);
-          resolve();
-        }
+        // Send custom event
+        reporter({
+          win,
+          name: "replaceTrack",
+          category: "api",
+          details: `Replace track ${trackLabel} by track ${newTrackLabel}`,
+          timestamp: Date.now(),
+          ssrc: null,
+          data: null,
+          ended: null,
+        });
+
+        resolve();
+      } catch (err) {
+        console.warn("[encode] error", err);
+        resolve();
       }
     });
   }
