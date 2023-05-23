@@ -32,16 +32,35 @@ class Aggregator extends Main {
         description: "Name of the Aggregator node",
         default: "Aggre",
       },
+      {
+        prop: KEYS.TIMEOUT,
+        label: "Timeout",
+        type: KEY_TYPE.ENUM,
+        enum: [
+          { label: "10 seconds", value: 10 },
+          { label: "20 seconds", value: 20 },
+          { label: "30 seconds", value: 30 },
+          { label: "45 seconds", value: 45 },
+          { label: "1 minute", value: 60 },
+          { label: "2 minutes", value: 120 },
+          { label: "5 minutes", value: 300 },
+        ],
+        value: 10,
+        description: "Max duration to wait when first connected node is finished before continuing",
+      },
     ];
     this._sources = [];
   }
 
   renderProp(prop) {
     const property = this.getPropertyFor(prop);
+    const label = this.getLabelFromPropertySelect(property);
 
     switch (prop) {
       case KEYS.NAME:
         return property.value;
+      case KEYS.TIMEOUT:
+        return label;
       default:
         return "";
     }
@@ -54,6 +73,7 @@ class Aggregator extends Main {
         id = setInterval(() => {
           const inputNodes = getNodesFromIds(this.linksInput, nodes);
           const raced = inputNodes.every((node) => node.executed);
+          console.log(">>>RACED", raced, inputNodes);
           if (raced) {
             clearInterval(id);
             resolve();
@@ -80,7 +100,11 @@ class Aggregator extends Main {
     }">${this.renderProp(KEYS.NAME)}</span>
         </div>
         <div class="box">
-            <span class="object-full">Wait until previous nodes are completed!</span>
+             <div class="object-box-line">
+                <i class="fas fa-hourglass"></i><span class="object-details-value" id="timeout-${
+      this._uuid
+    }">${this.renderProp(KEYS.TIMEOUT)}</span>
+            </div>
              <div class="object-footer">
                 <span class="object-node object-title-box">${
                   this.node

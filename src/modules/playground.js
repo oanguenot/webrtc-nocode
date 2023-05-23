@@ -191,32 +191,6 @@ const executeANode = (initialEvent, currentNode, nodes) => {
   });
 };
 
-const estimateTasks = (peers, iceEvents, readyEvent, nodes) => {
-  let nbTasks = peers.length;
-
-  // Count nodes for the ready Nodes
-  if (readyEvent) {
-    nbTasks += 1;
-    let currentNode = readyEvent.getNextNode(nodes);
-    while (currentNode) {
-      nbTasks += 1;
-      currentNode = currentNode.getNextNode(nodes);
-    }
-  }
-
-  // Count nodes for the ice Events Nodes
-  iceEvents.forEach((iceEvent) => {
-    nbTasks += 1;
-    let currentNode = iceEvent.getNextNode(nodes);
-    while (currentNode) {
-      nbTasks += 1;
-      currentNode = currentNode.getNextNode(nodes);
-    }
-  });
-
-  return nbTasks;
-};
-
 export const execute = (nodes, dispatch) => {
   return new Promise(async (resolve, reject) => {
     dispatcher = dispatch;
@@ -226,10 +200,11 @@ export const execute = (nodes, dispatch) => {
     // found peer connections for creating iFrame
     const peers = filterNodesByName(NODES.PEER, nodes);
     const iceEvents = filterNodesByName(NODES.ICE, nodes);
-    const readyEvent = findNodeByName(NODES.READY, nodes);
+    //const readyEvent = findNodeByName(NODES.READY, nodes);
+    const readyEvents = filterNodesByName(NODES.READY, nodes);
 
     // Estimate the number of task to do
-    const numberOfTasks = estimateTasks(peers, iceEvents, readyEvent, nodes);
+    const numberOfTasks = nodes.length;
     setTaskNumber(numberOfTasks, dispatch);
 
     // Initialize Peer Connections
@@ -261,15 +236,23 @@ export const execute = (nodes, dispatch) => {
       incrementTaskDone(dispatch);
     }
 
+    console.log(">>>READY", readyEvents);
     // Check for the ready event and execute it
-    if (!readyEvent) {
+    if (!readyEvents.length) {
       reject("No ready event");
       return;
     }
 
     // Start ready node in playground
-    await executeANode(readyEvent, readyEvent, nodes);
-    resolve();
+    //await executeANode(readyEvent, readyEvent, nodes);
+    readyEvents.forEach(readyEvent => {
+      Promise.all(executeANode(readyEvent, readyEvent, nodes)).then(() => {
+        console.log(">>> after ready events");
+        resolve();
+      }).catch(err => {
+        console.log("error playground", err);
+      });
+    })
   });
 };
 
