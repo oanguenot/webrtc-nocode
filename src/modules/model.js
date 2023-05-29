@@ -58,6 +58,7 @@ export const KEYS = {
   INBOUND: "inbound",
   OUTBOUND: "outbound",
   TRANSPORT: "transport",
+  SCALABILITY_MODE: "scalability_mode",
 };
 
 export const KEY_TYPE = {

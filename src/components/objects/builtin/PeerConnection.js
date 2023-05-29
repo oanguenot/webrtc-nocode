@@ -1,7 +1,7 @@
 import Main from "../Main";
 
 import "../Main.css";
-import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
+import { KEY_TYPE, KEYS, KIND, NODES } from "../../../modules/model";
 import {
   findNodeByName,
   generateCustomId4,
@@ -61,6 +61,24 @@ class PeerConnection extends Main {
         value: "unforced",
         description: "Choose the connection type to use",
       },
+      {
+        prop: KEYS.SCALABILITY_MODE,
+        label: "Scalability",
+        type: KEY_TYPE.ENUM,
+        enum: [
+          { label: "Unforced", value: "unforced" },
+          { label: "L1T2", value: "L1T2" },
+          { label: "L1T3", value: "L1T3" },
+          { label: "L2T1", value: "L2T1" },
+          { label: "L2T2", value: "L2T2" },
+          { label: "L2T3", value: "L2T3" },
+          { label: "L3T1", value: "L3T1" },
+          { label: "L3T2", value: "L3T2" },
+          { label: "L3T3", value: "L3T3" },
+        ],
+        value: "unforced",
+        description: "Choose the scalability mode to use",
+      },
     ];
     this._sources = [`${KEYS.NAME}:${KEYS.TURN}@${NODES.TURN}`];
   }
@@ -95,6 +113,9 @@ class PeerConnection extends Main {
       if (win) {
         const turnId = peerNode.getPropertyValueFor(KEYS.TURN);
         const network = peerNode.getPropertyValueFor(KEYS.NETWORK);
+        const scalabilityMode = peerNode.getPropertyValueFor(
+          KEYS.SCALABILITY_MODE
+        );
 
         // create and configure the peer connection
         let configuration = null;
@@ -175,20 +196,15 @@ class PeerConnection extends Main {
             ended: null,
           });
 
+          let options = {};
+          if (scalabilityMode !== "unforced" && track.kind === KIND.VIDEO) {
+            options = {
+              sendEncodings: [{ scalabilityMode }],
+            };
+          }
+
           //win.pc.addTrack(track);
-          const transceiver = win.pc.addTransceiver(track, {
-            // sendEncodings: [
-            //   { rid: "q", scaleResolutionDownBy: 4.0, scalabilityMode: "L1T3" },
-            //   { rid: "h", scaleResolutionDownBy: 2.0, scalabilityMode: "L1T3" },
-            //   { rid: "f", scalabilityMode: "L1T3" },
-            // ],
-            // sendEncodings: [
-            //   { rid: "h", maxBitrate: 1200 * 1024 },
-            //   { rid: "m", maxBitrate: 600 * 1024, scaleResolutionDownBy: 2 },
-            //   { rid: "l", maxBitrate: 300 * 1024, scaleResolutionDownBy: 4 },
-            // ],
-            //sendEncodings: [{ scalabilityMode: "L2T3" }],
-          });
+          const transceiver = win.pc.addTransceiver(track, options);
 
           // Store track id in private property
           transceiver.sender.__wp = track.__wp;
