@@ -94,6 +94,8 @@ class PeerConnection extends Main {
         return property.value;
       case KEYS.TURN:
         return property.value === "local" ? "Local only" : `[${label}]`;
+      case KEYS.SCALABILITY_MODE:
+        return property.value === "unforced" ? "No Simulcast/SVC" : label;
       default:
         return "";
     }
@@ -232,6 +234,11 @@ class PeerConnection extends Main {
               <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="network-${
                 this._uuid
               }">${this.renderProp(KEYS.NETWORK)}</span>
+          </div>
+          <div class="object-box-line">
+              <i class="fas fa-chevron-right"></i> <span class="object-details-value" id="scalability_mode-${
+                this._uuid
+              }">${this.renderProp(KEYS.SCALABILITY_MODE)}</span>
           </div>
           <div class="object-footer">
                   <span class="object-node object-title-box">${
