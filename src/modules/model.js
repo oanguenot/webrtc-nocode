@@ -59,6 +59,7 @@ export const KEYS = {
   OUTBOUND: "outbound",
   TRANSPORT: "transport",
   SCALABILITY_MODE: "scalability_mode",
+  TIMEOUT: "timeout",
 };
 
 export const KEY_TYPE = {
