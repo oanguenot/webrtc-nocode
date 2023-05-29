@@ -147,7 +147,7 @@ function Debug({ dispatch }) {
                   {appState.graph &&
                     Object.keys(appState.graph).map((peerId, index) => (
                       <div key={index} className="graph">
-                        <p className="debug-iframes-title">Peer-{peerId}</p>
+                        <p className="debug-iframes-title">{peerId}</p>
                         <canvas
                           className="canvasGraph"
                           id={`canvas-${peerId}`}

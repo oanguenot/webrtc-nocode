@@ -120,7 +120,7 @@ class WebRTCMetrics extends Main {
       win.probe.onreport = (report) => {
         // Do something with a report collected (JSON)
         addPointsInGraph(
-          peerNode.id,
+          peerNode.getPropertyValueFor(KEYS.NAME),
           report.passthrough,
           report.timestamp,
           dispatch
