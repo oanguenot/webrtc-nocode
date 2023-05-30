@@ -236,7 +236,6 @@ export const execute = (nodes, dispatch) => {
       incrementTaskDone(dispatch);
     }
 
-    console.log(">>>READY", readyEvents);
     // Check for the ready event and execute it
     if (!readyEvents.length) {
       reject("No ready event");
@@ -244,15 +243,9 @@ export const execute = (nodes, dispatch) => {
     }
 
     // Start ready node in playground
-    //await executeANode(readyEvent, readyEvent, nodes);
-    readyEvents.forEach(readyEvent => {
-      Promise.all(executeANode(readyEvent, readyEvent, nodes)).then(() => {
-        console.log(">>> after ready events");
-        resolve();
-      }).catch(err => {
-        console.log("error playground", err);
-      });
-    })
+    readyEvents.map((readyEvent) =>
+      executeANode(readyEvent, readyEvent, nodes)
+    );
   });
 };
 

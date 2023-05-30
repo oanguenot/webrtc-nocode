@@ -19,6 +19,7 @@ import {
   setStartTime,
 } from "../graph/graph";
 import { reset, run } from "../../actions/DebugActions";
+import { PLAY_STATE } from "../../reducers/appReducer";
 
 const getColorFromTag = (tag) => {
   switch (tag) {
@@ -51,10 +52,14 @@ function Debug({ dispatch }) {
   }, []);
 
   useEffect(() => {
-    if (appState.nbTasks > 0) {
+    if (appState.playState === PLAY_STATE.ENDED) {
+      setProgress(1);
+    } else if (appState.nbTasks > 0) {
       setProgress(appState.tasksDone / appState.nbTasks);
+    } else {
+      setProgress(0);
     }
-  }, [appState.nbTasks, appState.tasksDone]);
+  }, [appState.nbTasks, appState.tasksDone, appState.playState]);
 
   useEffect(() => {
     if (appState.graph) {
