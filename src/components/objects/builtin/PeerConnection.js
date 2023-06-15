@@ -187,29 +187,72 @@ class PeerConnection extends Main {
         });
 
         stream.getTracks().forEach((track) => {
-          addCustomEventWithObject({
-            win,
-            name: "addTrack",
-            category: "api",
-            details: "Add Track to RTCPeerConnection",
-            timestamp: Date.now(),
-            ssrc: null,
-            data: track,
-            ended: null,
-          });
-
-          let options = {};
+          let options = {
+            direction: "sendrecv",
+          };
+          let useScalability = false;
           if (scalabilityMode !== "unforced" && track.kind === KIND.VIDEO) {
-            options = {
-              sendEncodings: [{ scalabilityMode }],
-            };
+            options.sendEncodings = [{ scalabilityMode }];
+            useScalability = true;
           }
 
-          //win.pc.addTrack(track);
-          const transceiver = win.pc.addTransceiver(track, options);
+          try {
+            const transceivers = win.pc.getTransceivers();
+            let transceiver = transceivers.find((transceiver) => {
+              const receiverTrack = transceiver.receiver?.track;
+              const senderTrack = transceiver.sender?.track;
+              return (
+                receiverTrack &&
+                receiverTrack.kind === track.kind &&
+                !senderTrack
+              );
+            });
 
-          // Store track id in private property
-          transceiver.sender.__wp = track.__wp;
+            if (transceiver) {
+              console.log("reuse existing transceiver");
+              transceiver.sender.replaceTrack(track);
+              transceiver.sender.__wp = track.__wp;
+              addCustomEventWithObject({
+                win,
+                name: "replaceTrack",
+                category: "api",
+                details: "Replace Track to RTCPeerConnection",
+                timestamp: Date.now(),
+                ssrc: null,
+                data: track,
+                ended: null,
+              });
+            } else if (useScalability) {
+              console.log("create new transceiver");
+              transceiver = win.pc.addTransceiver(track, options);
+              transceiver.sender.__wp = track.__wp;
+              addCustomEventWithObject({
+                win,
+                name: "addTransceiver",
+                category: "api",
+                details: "Add Transceiver to RTCPeerConnection",
+                timestamp: Date.now(),
+                ssrc: null,
+                data: track,
+                ended: null,
+              });
+            } else {
+              win.pc.addTrack(track);
+              console.log("addTrack", peerNode.name, track.kind, track.id);
+              addCustomEventWithObject({
+                win,
+                name: "addTrack",
+                category: "api",
+                details: "Add Track to RTCPeerConnection",
+                timestamp: Date.now(),
+                ssrc: null,
+                data: track,
+                ended: null,
+              });
+            }
+          } catch (err) {
+            console.log("got error", err);
+          }
         });
       }
       resolve();
