@@ -116,6 +116,11 @@ class CallP2P extends Main {
         });
       };
 
+      const options = {
+        offerToReceiveVideo: true,
+        offerToReceiveAudio: true,
+      };
+
       const callerId = this.getPropertyValueFor(KEYS.CALLER);
       let callerNode = getNodeById(callerId, nodes);
       const recipientId = this.getPropertyValueFor(KEYS.RECIPIENT);
@@ -146,7 +151,7 @@ class CallP2P extends Main {
         return inputNode.node === NODES.MUNGING;
       });
 
-      let rtcOfferSessionDescription = await callerWin.pc.createOffer();
+      let rtcOfferSessionDescription = await callerWin.pc.createOffer(options);
 
       if (munglerId) {
         const munglerNode = getNodeById(munglerId, nodes);
