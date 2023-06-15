@@ -85,6 +85,10 @@ class Main {
     return infoNode ? infoNode.value : null;
   }
 
+  get name() {
+    return this.getPropertyValueFor(KEYS.NAME);
+  }
+
   get sources() {
     return this._sources;
   }
