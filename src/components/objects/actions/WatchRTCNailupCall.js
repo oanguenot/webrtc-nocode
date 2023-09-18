@@ -1,11 +1,6 @@
 import Main from "../Main";
 import { KEY_TYPE, KEYS, NODES } from "../../../modules/model";
-import {
-  findNodeByName,
-  generateCustomId4,
-  getNodeById,
-  getNodesFromIds,
-} from "../../../modules/helper";
+import { generateCustomId4, getNodeById } from "../../../modules/helper";
 
 class WatchRTCNailupCall extends Main {
   static item = "WatchRTCNailupCall";
@@ -20,7 +15,7 @@ class WatchRTCNailupCall extends Main {
     this._outputs = 1;
     this._acceptInputs = [NODES.EVENTS, NODES.ACTIONS];
     this._info = [
-      { key: KEYS.NODE, value: "action.wait" },
+      { key: KEYS.NODE, value: "action.nailup" },
       {
         key: KEYS.INFO,
         value: "Wait a moment before executing the next node",
@@ -103,10 +98,11 @@ class WatchRTCNailupCall extends Main {
       if (win.watchRTC) {
         if (operation === "start") {
           win.watchRTC.persistentStart(rtcRoomId, rtcPeerId);
-        } else if (operation === "end") {
+        } else if (operation === "stop") {
           win.watchRTC.persistentEnd();
         }
       }
+      resolve();
     });
   }
 
