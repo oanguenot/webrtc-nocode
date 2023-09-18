@@ -20,6 +20,7 @@ import VideoConstraints from "../components/objects/actions/VideoConstraints";
 import ReplaceTrack from "../components/objects/actions/ReplaceTrack";
 import AddTrack from "../components/objects/actions/AddTrack";
 import Aggregator from "../components/objects/events/Aggregator";
+import WatchRTCNailupCall from "../components/objects/actions/WatchRTCNailupCall";
 
 const ObjectBuilder = {
   Ready: Ready,
@@ -46,6 +47,7 @@ const ObjectBuilder = {
   AddTrack: AddTrack,
   Aggregator: Aggregator,
   End: End,
+  WatchRTCNailupCall: WatchRTCNailupCall,
 };
 
 const convertNodeNameToClass = (name, kind) => {
@@ -70,6 +72,7 @@ const convertNodeNameToClass = (name, kind) => {
     "action.addTrack": AddTrack,
     "action.aggregator": Aggregator,
     "action.end": End,
+    "action.nailup": WatchRTCNailupCall,
   };
 
   return Nodes[name];
@@ -93,6 +96,6 @@ export const rehydrateObject = (name, kind, x, y) => {
 
 export const availableObjects = () => {
   return Object.keys(ObjectBuilder).map(
-    (ClassReference) => ObjectBuilder[ClassReference]
+    (ClassReference) => ObjectBuilder[ClassReference],
   );
 };

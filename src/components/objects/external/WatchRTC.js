@@ -90,14 +90,16 @@ class WatchRTC extends Main {
 
         const rtcApiKey = this.getPropertyValueFor("apiKey");
         const rtcRoomId = this.getPropertyValueFor("roomId");
+        const rtcPeerIdName = this.getPropertyValueFor("name");
 
         win.watchRTC.init({
           rtcApiKey,
           rtcRoomId,
-          rtcPeerId,
+          rtcPeerId: rtcPeerIdName,
         });
         resolve();
       } catch (err) {
+        console.log(">>>ERROR", err);
         reject(err);
       }
     });
@@ -108,8 +110,8 @@ class WatchRTC extends Main {
       <div>
         <div class="title-box">
           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
-      this._uuid
-    }">${this.renderProp("name")}</span>
+            this._uuid
+          }">${this.renderProp("name")}</span>
         </div>
          <div class="box">
             <div class="object-box-line">

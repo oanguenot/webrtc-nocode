@@ -60,6 +60,7 @@ export const KEYS = {
   TRANSPORT: "transport",
   SCALABILITY_MODE: "scalability_mode",
   TIMEOUT: "timeout",
+  NAILUP_OPERATION: "nailup_operation",
 };
 
 export const KEY_TYPE = {
