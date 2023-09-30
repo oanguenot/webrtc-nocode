@@ -38,7 +38,8 @@ class SDPMunging extends Main {
         enum: [
           { label: "None", value: "none" },
           { label: "RRTR", value: "rrtr" },
-          //{ label: "No Bundle", value: "nobundle" },
+          { label: "Bad Offer", value: "badoffer" },
+          { label: "Bad Answer", value: "badAnswer" },
         ],
         value: "none",
         description: "Choose the operation to apply on the SDP",
@@ -85,18 +86,20 @@ class SDPMunging extends Main {
       <div>
         <div class="title-box">
           <i class="fas fa-${this.constructor.icon}"></i> <span id="name-${
-      this._uuid
-    }">${this.renderProp(KEYS.NAME)}</span>
+            this._uuid
+          }">${this.renderProp(KEYS.NAME)}</span>
         </div>
         <div class="box">
         <div class="object-box-line">
             <i id="operation-color-${
               this._uuid
             }" class="fas fa-prescription-bottle ${
-      this.renderColorIsMissingProp(KEYS.OPERATION) ? "red" : ""
-    }"></i><span class="object-details-value ${
-      this.renderColorIsMissingProp(KEYS.OPERATION) ? "red" : ""
-    }" id="operation-${this._uuid}">${this.renderProp(KEYS.OPERATION)}</span>
+              this.renderColorIsMissingProp(KEYS.OPERATION) ? "red" : ""
+            }"></i><span class="object-details-value ${
+              this.renderColorIsMissingProp(KEYS.OPERATION) ? "red" : ""
+            }" id="operation-${this._uuid}">${this.renderProp(
+              KEYS.OPERATION,
+            )}</span>
             </div>
             <div class="object-footer">
                 <span class="object-node object-title-box">${

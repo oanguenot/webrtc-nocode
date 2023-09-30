@@ -1,4 +1,4 @@
-const findLine = (sdpLines, prefix, substr)  => {
+const findLine = (sdpLines, prefix, substr) => {
   return findLineInRange(sdpLines, 0, -1, prefix, substr);
 };
 
@@ -6,8 +6,10 @@ const findLineInRange = (sdpLines, startLine, endLine, prefix, substr) => {
   const realEndLine = endLine !== -1 ? endLine : sdpLines.length;
   for (let i = startLine; i < realEndLine; ++i) {
     if (sdpLines[i].indexOf(prefix) === 0) {
-      if (!substr ||
-        sdpLines[i].toLowerCase().indexOf(substr.toLowerCase()) !== -1) {
+      if (
+        !substr ||
+        sdpLines[i].toLowerCase().indexOf(substr.toLowerCase()) !== -1
+      ) {
         return i;
       }
     }
@@ -16,19 +18,23 @@ const findLineInRange = (sdpLines, startLine, endLine, prefix, substr) => {
 };
 
 const splitLines = (blob) => {
-  return blob.trim().split('\n').map(line => line.trim());
+  return blob
+    .trim()
+    .split("\n")
+    .map((line) => line.trim());
 };
 
 const joinLines = (lines) => {
   let str = lines.join("\r\n");
   str = `${str}\r\n`;
   return str;
-}
+};
 
 const splitSections = (blob) => {
-  const parts = blob.split('\nm=');
-  return parts.map((part, index) => (index > 0 ?
-    'm=' + part : part).trim() + '\r\n');
+  const parts = blob.split("\nm=");
+  return parts.map(
+    (part, index) => (index > 0 ? "m=" + part : part).trim() + "\r\n",
+  );
 };
 
 const getMediaSections = (blob) => {
@@ -48,11 +54,11 @@ const applyRRTR = (offer) => {
   const sections = getMediaSections(offer);
   sections.forEach((section, index) => {
     const lines = splitLines(section);
-    const mLine = lines[0].split(' ');
+    const mLine = lines[0].split(" ");
 
-    if(mLine) {
+    if (mLine) {
       mLine.forEach((codec, index) => {
-        if(index >2) {
+        if (index > 2) {
           lines.push(`a=rtcp-fb:${codec} rrtr`);
         }
       });
@@ -62,14 +68,26 @@ const applyRRTR = (offer) => {
     modifiedSections.push(newSection);
   });
 
-  return getVSection(offer).concat(modifiedSections.join(''));
-}
+  return getVSection(offer).concat(modifiedSections.join(""));
+};
+
+const applyBadOffer = (offer) => {
+  return offer;
+};
+
+const applyBadAnswer = (answer) => {
+  return answer;
+};
 
 export const mungle = (operation, offer) => {
   switch (operation) {
     case "rrtr":
       return applyRRTR(offer);
+    case "badoffer":
+      return applyBadOffer(offer);
+    case "badanswer":
+      return applyBadAnswer(offer);
     default:
       return offer;
   }
-}
+};
